@@ -1,6 +1,6 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            booklist.h
+ *            accountstab.h
  *
  *  Sat Apr 30 09:03:00 CEST 2022
  *  Copyright 2022 Lars Muldjord
@@ -24,8 +24,8 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
 
-#ifndef __BOOKLIST_H__
-#define __BOOKLIST_H__
+#ifndef __ACCOUNTSTAB_H__
+#define __ACCOUNTSTAB_H__
 
 #include "datatypes.h"
 
@@ -33,25 +33,22 @@
 #include <QElapsedTimer>
 #include <QTimer>
 
-class BookList : public QListWidget
+class AccountsTab : public QListWidget
 {
   Q_OBJECT
     
 public:
-  BookList(QList<Book> &books, QWidget *parent);
-  ~BookList();
+  AccountsTab(const QList<Account> &accounts, QWidget *parent);
+  ~AccountsTab();
   
-signals:
-  void focusBook(const QString &barcode);
 
 private slots:
-  void refreshBooks();
-  void bookSelected(QListWidgetItem *item);
+  void refreshAccounts();
+  void accountSelected(QListWidgetItem *item);
 
 private:
-  QElapsedTimer elapsedTime;
-  QList<Book> &books;
+  const QList<Account> &accounts;
   QTimer refreshTimer;
 };
 
-#endif // __BOOKLIST_H__
+#endif // __ACCOUNTSTAB_H__

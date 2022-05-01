@@ -1,6 +1,6 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            datatypes.h
+ *            categoriestab.h
  *
  *  Sat Apr 30 09:03:00 CEST 2022
  *  Copyright 2022 Lars Muldjord
@@ -24,32 +24,31 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
 
-#ifndef __DATATYPES_H__
-#define __DATATYPES_H__
+#ifndef __CATEGORIESTAB_H__
+#define __CATEGORIESTAB_H__
 
-#include <QString>
+#include "datatypes.h"
 
-struct Account {
-  QString barcode = "";
-  QString id = "";
-  double balance = 0.0;
-  double bonus = 0.0;
+#include <QListWidget>
+#include <QElapsedTimer>
+#include <QTimer>
+
+class CategoriesTab : public QListWidget
+{
+  Q_OBJECT
+    
+public:
+  CategoriesTab(const QList<Category> &categories, QWidget *parent);
+  ~CategoriesTab();
+  
+
+private slots:
+  void refreshCategories();
+  void categorySelected(QListWidgetItem *item);
+
+private:
+  const QList<Category> &categories;
+  QTimer refreshTimer;
 };
 
-struct Item {
-  QString barcode = "";
-  QString id = "";
-  QString category = ""; // Category barcode.
-  double price = 0.0;
-  double discount = 0.0; // Subtracted from price.
-  int stock = 0;
-  int age = 0; // Seconds. Reset whenever one or more is added to stock emulating renewal.
-};
-
-struct Category {
-  QString barcode = "";
-  QString id = "";
-};
-
-
-#endif // __DATATYPES_H__
+#endif // __CATEGORIESTAB_H__

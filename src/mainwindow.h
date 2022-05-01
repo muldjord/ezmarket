@@ -28,6 +28,9 @@
 #define __MAINWINDOW_H__
 
 #include "datatypes.h"
+#include "accountstab.h"
+#include "itemstab.h"
+#include "categoriestab.h"
 
 #include <QMainWindow>
 #include <QTimer>
@@ -37,6 +40,7 @@
 #include <QAction>
 #include <QMenu>
 #include <QMenuBar>
+#include <QTabWidget>
 
 class MainWindow : public QMainWindow
 {
@@ -83,14 +87,15 @@ private:
   QMenuBar *menuBar;
 
   QLineEdit *barcodeLineEdit = nullptr;
-  /*
+
+  QTabWidget *modeTabs = nullptr;
+
   AccountsTab *accountsTab = nullptr;
   ItemsTab *itemsTab = nullptr;
   CategoriesTab *categoriesTab = nullptr;
+  /*
   CheckoutTab *checkoutTab = nullptr;
   */
-
-  QTabWidget *modeTabs = nullptr;
 
   QTimer randomTimer;
   QTimer focusTimer;

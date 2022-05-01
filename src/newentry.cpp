@@ -119,3 +119,13 @@ void NewEntry::checkSanity()
   }
   accept();
 }
+
+QString NewEntry::getType()
+{
+  if(typeLayout->currentWidget() == accountWidget) {
+    return "account";
+  } else if(typeLayout->currentWidget() == itemWidget) {
+    return "item";
+  }
+  return "";
+}

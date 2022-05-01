@@ -44,6 +44,7 @@ public:
            QList<Account> &accounts,
            QList<Item> &items, const QList<Category> &categories,
            QWidget *parent);
+  QString getType();
 
 public slots:
 

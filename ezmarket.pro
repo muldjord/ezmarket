@@ -14,6 +14,9 @@ DEFINES+=VERSION=\\\"$$VERSION\\\"
 # Input
 HEADERS += src/mainwindow.h \
            src/datatypes.h \
+           src/accountstab.h \
+           src/itemstab.h \
+           src/categoriestab.h \
            src/newentry.h \
            src/lineedit.h \
            src/accountwidget.h \
@@ -22,6 +25,9 @@ HEADERS += src/mainwindow.h \
 
 SOURCES += src/main.cpp \
            src/mainwindow.cpp \
+           src/accountstab.cpp \
+           src/itemstab.cpp \
+           src/categoriestab.cpp \
            src/newentry.cpp \
            src/lineedit.cpp \
            src/accountwidget.cpp \

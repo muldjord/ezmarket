@@ -45,6 +45,7 @@ MainWindow::MainWindow()
 
   setStyleSheet("QLabel {font-size: 25px;}"
                 "QLineEdit {font-size: 25px;}"
+                "QTabWidget {font-size: 25px;}"
                 "QListWidget {font-size: 25px;}"
                 "QGroupBox{font-size: 30px; padding-left: 20px; padding-top: 40px; padding-bottom: 20px; padding-right: 20px;}");
   createActions();
@@ -53,18 +54,18 @@ MainWindow::MainWindow()
   
   loadDatabase();
   
-  /*
-  AccountsTab *accountsTab = new AccountsTab(this);
-  ItemsTab *itemsTab = new ItemsTab(this);
-  CategoriesTab *categoriesTab = new CategoriesTab(this);
+  accountsTab = new AccountsTab(accounts, this); 
+  itemsTab = new ItemsTab(items, this);
+  categoriesTab = new CategoriesTab(categories, this);
+ /*
   CheckoutTab *checkoutTab = new CheckoutTab(this);
   */
   
-  QTabWidget *modeTabs = new QTabWidget(this);
-  /*
+  modeTabs = new QTabWidget(this);
   modeTabs->addTab(accountsTab, tr("Accounts"));
   modeTabs->addTab(itemsTab, tr("Items"));
   modeTabs->addTab(categoriesTab, tr("Categories"));
+  /*
   modeTabs->addTab(checkoutTab, tr("Checkout"));
   */
   
@@ -249,10 +250,10 @@ void MainWindow::parseItem(const QString &string)
     item.stock = vars["stock"].toInt();
   }
   if(vars.contains("age")) {
-    item.age = vars["age"].toDouble();
+    item.age = vars["age"].toInt();
   }
 
-  printf("Item:\n  barcode=%s\n  id=%s\n  category=%s\n  price=%f\n  discount=%f\n  stock=%d\n  age=%f\n",
+  printf("Item:\n  barcode=%s\n  id=%s\n  category=%s\n  price=%f\n  discount=%f\n  stock=%d\n  age=%d\n",
          qPrintable(item.barcode),
          qPrintable(item.id),
          qPrintable(item.category),
@@ -336,13 +337,59 @@ void MainWindow::showAbout()
 void MainWindow::checkBarcode()
 {
   QString barcode = barcodeLineEdit->text().toLower();
+  QString type = "";
   barcodeLineEdit->setText("");
   if(barcode.isEmpty()) {
     return;
   }
-  
+
   printf("CHECKING BARCODE: '%s'\n", qPrintable(barcode));
   bool barcodeFound = false;
+  for(const auto &account: accounts) {
+    if(barcode == account.barcode) {
+      printf("THIS IS AN ACCOUNT!\n");
+      type = "account";
+      barcodeFound = true;
+    }
+  }
+  for(const auto &item: items) {
+    if(barcode == item.barcode) {
+      printf("THIS IS AN ITEM!\n");
+      type = "item";
+      barcodeFound = true;
+    }
+  }
+
+  if(!barcodeFound) {
+    QSound::play("sounds/ny_konto_eller_vare.wav");
+
+    printf("NEW BARCODE!\n");
+    NewEntry newEntry(barcode, accounts, items, categories, this);
+    newEntry.exec();
+    type = newEntry.getType();
+    if(type == "account") {
+      std::sort(accounts.begin(), accounts.end(), [](const Account a, const Account b) -> bool { return a.id.toLower() < b.id.toLower(); });
+    } else if(type == "item") {
+      std::sort(items.begin(), items.end(), [](const Item a, const Item b) -> bool { return a.id.toLower() < b.id.toLower(); });
+    }
+  }
+
+  if(modeTabs->currentWidget() == accountsTab) {
+    printf("ACCOUNTS TAB ACTIVE!\n");
+    if(type == "account") {
+    } else if(type == "item") {
+      modeTabs->setCurrentWidget(itemsTab);
+    }
+  } else if(modeTabs->currentWidget() == itemsTab) {
+    printf("ITEMS TAB ACTIVE!\n");
+    if(type == "account") {
+      modeTabs->setCurrentWidget(accountsTab);
+    } else if(type == "item") {
+    }
+  } else if(modeTabs->currentWidget() == categoriesTab) {
+    printf("CATEGORIES TAB ACTIVE!\n");
+  }
+  
   /*  
   for(const auto &account: accounts) {
     if(barcode == account.barcode) {
@@ -452,19 +499,6 @@ void MainWindow::checkBarcode()
     clearTimer.start();
   }
   */
-  if(!barcodeFound) {
-    
-    QSound::play("sounds/ny_konto_eller_vare.wav");
-    
-    printf("NEW BARCODE!\n");
-    NewEntry newEntry(barcode, accounts, items, categories, this);
-    newEntry.exec();
-    
-    std::sort(accounts.begin(), accounts.end(), [](const Account a, const Account b) -> bool { return a.id.toLower() < b.id.toLower(); });
-    
-    std::sort(items.begin(), items.end(), [](const Item a, const Item b) -> bool { return a.id.toLower() < b.id.toLower(); });
-
-  }
 }
 
 QString MainWindow::getAccountFromBarcode(const QString &barcode)

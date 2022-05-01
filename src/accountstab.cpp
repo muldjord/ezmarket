@@ -1,6 +1,6 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            booklist.cpp
+ *            accountstab.cpp
  *
  *  Sat Apr 30 09:03:00 CEST 2022
  *  Copyright 2022 Lars Muldjord
@@ -26,55 +26,57 @@
 
 #include <stdio.h>
 
-#include "booklist.h"
+#include "accountstab.h"
 
-BookList::BookList(QList<Book> &books, QWidget *parent)
-  : QListWidget(parent), books(books)
+AccountsTab::AccountsTab(const QList<Account> &accounts, QWidget *parent)
+  : QListWidget(parent), accounts(accounts)
 {
   refreshTimer.setInterval(1000);
   refreshTimer.setSingleShot(true);
-  connect(&refreshTimer, &QTimer::timeout, this, &BookList::refreshBooks);
+  connect(&refreshTimer, &QTimer::timeout, this, &AccountsTab::refreshAccounts);
   refreshTimer.start();
 
-  elapsedTime.start();
-  
-  connect(this, &BookList::itemPressed, this, &BookList::bookSelected);
+  connect(this, &AccountsTab::itemPressed, this, &AccountsTab::accountSelected);
 }
 
-BookList::~BookList()
+AccountsTab::~AccountsTab()
 {
 }
 
-void BookList::refreshBooks()
+void AccountsTab::refreshAccounts()
 {
-  printf("REFRESHING BOOKS!\n");
+  printf("REFRESHING ACCOUNTS!\n");
   clear();
 
-  for(auto &book: books) {
-    if(!book.loanedBy.isEmpty()) {
-      book.loanedTimer += elapsedTime.elapsed();
-      printf("Book: %s, loaned time: %d\n", qPrintable(book.title), book.loanedTimer);
+  for(auto &account: accounts) {
+    /*
+    if(!account.loanedBy.isEmpty()) {
+      account.loanedTimer += elapsedTime.elapsed();
+      printf("Account: %s, loaned time: %d\n", qPrintable(account.title), account.loanedTimer);
     } else {
-      book.loanedTimer = 0.0;
+      account.loanedTimer = 0.0;
     }
+    */
     QListWidgetItem *item = new QListWidgetItem;
-    item->setText(book.title + " (" + book.barcode + ")");
-    if(book.loanedTimer > 240 * 1000) {
+    item->setText(account.id + " (" + account.barcode + ")");
+    /*
+    if(account.loanedTimer > 240 * 1000) {
       item->setForeground(Qt::red);
-    } else if(!book.reservedBy.isEmpty()) {
+    } else if(!account.reservedBy.isEmpty()) {
       item->setForeground(Qt::blue);
-    } else if(!book.loanedBy.isEmpty()) {
+    } else if(!account.loanedBy.isEmpty()) {
       item->setForeground(Qt::gray);
     }
-    item->setData(Qt::UserRole, book.barcode);
+    */
+    item->setData(Qt::UserRole, account.barcode);
     addItem(item);
   }
-  elapsedTime.restart();
+  //elapsedTime.restart();
   refreshTimer.start();
 }
 
-void BookList::bookSelected(QListWidgetItem *item)
+void AccountsTab::accountSelected(QListWidgetItem *item)
 {
-  emit focusBook(item->data(Qt::UserRole).toString());
+  //emit focusAccount(item->data(Qt::UserRole).toString());
   refreshTimer.start();
 }
