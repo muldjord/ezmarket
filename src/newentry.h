@@ -27,19 +27,23 @@
 #ifndef __NEWENTRY_H__
 #define __NEWENTRY_H__
 
+#include "datatypes.h"
+#include "accountwidget.h"
+#include "itemwidget.h"
+
 #include <QDialog>
 #include <QAbstractButton>
-#include <QLabel>
-#include <QLineEdit>
+#include <QStackedLayout>
 
 class NewEntry : public QDialog
 {
 Q_OBJECT
 
 public:
-  NewEntry(QString barcode, QWidget *parent);
-  QString getType();
-  QString getNameTitle();
+  NewEntry(const QString &barcode,
+           QList<Account> &accounts,
+           QList<Item> &items, const QList<Category> &categories,
+           QWidget *parent);
 
 public slots:
 
@@ -47,13 +51,19 @@ signals:
 
 private slots:
   void typeChanged(QAbstractButton *button);
-  void checkNameTitle();
+  void checkSanity();
 
 private:
   QButtonGroup *typeGroup = nullptr;
-  QLabel *nameTitleLabel = nullptr;
-  QLineEdit *nameTitleLineEdit = nullptr;
 
+  AccountWidget *accountWidget = nullptr;
+  ItemWidget *itemWidget = nullptr;
+
+  QStackedLayout *typeLayout = nullptr;
+
+  QList<Account> &accounts;
+  QList<Item> &items;
+  const QList<Category> &categories;
 };
 
 

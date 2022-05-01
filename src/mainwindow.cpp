@@ -36,6 +36,7 @@
 #include <QRandomGenerator>
 #include <QDir>
 #include <QToolBar>
+#include <QLocale>
 
 MainWindow::MainWindow()
 {
@@ -46,94 +47,29 @@ MainWindow::MainWindow()
                 "QLineEdit {font-size: 25px;}"
                 "QListWidget {font-size: 25px;}"
                 "QGroupBox{font-size: 30px; padding-left: 20px; padding-top: 40px; padding-bottom: 20px; padding-right: 20px;}");
-  /*
-  setStyleSheet("QLabel {font-size: 25px;}"
-                "QLineEdit {font-size: 25px; border-image: url(:translucent_background.png);}"
-                "QListWidget {font-size: 25px; border-image: url(:translucent_background.png);}"
-                "QGroupBox{font-size: 30px; padding-left: 20px; padding-top: 40px; padding-bottom: 20px; padding-right: 20px;}");
-  */
   createActions();
   createMenus();
   createToolBar();
   
   loadDatabase();
   
-  QLabel *personBarcodeLabel = new QLabel(tr("Barcode:"));
-  personBarcodeLineEdit = new QLineEdit(this);
-  QLabel *personNameLabel = new QLabel(tr("Name:"));
-  personNameLineEdit = new QLineEdit(this);
-  QLabel *personOnLoanLabel = new QLabel(tr("On loan:"));
-  personOnLoanList = new QListWidget(this);
-  QLabel *personReservedLabel = new QLabel(tr("Reserved:"));
-  personReservedList = new QListWidget(this);
-  
-  QVBoxLayout *personLayout = new QVBoxLayout();
-  personLayout->addWidget(personBarcodeLabel);
-  personLayout->addWidget(personBarcodeLineEdit);
-  personLayout->addWidget(personNameLabel);
-  personLayout->addWidget(personNameLineEdit);
-  personLayout->addWidget(personOnLoanLabel);
-  personLayout->addWidget(personOnLoanList);
-  personLayout->addWidget(personReservedLabel);
-  personLayout->addWidget(personReservedList);
-
-  personGroup = new QGroupBox(tr("Person"));
-  personGroup->setStyleSheet("QGroupBox {background-image: url(:person_background.png);}");
-  personGroup->setLayout(personLayout);
-  
-  QLabel *bookBarcodeLabel = new QLabel(tr("Barcode:"));
-  bookBarcodeLineEdit = new QLineEdit(this);
-  QLabel *bookTitleLabel = new QLabel(tr("Title:"));
-  bookTitleLineEdit = new QLineEdit(this);
-  QLabel *bookLoanedByLabel = new QLabel(tr("Loaned by:"));
-  bookLoanedByLineEdit = new QLineEdit(this);
-  QLabel *bookReservedByLabel = new QLabel(tr("Reserved by:"));
-  bookReservedByLineEdit = new QLineEdit(this);
-  
-  QVBoxLayout *bookLayout = new QVBoxLayout();
-  bookLayout->addWidget(bookBarcodeLabel);
-  bookLayout->addWidget(bookBarcodeLineEdit);
-  bookLayout->addWidget(bookTitleLabel);
-  bookLayout->addWidget(bookTitleLineEdit);
-  bookLayout->addWidget(bookLoanedByLabel);
-  bookLayout->addWidget(bookLoanedByLineEdit);
-  bookLayout->addWidget(bookReservedByLabel);
-  bookLayout->addWidget(bookReservedByLineEdit);
-  //bookLayout->addSpacerItem(new QSpacerItem(1, 1, QSizePolicy::Ignored, QSizePolicy::Expanding));
-
-  bookGroup = new QGroupBox(tr("Book"));
-  bookGroup->setStyleSheet("QGroupBox {background-image: url(:book_background.png);}");
-  bookGroup->setLayout(bookLayout);
-
-  allBooksList = new BookList(books, this);
-  connect(allBooksList, &BookList::focusBook, this, &MainWindow::focusBook);
-
-  QVBoxLayout *allBooksLayout = new QVBoxLayout();
-  //personLayout->addWidget(personBarcodeLabel);
-  //personLayout->addWidget(personBarcodeLineEdit);
-  allBooksLayout->addWidget(allBooksList);
-
-  allBooksGroup = new QGroupBox(tr("All books"));
-  allBooksGroup->setStyleSheet("QGroupBox {background-image: url(:book_background.png);}");
-  allBooksGroup->setLayout(allBooksLayout);
-  
   /*
-  QTabWidget *tabs = new QTabWidget(this);
-  tabs->addTab(personGroup, tr("Person"));
-  tabs->addTab(bookGroup, tr("Book"));
+  AccountsTab *accountsTab = new AccountsTab(this);
+  ItemsTab *itemsTab = new ItemsTab(this);
+  CategoriesTab *categoriesTab = new CategoriesTab(this);
+  CheckoutTab *checkoutTab = new CheckoutTab(this);
   */
-
-  QVBoxLayout *booksLayout = new QVBoxLayout();
-  booksLayout->addWidget(bookGroup);
-  booksLayout->addWidget(allBooksGroup);
-
-  QHBoxLayout *dataLayout = new QHBoxLayout();
-  dataLayout->addWidget(personGroup);
-  dataLayout->addLayout(booksLayout);
-
+  
+  QTabWidget *modeTabs = new QTabWidget(this);
+  /*
+  modeTabs->addTab(accountsTab, tr("Accounts"));
+  modeTabs->addTab(itemsTab, tr("Items"));
+  modeTabs->addTab(categoriesTab, tr("Categories"));
+  modeTabs->addTab(checkoutTab, tr("Checkout"));
+  */
+  
   QVBoxLayout *layout = new QVBoxLayout();
-  //layout->addWidget(barcodeLineEdit);
-  layout->addLayout(dataLayout);
+  layout->addWidget(modeTabs);
 
   setCentralWidget(new QWidget());
   centralWidget()->setLayout(layout);
@@ -142,10 +78,11 @@ MainWindow::MainWindow()
   connect(&randomTimer, &QTimer::timeout, this, &MainWindow::initRandomSound);
   initRandomSound();
 
+  /*
   clearTimer.setInterval(5000);
   clearTimer.setSingleShot(true);
   connect(&clearTimer, &QTimer::timeout, this, &MainWindow::clearAll);
-
+  */
   focusTimer.setInterval(500);
   focusTimer.setSingleShot(false);
   connect(&focusTimer, &QTimer::timeout, this, &MainWindow::focusBarcodeLineEdit);
@@ -231,49 +168,62 @@ void MainWindow::loadDatabase()
       if(string.isEmpty() ||
          string.left(1) == "#") {
         continue;
-      } else if(string == "persons:") {
+      } else if(string == "accounts:") {
         state = 0;
         continue;
-      } else if(string == "books:") {
+      } else if(string == "items:") {
         state = 1;
+        continue;
+      } else if(string == "categories:") {
+        state = 2;
         continue;
       }
       if(state == 0) {
-        parsePerson(string);
+        parseAccount(string);
       } else if(state == 1) {
-        parseBook(string);
+        parseItem(string);
+      } else if(state == 2) {
+        parseCategory(string);
       }
     }
     database.close();
   }
 }
 
-void MainWindow::parsePerson(const QString &string)
+void MainWindow::parseAccount(const QString &string)
 {
-  Person person;
+  Account account;
   QMap<QString, QString> vars;
   for(const auto &snippet: string.split(";")) {
     if(snippet.contains("=")) {
       vars[snippet.split("=").first()] = snippet.split("=").last();
     }
   }
-  if(vars.contains("name")) {
-    person.name = vars["name"];
-  }
   if(vars.contains("barcode")) {
-    person.barcode = vars["barcode"];
+    account.barcode = vars["barcode"];
+  }
+  if(vars.contains("id")) {
+    account.id = vars["id"];
+  }
+  if(vars.contains("balance")) {
+    account.balance = vars["balance"].toDouble();
+  }
+  if(vars.contains("bonus")) {
+    account.bonus = vars["bonus"].toDouble();
   }
 
-  printf("Person:\n  barcode=%s\n  name=%s\n",
-         qPrintable(person.barcode),
-         qPrintable(person.name));
+  printf("Account:\n  barcode=%s\n  id=%s\n  balance=%f\n  bonus=%f\n",
+         qPrintable(account.barcode),
+         qPrintable(account.id),
+         account.balance,
+         account.bonus);
   
-  persons.append(person);
+  accounts.append(account);
 }
 
-void MainWindow::parseBook(const QString &string)
+void MainWindow::parseItem(const QString &string)
 {
-  Book book;
+  Item item;
   QMap<QString, QString> vars;
   for(const auto &snippet: string.split(";")) {
     if(snippet.contains("=")) {
@@ -281,34 +231,64 @@ void MainWindow::parseBook(const QString &string)
     }
   }
   if(vars.contains("barcode")) {
-    book.barcode = vars["barcode"];
+    item.barcode = vars["barcode"];
   }
-  if(vars.contains("title")) {
-    book.title = vars["title"];
+  if(vars.contains("id")) {
+    item.id = vars["id"];
   }
-  if(vars.contains("loanedby")) {
-    book.loanedBy = vars["loanedby"];
+  if(vars.contains("category")) {
+    item.category = vars["category"];
   }
-  if(vars.contains("loanedtimer")) {
-    book.loanedTimer = vars["loanedtimer"].toInt();
+  if(vars.contains("price")) {
+    item.price = vars["price"].toDouble();
   }
-  if(vars.contains("reservedby")) {
-    book.reservedBy = vars["reservedby"];
+  if(vars.contains("discount")) {
+    item.discount = vars["discount"].toDouble();
+  }
+  if(vars.contains("stock")) {
+    item.stock = vars["stock"].toInt();
+  }
+  if(vars.contains("age")) {
+    item.age = vars["age"].toDouble();
   }
 
-  printf("Book:\n  barcode=%s\n  title=%s\n  loanedBy=%s\n  loanedTimer=%d\n  reservedBy=%s\n",
-         qPrintable(book.barcode),
-         qPrintable(book.title),
-         qPrintable(book.loanedBy),
-         book.loanedTimer / 1000,
-         qPrintable(book.reservedBy));
+  printf("Item:\n  barcode=%s\n  id=%s\n  category=%s\n  price=%f\n  discount=%f\n  stock=%d\n  age=%f\n",
+         qPrintable(item.barcode),
+         qPrintable(item.id),
+         qPrintable(item.category),
+         item.price,
+         item.discount,
+         item.stock,
+         item.age);
 
-  books.append(book);
+  items.append(item);
+}
+
+void MainWindow::parseCategory(const QString &string)
+{
+  Category category;
+  QMap<QString, QString> vars;
+  for(const auto &snippet: string.split(";")) {
+    if(snippet.contains("=")) {
+      vars[snippet.split("=").first()] = snippet.split("=").last();
+    }
+  }
+  if(vars.contains("barcode")) {
+    category.barcode = vars["barcode"];
+  }
+  if(vars.contains("id")) {
+    category.id = vars["id"];
+  }
+  printf("Category:\n  barcode=%s\n  id=%s\n",
+         qPrintable(category.barcode),
+         qPrintable(category.id));
+  
+  categories.append(category);
 }
 
 void MainWindow::saveDatabase()
 {
-  if(persons.isEmpty() && books.isEmpty()) {
+  if(accounts.isEmpty() && items.isEmpty()) {
     return;
   }
 
@@ -328,14 +308,19 @@ void MainWindow::saveDatabase()
   }
   QFile database("database.dat");
   if(database.open(QIODevice::WriteOnly)) {
-    database.write("persons:\n");
-    for(const auto &person: persons) {
-      database.write(QString("barcode=" + person.barcode + ";name=" + person.name + "\n").toUtf8());
+    database.write("accounts:\n");
+    for(const auto &account: accounts) {
+      database.write(QString("barcode=" + account.barcode + ";id=" + account.id + ";balance=" + QString::number(account.balance) + ";bonus=" + QString::number(account.bonus) + "\n").toUtf8());
     }
     database.write("\n");
-    database.write("books:\n");
-    for(const auto &book: books) {
-      database.write(QString("barcode=" + book.barcode + ";title=" + book.title + ";loanedby=" + book.loanedBy + ";loanedtimer=" + QString::number(book.loanedTimer) + ";reservedby=" + book.reservedBy + "\n").toUtf8());
+    database.write("items:\n");
+    for(const auto &item: items) {
+      database.write(QString("barcode=" + item.barcode + ";id=" + item.id + ";category=" + item.category + ";price=" + QString::number(item.price) + ";discount=" + QString::number(item.discount) + ";stock=" + QString::number(item.stock) + ";age=" + QString::number(item.age) + "\n").toUtf8());
+    }
+    database.write("\n");
+    database.write("categories:\n");
+    for(const auto &category: categories) {
+      database.write(QString("barcode=" + category.barcode + ";id=" + category.id + "\n").toUtf8());
     }
     database.close();
   }
@@ -350,8 +335,6 @@ void MainWindow::showAbout()
 
 void MainWindow::checkBarcode()
 {
-  clearTimer.stop();
-  
   QString barcode = barcodeLineEdit->text().toLower();
   barcodeLineEdit->setText("");
   if(barcode.isEmpty()) {
@@ -359,77 +342,77 @@ void MainWindow::checkBarcode()
   }
   
   printf("CHECKING BARCODE: '%s'\n", qPrintable(barcode));
-  
   bool barcodeFound = false;
-  for(const auto &person: persons) {
-    if(barcode == person.barcode) {
-      printf("THIS IS A PERSON!\n");
+  /*  
+  for(const auto &account: accounts) {
+    if(barcode == account.barcode) {
+      printf("THIS IS A ACCOUNT!\n");
       barcodeFound = true;
-      personBarcodeLineEdit->setText(person.barcode);
-      personNameLineEdit->setText(person.name);
-      personOnLoanList->clear();
-      personReservedList->clear();
-      clearBook();
-      for(const auto &book: books) {
-        if(book.loanedBy == person.barcode) {
-          personOnLoanList->addItem(book.title);
-        } else if(book.reservedBy == person.barcode) {
-          personReservedList->addItem(book.title);
+      accountBarcodeLineEdit->setText(account.barcode);
+      accountNameLineEdit->setText(account.id);
+      accountOnLoanList->clear();
+      accountReservedList->clear();
+      clearItem();
+      for(const auto &item: items) {
+        if(item.loanedBy == account.barcode) {
+          accountOnLoanList->addItem(item.id);
+        } else if(item.reservedBy == account.barcode) {
+          accountReservedList->addItem(item.id);
         }
       }
     }
   }
-  for(auto &book: books) {
-    if(barcode == book.barcode) {
-      printf("THIS IS A BOOK!\n");
+  for(auto &item: items) {
+    if(barcode == item.barcode) {
+      printf("THIS IS A ITEM!\n");
       barcodeFound = true;
-      bookBarcodeLineEdit->setText(book.barcode);
-      bookTitleLineEdit->setText(book.title);
-      bookLoanedByLineEdit->setText(getPersonFromBarcode(book.loanedBy)); 
-      bookReservedByLineEdit->setText(getPersonFromBarcode(book.reservedBy)); 
-      if(book.title.isEmpty()) {
-        printf("MISSING TITLE, NEW BOOK?\n");
+      itemBarcodeLineEdit->setText(item.barcode);
+      itemIdLineEdit->setText(item.id);
+      itemLoanedByLineEdit->setText(getAccountFromBarcode(item.loanedBy)); 
+      itemReservedByLineEdit->setText(getAccountFromBarcode(item.reservedBy)); 
+      if(item.id.isEmpty()) {
+        printf("MISSING ID, NEW ITEM?\n");
         break;
       }
-      if(!personBarcodeLineEdit->text().isEmpty()) {
-        for(const auto &person: persons) {
-          if(personBarcodeLineEdit->text() == person.barcode) {
+      if(!accountBarcodeLineEdit->text().isEmpty()) {
+        for(const auto &account: accounts) {
+          if(accountBarcodeLineEdit->text() == account.barcode) {
 
-            if(book.reservedBy.isEmpty() && book.loanedBy.isEmpty()) {
+            if(item.reservedBy.isEmpty() && item.loanedBy.isEmpty()) {
               QSound::play("sounds/laant.wav");
-              printf("BOOK LOANED!\n");
-              book.loanedBy = person.barcode;
+              printf("ITEM LOANED!\n");
+              item.loanedBy = account.barcode;
 
-            } else if(!book.reservedBy.isEmpty() && book.loanedBy.isEmpty()) {
-              if(person.barcode == book.reservedBy) {
+            } else if(!item.reservedBy.isEmpty() && item.loanedBy.isEmpty()) {
+              if(account.barcode == item.reservedBy) {
                 QSound::play("sounds/laant.wav");
-                printf("BOOK LOANED! HAD IT RESERVED!\n");
-                book.reservedBy.clear();
-                book.loanedBy = person.barcode;
+                printf("ITEM LOANED! HAD IT RESERVED!\n");
+                item.reservedBy.clear();
+                item.loanedBy = account.barcode;
               } else {
                 QSound::play("sounds/reserveret_til_anden.wav");
                 printf("RESERVED BY OTHER!\n");
               }
 
-            } else if(!book.reservedBy.isEmpty() && !book.loanedBy.isEmpty()) {
-              if(person.barcode == book.loanedBy) {
+            } else if(!item.reservedBy.isEmpty() && !item.loanedBy.isEmpty()) {
+              if(account.barcode == item.loanedBy) {
                 QSound::play("sounds/afleveret-reserveret_til_anden.wav");
-                printf("BOOK RETURNED! RESERVED BY OTHER!\n");
-                book.loanedBy.clear();
-              } else if(person.barcode == book.reservedBy) {
+                printf("ITEM RETURNED! RESERVED BY OTHER!\n");
+                item.loanedBy.clear();
+              } else if(account.barcode == item.reservedBy) {
                 QSound::play("sounds/udlaant-allerede_reserveret_til_dig.wav");
                 printf("ON LOAN, ALREADY RESERVED!\n");
               }
 
-            } else if(book.reservedBy.isEmpty() && !book.loanedBy.isEmpty()) {
-              if(book.loanedBy != person.barcode) {
+            } else if(item.reservedBy.isEmpty() && !item.loanedBy.isEmpty()) {
+              if(item.loanedBy != account.barcode) {
                 QSound::play("sounds/udlaant-reserveret_til_dig.wav");
-                printf("BOOK RESERVED!\n");
-                book.reservedBy = person.barcode;
-              } else if(book.loanedBy == person.barcode) {
+                printf("ITEM RESERVED!\n");
+                item.reservedBy = account.barcode;
+              } else if(item.loanedBy == account.barcode) {
                 QSound::play("sounds/afleveret.wav");
-                printf("BOOK RETURNED!\n");
-                book.loanedBy.clear();
+                printf("ITEM RETURNED!\n");
+                item.loanedBy.clear();
               }
             }
 
@@ -439,26 +422,26 @@ void MainWindow::checkBarcode()
     }
   }
   if(!barcodeFound) {
-    QSound::play("sounds/ny_person_eller_bog.wav");
+    QSound::play("sounds/ny_account_eller_bog.wav");
     printf("NEW BARCODE!\n");
     NewEntry newEntry(barcode, this);
     newEntry.exec();
     if(newEntry.result() == QDialog::Accepted) {
-      if(newEntry.getType() == "person") {
-        QSound::play("sounds/person_registreret.wav");
-        printf("ADDING NEW PERSON!\n");
-        Person person;
-        person.barcode = barcode;
-        person.name = newEntry.getNameTitle();
-        persons.append(person);
-      } else if(newEntry.getType() == "book") {
+      if(newEntry.getType() == "account") {
+        QSound::play("sounds/account_registreret.wav");
+        printf("ADDING NEW ACCOUNT!\n");
+        Account account;
+        account.barcode = barcode;
+        account.id = newEntry.getNameTitle();
+        accounts.append(account);
+      } else if(newEntry.getType() == "item") {
         QSound::play("sounds/bog_registreret.wav");
-        printf("ADDING NEW BOOK!\n");
-        Book book;
-        book.barcode = barcode;
-        book.title = newEntry.getNameTitle();
-        books.append(book);
-        std::sort(books.begin(), books.end(), [](const Book a, const Book b) -> bool { return a.title.toLower() < b.title.toLower(); });
+        printf("ADDING NEW ITEM!\n");
+        Item item;
+        item.barcode = barcode;
+        item.id = newEntry.getNameTitle();
+        items.append(item);
+        std::sort(items.begin(), items.end(), [](const Item a, const Item b) -> bool { return a.id.toLower() < b.id.toLower(); });
 
       }
       clearAll();
@@ -468,49 +451,47 @@ void MainWindow::checkBarcode()
   } else {
     clearTimer.start();
   }
-}
+  */
+  if(!barcodeFound) {
+    
+    QSound::play("sounds/ny_konto_eller_vare.wav");
+    
+    printf("NEW BARCODE!\n");
+    NewEntry newEntry(barcode, accounts, items, categories, this);
+    newEntry.exec();
+    
+    std::sort(accounts.begin(), accounts.end(), [](const Account a, const Account b) -> bool { return a.id.toLower() < b.id.toLower(); });
+    
+    std::sort(items.begin(), items.end(), [](const Item a, const Item b) -> bool { return a.id.toLower() < b.id.toLower(); });
 
-void MainWindow::clearAll()
-{
-  clearPerson();
-  clearBook();
-}
-
-void MainWindow::clearPerson()
-{
-  for(auto *child: personGroup->findChildren<QLineEdit *>("")) {
-    child->clear();
-  }
-  for(auto *child: personGroup->findChildren<QListWidget *>("")) {
-    child->clear();
   }
 }
 
-void MainWindow::clearBook()
+QString MainWindow::getAccountFromBarcode(const QString &barcode)
 {
-  for(auto *child: bookGroup->findChildren<QLineEdit *>("")) {
-    child->clear();
-  }
-  for(auto *child: bookGroup->findChildren<QListWidget *>("")) {
-    child->clear();
-  }
-}
-
-QString MainWindow::getPersonFromBarcode(const QString &barcode)
-{
-  for(const auto &person: persons) {
-    if(person.barcode == barcode) {
-      return person.name;
+  for(const auto &account: accounts) {
+    if(account.barcode == barcode) {
+      return account.id;
     }
   }
   return "";
 }
 
-QString MainWindow::getBookFromBarcode(const QString &barcode)
+QString MainWindow::getItemFromBarcode(const QString &barcode)
 {
-  for(const auto &book: books) {
-    if(book.barcode == barcode) {
-      return book.title;
+  for(const auto &item: items) {
+    if(item.barcode == barcode) {
+      return item.id;
+    }
+  }
+  return "";
+}
+
+QString MainWindow::getCategoryFromBarcode(const QString &barcode)
+{
+  for(const auto &category: categories) {
+    if(category.barcode == barcode) {
+      return category.id;
     }
   }
   return "";
@@ -538,12 +519,14 @@ void MainWindow::playRandomSound()
   QSound::play(soundInfos.at(QRandomGenerator::global()->bounded(soundInfos.length())).absoluteFilePath());
 }
 
-void MainWindow::focusBook(const QString &barcode)
+/*
+void MainWindow::focusItem(const QString &barcode)
 {
   clearAll();
   barcodeLineEdit->setText(barcode);
   checkBarcode();
 }
+*/
 
 void MainWindow::focusBarcodeLineEdit()
 {

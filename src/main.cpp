@@ -39,13 +39,15 @@ int main(int argc, char *argv[])
   
   QDir::setCurrent(QApplication::applicationDirPath());
 
+  //QLocale::setDefault(QLocale::system().name());
+  QLocale::setDefault(QString("da_DK"));
+
   QTranslator translator;
-  translator.load("ezmarket_" + QLocale::system().name());
-  //translator.load("ezmarket_da_DK");
+  translator.load("ezmarket_" + QLocale().name());
   app.installTranslator(&translator);
 
   QTranslator qtBaseTranslator;
-  qtBaseTranslator.load("qtbase_" + QLocale::system().name(),
+  qtBaseTranslator.load("qtbase_" + QLocale().name(),
                         QLibraryInfo::location(QLibraryInfo::TranslationsPath));
   app.installTranslator(&qtBaseTranslator);
 

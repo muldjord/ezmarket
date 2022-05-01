@@ -1,6 +1,6 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            accountwidget.h
+ *            itemwidget.h
  *
  *  Sat Apr 30 09:03:00 CEST 2022
  *  Copyright 2022 Lars Muldjord
@@ -24,25 +24,30 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
 
-#ifndef __ACCOUNTWIDGET_H__
-#define __ACCOUNTWIDGET_H__
+#ifndef __ITEMWIDGET_H__
+#define __ITEMWIDGET_H__
 
 #include "datatypes.h"
+#include "lineedit.h"
 
 #include <QWidget>
+#include <QComboBox>
 
-class AccountWidget : public QWidget
+class ItemWidget : public QWidget
 {
   Q_OBJECT
     
 public:
-  AccountWidget(const QString &barcode, QWidget *parent);
-  ~AccountWidget();
+  ItemWidget(const QString &barcode, const QList<Category> &categories, QWidget *parent);
+  ~ItemWidget();
   bool isSane();
-  Account getAccount();
+  Item getItem();
 
 private:
   const QString &barcode;
+  LineEdit *idLineEdit = nullptr;
+  QComboBox *categoryComboBox = nullptr;
+  LineEdit *priceLineEdit = nullptr;
 };
 
-#endif // __ACCOUNTWIDGET_H__
+#endif // __ITEMWIDGET_H__

@@ -1,6 +1,6 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            accountwidget.cpp
+ *            itemwidget.cpp
  *
  *  Sat Apr 30 09:03:00 CEST 2022
  *  Copyright 2022 Lars Muldjord
@@ -24,53 +24,62 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
 
-#include "accountwidget.h"
+#include "itemwidget.h"
 
-AccountWidget::AccountWidget(const QString &barcode, QWidget *parent)
+#include <QLabel>
+#include <QVBoxLayout>
+#include <QLocale>
+
+ItemWidget::ItemWidget(const QString &barcode, const QList<Category> &categories, QWidget *parent)
   : QWidget(parent), barcode(barcode)
 {
-  QLabel *idLabel = new QLabel(tr("Account holder:"));
-  idLineEdit = new QLineEdit(this);
-  QLabel *balanceLabel = new QLabel(tr("Balance:"));
-  balanceLineEdit = new QLineEdit(this);
-  balanceLineEdit.setText("100");
-  QLabel *bonusLabel = new QLabel(tr("Bonus points:"));
-  bonusLineEdit = new QLineEdit(this);
-  bonusLineEdit.setText("0");
+  QLabel *idLabel = new QLabel(tr("Item name:"));
+  idLineEdit = new LineEdit(this);
+  setFocusProxy(idLineEdit);
+
+  QLabel *categoryLabel = new QLabel(tr("Category:"));
+  categoryComboBox = new QComboBox(this);
+  for(const auto &category: categories) {
+    categoryComboBox->addItem(category.id, category.barcode);
+  }
+
+  QLabel *priceLabel = new QLabel(tr("Price:"));
+  priceLineEdit = new LineEdit(this);
+  priceLineEdit->setText("0.0");
 
   QVBoxLayout *layout = new QVBoxLayout(this);
   layout->addWidget(idLabel);
   layout->addWidget(idLineEdit);
-  layout->addWidget(balanceLabel);
-  layout->addWidget(balanceLineEdit);
-  layout->addWidget(bonusLabel);
-  layout->addWidget(bonusLineEdit);
+  layout->addWidget(categoryLabel);
+  layout->addWidget(categoryComboBox);
+  layout->addWidget(priceLabel);
+  layout->addWidget(priceLineEdit);
 
   setLayout(layout);
 }
 
-AccountWidget::~AccountWidget()
+ItemWidget::~ItemWidget()
 {
 }
 
-bool AccountWidget::isSane()
+bool ItemWidget::isSane()
 {
   if(!idLineEdit->text().isEmpty() &&
-     !balanceLineEdit->text().isEmpty() &&
-     !bonusLineEdit->text().isEmpty()) {
+     !categoryComboBox->currentData().toString().isEmpty() &&
+     !priceLineEdit->text().isEmpty()) {
     return true;
   }
   return false;
 }
 
-Account AccountWidget::getAccount()
+Item ItemWidget::getItem()
 {
-  Account account;
+  Item item;
 
-  account.barcode = this->barcode;
-  account.id = idLineEdit->getText();
-  account.balance = balanceLineEdit->getText().toDouble();
-  account.bonus = bonusLineEdit->getText().toDouble();
+  item.barcode = this->barcode;
+  item.id = idLineEdit->text();
+  item.category = categoryComboBox->currentData().toString();
+  item.price = QLocale().toDouble(priceLineEdit->text());
 
-  return account;
+  return item;
 }

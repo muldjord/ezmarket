@@ -30,53 +30,62 @@
 #include <QButtonGroup>
 #include <QHBoxLayout>
 #include <QDialogButtonBox>
+#include <QLabel>
 
-NewEntry::NewEntry(QString barcode, QWidget *parent): QDialog(parent)
+NewEntry::NewEntry(const QString &barcode,
+                   QList<Account> &accounts,
+                   QList<Item> &items, const QList<Category> &categories,
+                   QWidget *parent)
+  : QDialog(parent), accounts(accounts), items(items), categories(categories)
 {
   setWindowTitle(tr("Barcode: ") + barcode);
-  setFixedSize(450, 350);
+  setFixedSize(450, 500);
 
   setStyleSheet("QLabel {font-size: 40px; qproperty-alignment: AlignCenter;}"
-                "QPushButton {qproperty-iconSize: 40px; font-size: 40px;}"
-                "QLineEdit {font-size: 40px;}");
+                "QComboBox {font-size: 25px;}"
+                "QPushButton {qproperty-iconSize: 40px; font-size: 40px;}");
   
-  QLabel *typeLabel = new QLabel(tr("New person or book?"));
+  QLabel *typeLabel = new QLabel(tr("New account or item?"));
 
-  QPushButton *personButton = new QPushButton(tr("Person"));
-  personButton->setIcon(QIcon("graphics/person.png"));
-  personButton->setCheckable(true);
-  personButton->setObjectName("person");
-  personButton->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Expanding);
+  QPushButton *accountButton = new QPushButton(tr("Account"));
+  accountButton->setIcon(QIcon("graphics/account.png"));
+  accountButton->setCheckable(true);
+  accountButton->setObjectName("account");
+  accountButton->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Expanding);
 
-  QPushButton *bookButton = new QPushButton(tr("Book"));
-  bookButton->setIcon(QIcon("graphics/book.png"));
-  bookButton->setCheckable(true);
-  bookButton->setObjectName("book");
-  bookButton->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Expanding);
+  QPushButton *itemButton = new QPushButton(tr("Item"));
+  itemButton->setIcon(QIcon("graphics/item.png"));
+  itemButton->setCheckable(true);
+  itemButton->setObjectName("item");
+  itemButton->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Expanding);
 
   typeGroup = new QButtonGroup(this);
-  typeGroup->addButton(personButton);
-  typeGroup->addButton(bookButton);
+  typeGroup->addButton(accountButton);
+  typeGroup->addButton(itemButton);
   typeGroup->setExclusive(true);
   connect(typeGroup, qOverload<QAbstractButton *>(&QButtonGroup::buttonReleased), this, &NewEntry::typeChanged);
 
   QHBoxLayout *buttonLayout = new QHBoxLayout;
-  buttonLayout->addWidget(personButton);
-  buttonLayout->addWidget(bookButton);
+  buttonLayout->addWidget(accountButton);
+  buttonLayout->addWidget(itemButton);
 
-  nameTitleLabel = new QLabel(this);
-  nameTitleLineEdit = new QLineEdit(this);
+  accountWidget = new AccountWidget(barcode, this);
+  itemWidget = new ItemWidget(barcode, categories, this);
+
+  typeLayout = new QStackedLayout;
+  typeLayout->addWidget(new QWidget);
+  typeLayout->addWidget(accountWidget);
+  typeLayout->addWidget(itemWidget);
 
   QDialogButtonBox *dialogButtons = new QDialogButtonBox(QDialogButtonBox::Save |
                                                          QDialogButtonBox::Cancel);
-  connect(dialogButtons, &QDialogButtonBox::accepted, this, &NewEntry::checkNameTitle);
+  connect(dialogButtons, &QDialogButtonBox::accepted, this, &NewEntry::checkSanity);
   connect(dialogButtons, &QDialogButtonBox::rejected, this, &NewEntry::reject);
 
   QVBoxLayout *layout = new QVBoxLayout;
   layout->addWidget(typeLabel);
   layout->addLayout(buttonLayout);
-  layout->addWidget(nameTitleLabel);
-  layout->addWidget(nameTitleLineEdit);
+  layout->addLayout(typeLayout);
   layout->addWidget(dialogButtons);
   
   setLayout(layout);
@@ -84,33 +93,29 @@ NewEntry::NewEntry(QString barcode, QWidget *parent): QDialog(parent)
 
 void NewEntry::typeChanged(QAbstractButton *button)
 {
-  if(button->objectName() == "person") {
-    nameTitleLabel->setText(tr("Name:"));
-  } else if(button->objectName() == "book") {
-    nameTitleLabel->setText(tr("Title:"));
+  if(button->objectName() == "account") {
+    typeLayout->setCurrentWidget(accountWidget);
+    accountWidget->setFocus();
+  } else if(button->objectName() == "item") {
+    typeLayout->setCurrentWidget(itemWidget);
+    itemWidget->setFocus();
   }
-  nameTitleLineEdit->setFocus();
 }
 
-QString NewEntry::getType()
+void NewEntry::checkSanity()
 {
-  return typeGroup->checkedButton()->objectName();
-}
-
-QString NewEntry::getNameTitle()
-{
-  return nameTitleLineEdit->text();
-}
-
-void NewEntry::checkNameTitle()
-{
-  if(typeGroup->checkedButton() == nullptr) {
-    printf("NO ENTRY TYPE SELECTED!\n");
-    return;
-  }
-  if(nameTitleLineEdit->text().trimmed().isEmpty()) {
-    printf("MISSING NAME OR TITLE!\n");
-    return;
+  if(typeLayout->currentWidget() == accountWidget) {
+    if(accountWidget->isSane()) {
+      accounts.append(accountWidget->getAccount());
+    } else {
+      return;
+    }
+  } else if(typeLayout->currentWidget() == itemWidget) {
+    if(itemWidget->isSane()) {
+      items.append(itemWidget->getItem());
+    } else {
+      return;
+    }
   }
   accept();
 }

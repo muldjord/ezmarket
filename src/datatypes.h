@@ -29,17 +29,27 @@
 
 #include <QString>
 
-struct Person {
+struct Account {
   QString barcode = "";
-  QString name = "";
+  QString id = "";
+  double balance = 0.0;
+  double bonus = 0.0;
 };
 
-struct Book {
+struct Item {
   QString barcode = "";
-  QString title = "";
-  QString loanedBy = "";
-  int loanedTimer = 0;
-  QString reservedBy = "";
+  QString id = "";
+  QString category = ""; // Category barcode.
+  double price = 0.0;
+  double discount = 0.0; // Subtracted from price.
+  int stock = 0;
+  double age = 0.0; // Seconds. Reset whenever one or more is added to stock emulating renewal.
 };
+
+struct Category {
+  QString barcode = "";
+  QString id = "";
+};
+
 
 #endif // __DATATYPES_H__

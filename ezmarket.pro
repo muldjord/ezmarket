@@ -15,11 +15,15 @@ DEFINES+=VERSION=\\\"$$VERSION\\\"
 HEADERS += src/mainwindow.h \
            src/datatypes.h \
            src/newentry.h \
-           src/booklist.h \
+           src/lineedit.h \
+           src/accountwidget.h \
+           src/itemwidget.h \
            src/aboutbox.h
 
 SOURCES += src/main.cpp \
            src/mainwindow.cpp \
            src/newentry.cpp \
-           src/booklist.cpp \
+           src/lineedit.cpp \
+           src/accountwidget.cpp \
+           src/itemwidget.cpp \
            src/aboutbox.cpp

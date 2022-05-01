@@ -1,6 +1,6 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            booklist.h
+ *            accountwidget.h
  *
  *  Sat Apr 30 09:03:00 CEST 2022
  *  Copyright 2022 Lars Muldjord
@@ -24,34 +24,28 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
 
-#ifndef __BOOKLIST_H__
-#define __BOOKLIST_H__
+#ifndef __ACCOUNTWIDGET_H__
+#define __ACCOUNTWIDGET_H__
 
 #include "datatypes.h"
+#include "lineedit.h"
 
-#include <QListWidget>
-#include <QElapsedTimer>
-#include <QTimer>
+#include <QWidget>
 
-class BookList : public QListWidget
+class AccountWidget : public QWidget
 {
   Q_OBJECT
     
 public:
-  BookList(QList<Book> &books, QWidget *parent);
-  ~BookList();
-  
-signals:
-  void focusBook(const QString &barcode);
-
-private slots:
-  void refreshBooks();
-  void bookSelected(QListWidgetItem *item);
+  AccountWidget(const QString &barcode, QWidget *parent);
+  ~AccountWidget();
+  bool isSane();
+  Account getAccount();
 
 private:
-  QElapsedTimer elapsedTime;
-  QList<Book> &books;
-  QTimer refreshTimer;
+  const QString &barcode;
+  LineEdit *idLineEdit = nullptr;
+  LineEdit *balanceLineEdit = nullptr;
 };
 
-#endif // __BOOKLIST_H__
+#endif // __ACCOUNTWIDGET_H__

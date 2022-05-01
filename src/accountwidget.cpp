@@ -1,6 +1,6 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            booklist.cpp
+ *            accountwidget.cpp
  *
  *  Sat Apr 30 09:03:00 CEST 2022
  *  Copyright 2022 Lars Muldjord
@@ -24,57 +24,53 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
 
-#include <stdio.h>
+#include "accountwidget.h"
 
-#include "booklist.h"
+#include <QLabel>
+#include <QVBoxLayout>
+#include <QLocale>
 
-BookList::BookList(QList<Book> &books, QWidget *parent)
-  : QListWidget(parent), books(books)
+AccountWidget::AccountWidget(const QString &barcode, QWidget *parent)
+  : QWidget(parent), barcode(barcode)
 {
-  refreshTimer.setInterval(1000);
-  refreshTimer.setSingleShot(true);
-  connect(&refreshTimer, &QTimer::timeout, this, &BookList::refreshBooks);
-  refreshTimer.start();
+  QLabel *idLabel = new QLabel(tr("Account holder:"));
+  idLineEdit = new LineEdit(this);
+  setFocusProxy(idLineEdit);
 
-  elapsedTime.start();
-  
-  connect(this, &BookList::itemPressed, this, &BookList::bookSelected);
+  QLabel *balanceLabel = new QLabel(tr("Balance:"));
+  balanceLineEdit = new LineEdit(this);
+  balanceLineEdit->setText("100.0");
+
+  QVBoxLayout *layout = new QVBoxLayout(this);
+  layout->addWidget(idLabel);
+  layout->addWidget(idLineEdit);
+  layout->addWidget(balanceLabel);
+  layout->addWidget(balanceLineEdit);
+  layout->addSpacerItem(new QSpacerItem(1, 1, QSizePolicy::Ignored, QSizePolicy::Expanding));
+
+  setLayout(layout);
 }
 
-BookList::~BookList()
+AccountWidget::~AccountWidget()
 {
 }
 
-void BookList::refreshBooks()
+bool AccountWidget::isSane()
 {
-  printf("REFRESHING BOOKS!\n");
-  clear();
-
-  for(auto &book: books) {
-    if(!book.loanedBy.isEmpty()) {
-      book.loanedTimer += elapsedTime.elapsed();
-      printf("Book: %s, loaned time: %d\n", qPrintable(book.title), book.loanedTimer);
-    } else {
-      book.loanedTimer = 0.0;
-    }
-    QListWidgetItem *item = new QListWidgetItem;
-    item->setText(book.title + " (" + book.barcode + ")");
-    if(book.loanedTimer > 240 * 1000) {
-      item->setForeground(Qt::red);
-    } else if(!book.reservedBy.isEmpty()) {
-      item->setForeground(Qt::blue);
-    } else if(!book.loanedBy.isEmpty()) {
-      item->setForeground(Qt::gray);
-    }
-    item->setData(Qt::UserRole, book.barcode);
-    addItem(item);
+  if(!idLineEdit->text().isEmpty() &&
+     !balanceLineEdit->text().isEmpty()) {
+    return true;
   }
-  elapsedTime.restart();
-  refreshTimer.start();
+  return false;
 }
 
-void BookList::bookSelected(QListWidgetItem *item)
+Account AccountWidget::getAccount()
 {
-  emit focusBook(item->data(Qt::UserRole).toString());
-  refreshTimer.start();
+  Account account;
+
+  account.barcode = this->barcode;
+  account.id = idLineEdit->text();
+  account.balance = QLocale().toDouble(balanceLineEdit->text());
+
+  return account;
 }

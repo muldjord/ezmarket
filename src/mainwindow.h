@@ -27,7 +27,7 @@
 #ifndef __MAINWINDOW_H__
 #define __MAINWINDOW_H__
 
-#include "booklist.h"
+#include "datatypes.h"
 
 #include <QMainWindow>
 #include <QTimer>
@@ -55,10 +55,6 @@ signals:
 private slots:
   void showAbout();
   void checkBarcode();
-  void clearAll();
-  void clearPerson();
-  void clearBook();
-  void focusBook(const QString &barcode);
   void focusBarcodeLineEdit();
   void initRandomSound();
   
@@ -70,46 +66,38 @@ private:
   void createMenus();
   void createToolBar();
 
-  void parsePerson(const QString &string);
-  void parseBook(const QString &string);
+  void parseAccount(const QString &string);
+  void parseItem(const QString &string);
+  void parseCategory(const QString &string);
   
-  QString getPersonFromBarcode(const QString &barcode);
-  QString getBookFromBarcode(const QString &barcode);
+  QString getAccountFromBarcode(const QString &barcode);
+  QString getItemFromBarcode(const QString &barcode);
+  QString getCategoryFromBarcode(const QString &barcode);
 
   void playRandomSound();
 
   QAction *quitAct;
-  QAction *preferencesAct;
   QAction *aboutAct;
   QMenu *fileMenu;
-  QMenu *optionsMenu;
   QMenu *helpMenu;
   QMenuBar *menuBar;
 
+  QLineEdit *barcodeLineEdit = nullptr;
+  /*
+  AccountsTab *accountsTab = nullptr;
+  ItemsTab *itemsTab = nullptr;
+  CategoriesTab *categoriesTab = nullptr;
+  CheckoutTab *checkoutTab = nullptr;
+  */
+
+  QTabWidget *modeTabs = nullptr;
+
   QTimer randomTimer;
-  QTimer clearTimer;
   QTimer focusTimer;
 
-  QLineEdit *barcodeLineEdit = nullptr;
-
-  QGroupBox *personGroup = nullptr;
-  QLineEdit *personBarcodeLineEdit = nullptr;
-  QLineEdit *personNameLineEdit = nullptr;
-  QListWidget *personOnLoanList = nullptr;
-  QListWidget *personReservedList = nullptr;
-  
-  QGroupBox *bookGroup = nullptr;
-  QLineEdit *bookBarcodeLineEdit = nullptr;
-  QLineEdit *bookTitleLineEdit = nullptr;
-  QLineEdit *bookStatusLineEdit = nullptr;
-  QLineEdit *bookLoanedByLineEdit = nullptr;
-  QLineEdit *bookReservedByLineEdit = nullptr;
-  
-  QGroupBox *allBooksGroup = nullptr;
-  BookList *allBooksList = nullptr;
-
-  QList<Person> persons;
-  QList<Book> books;
+  QList<Account> accounts;
+  QList<Item> items;
+  QList<Category> categories;
 };
 
 #endif // __MAINWINDOW_H__
