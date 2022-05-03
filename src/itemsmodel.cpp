@@ -37,23 +37,22 @@
 extern MainWindow *mainWindow;
 extern ConnStatus *connStatus;
 
-ItemsModel::ItemsModel(const QList<ItemsData> &data, QObject *parent)
-  : QAbstractTableModel(parent)
+ItemsModel::ItemsModel(QList<Item> &items, QObject *parent)
+  : QAbstractTableModel(parent), items(items)
 {
-  this->rowList = data;
 }
 
 int ItemsModel::rowCount(const QModelIndex &) const
 {
-  return rowList.size();
+  return items.size();
 }
 
 int ItemsModel::columnCount(const QModelIndex &) const
 {
-  if(rowList.isEmpty()) {
+  if(items.isEmpty()) {
     return 0;
   }
-  return rowList[0].values.size();
+  return items[0].values.size();
 }
 
 QVariant ItemsModel::data(const QModelIndex &index, int role) const
@@ -63,41 +62,60 @@ QVariant ItemsModel::data(const QModelIndex &index, int role) const
   }
 
   if(role == Qt::DisplayRole) {
-    return QVariant(rowList[index.row()].values[index.column()].value.toString());
+    return QVariant(items[index.row()].values[index.column()].value.toString());
   } else if(role == Qt::EditRole) {
-    return QVariant(rowList[index.row()].values[index.column()].value.toString());
+    return QVariant(items[index.row()].values[index.column()].value.toString());
   } else if(role == Qt::ForegroundRole) {
-    if(!rowList[index.row()].values[index.column()].writeable) {
+    if(!items[index.row()].values[index.column()].writeable) {
       return QVariant(QBrush(QColor(128, 128, 128)));
     }
   } else if(role == Qt::BackgroundRole) {
     /*
-    if(rowList[index.row()].values[index.column()].eye == MMK::E_OD) {
+    if(items[index.row()].values[index.column()].eye == MMK::E_OD) {
       return QVariant(QBrush(QColor(242, 255, 242)));
-    } else if(rowList[index.row()].values[index.column()].eye == MMK::E_OS) {
+    } else if(items[index.row()].values[index.column()].eye == MMK::E_OS) {
       return QVariant(QBrush(QColor(255, 242, 242)));
     }
     */
   } else if(role == Qt::ToolTipRole) {
-    //return QVariant(rowList[index.row()].values[index.column()].conclusionExaminer);
+    //return QVariant(items[index.row()].values[index.column()].conclusionExaminer);
   }
   return QVariant();
 }
 
 QVariant ItemsModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
-  if(!rowList.isEmpty()) {
+  if(!items.isEmpty()) {
     if(role == Qt::DisplayRole) {
       if(orientation == Qt::Horizontal) {
-        return ItemsData::getHeaderFromCell(rowList.first().values.at(section));
+        switch(section) {
+        case 0:
+          return tr("Icon");
+        case 1:
+          return tr("Id");
+        case 2:
+          return tr("Category");
+        case 3:
+          return tr("Price");
+        case 4:
+          return tr("Discount");
+        case 5:
+          return tr("Stock");
+        case 6:
+          return tr("Icon");
+        case 7:
+          return tr("Barcode");
+        default:
+          return "NA";
+        };
       } else {
-        //return rowList[section].getDateTime().toString("yyyy-MM-dd");
+        //return items[section].getDateTime().toString("yyyy-MM-dd");
         return QVariant();
       }
     } else if(role == Qt::ToolTipRole) {
       /*
       if(orientation == Qt::Vertical) {
-        return rowList[section].getExaminer();
+        return items[section].getExaminer();
       }
       */
     }
@@ -111,7 +129,7 @@ Qt::ItemFlags ItemsModel::flags(const QModelIndex &index) const
     return Qt::ItemIsEnabled;
   }
 
-  if(rowList[index.row()].values[index.column()].writeable) {
+  if(items[index.row()].values[index.column()].writeable) {
     return Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable;
   }
 
@@ -122,33 +140,33 @@ bool ItemsModel::setData(const QModelIndex &index, const QVariant &value, int ro
 {
   if(!index.isValid() ||
      role != Qt::EditRole ||
-     !rowList[index.row()].values[index.column()].writeable ||
-     rowList[index.row()].values[index.column()].undoValue == value) {
+     !items[index.row()].values[index.column()].writeable ||
+     items[index.row()].values[index.column()].undoValue == value) {
     return false;
   }
 
   printf("TYPE: %d\n", value.type());
   
-  QVariant oldValue = rowList[index.row()].values[index.column()].value;
+  QVariant oldValue = items[index.row()].values[index.column()].value;
   
-  int cellType = ItemsData::getTypeFromCell(rowList[index.row()].values[index.column()]);
+  int cellType = ItemsData::getTypeFromCell(items[index.row()].values[index.column()]);
   if(cellType != MMK::NONE) {
     if(value.toString().isEmpty()) {
-      rowList[index.row()].values[index.column()].value = QVariant();
+      items[index.row()].values[index.column()].value = QVariant();
     } else {
       if(cellType == QMetaType::Int &&
          QRegularExpression("^[0-9]{0,4}$").match(value.toString()).hasMatch()) {
-        rowList[index.row()].values[index.column()].value = QVariant(value.toInt());
+        items[index.row()].values[index.column()].value = QVariant(value.toInt());
       } else if(cellType == QMetaType::Double &&
                 QRegularExpression("^[0-9]{1,4}(\\.|,){0,1}[0-9]{0,4}$").match(value.toString()).hasMatch()) {
-        rowList[index.row()].values[index.column()].value = QVariant(value.toString().replace(",", ".").toDouble());
+        items[index.row()].values[index.column()].value = QVariant(value.toString().replace(",", ".").toDouble());
       } else if(cellType == QMetaType::QString &&
                 QRegularExpression("^.{0,42}$").match(value.toString()).hasMatch()) {
-        rowList[index.row()].values[index.column()].value = QVariant(value.toString());
+        items[index.row()].values[index.column()].value = QVariant(value.toString());
       } else if(cellType == QMetaType::QDate &&
                 QRegularExpression("^[12]{1}[09]{1}[0-9]{2}-[01]{1}[0-9]{1}-[0-3]{1}[0-9]{1}$").match(value.toString()).hasMatch() &&
                 QDate::fromString(value.toString(), "yyyy-MM-dd").isValid()) {
-        rowList[index.row()].values[index.column()].value = QVariant(value.toString());
+        items[index.row()].values[index.column()].value = QVariant(value.toString());
       } else {
         QString typeHelp = "";
         if(cellType == QMetaType::Int) {
@@ -164,33 +182,33 @@ bool ItemsModel::setData(const QModelIndex &index, const QVariant &value, int ro
         return false;
       }
     }
-    rowList[index.row()].values[index.column()].dirty = true;
+    items[index.row()].values[index.column()].dirty = true;
 
     mainWindow->setEnabled(false);
     NetBlocker blocker;
     connect(connStatus, &ConnStatus::gotItemsUpdate, &blocker, &NetBlocker::gotItemsUpdate);
 
-    emit updateItems(rowList[index.row()]);
+    emit updateItems(items[index.row()]);
 
     // Reset all to undirty now that the update request has been sent
-    for(auto &otherValue: rowList[index.row()].values) {
+    for(auto &otherValue: items[index.row()].values) {
       otherValue.dirty = false;
     }
-    //rowList[index.row()].values[index.column()].dirty = false;
+    //items[index.row()].values[index.column()].dirty = false;
 
     blocker.exec(); // Wait for answer from server
     if(blocker.success()) {
       emit dataChanged(index, index); // Inform the model that this index has changed
       mainWindow->setEnabled(true);
       // Update undoValue so cell is only updated if it's changed, see top of this function
-      rowList[index.row()].values[index.column()].undoValue = value;
+      items[index.row()].values[index.column()].undoValue = value;
       return true;
     }
   }
   qWarning("Cell value update failed!\n");
   QMessageBox::critical(nullptr, tr("Value update failed"), tr("Cell value could not be updated, probably due to server communication problems. Please contact a system administrator before continuing"), QMessageBox::Ok);
   // Revert value, something went wrong!
-  rowList[index.row()].values[index.column()].value = oldValue;
+  items[index.row()].values[index.column()].value = oldValue;
   return false;
 }
 
@@ -200,7 +218,7 @@ QList<ItemsData> ItemsModel::getRows(const QModelIndexList &indexes) const
   for(const auto &index: indexes) {
     // Only process each row once, so only process when at column == 0
     if(index.column() == 0) {
-      rows.append(rowList.at(index.row()));
+      rows.append(items.at(index.row()));
       continue;
     }
   }
@@ -210,8 +228,8 @@ QList<ItemsData> ItemsModel::getRows(const QModelIndexList &indexes) const
 int ItemsModel::getFocusRow(const int &itemsUid) const
 {
   if(itemsUid != MMK::NONE) {
-    for(int a = 0; a < rowList.count(); ++a) {
-      if(rowList.at(a).getItemsUid() == itemsUid) {
+    for(int a = 0; a < items.count(); ++a) {
+      if(items.at(a).getItemsUid() == itemsUid) {
         return a;
       }
     }

@@ -27,7 +27,7 @@
 #ifndef __ITEMSMODEL_H__
 #define __ITEMSMODEL_H__
 
-#include "itemsdata.h"
+#include "datatypes.h"
 
 #include <QAbstractTableModel>
 #include <QStringList>
@@ -38,7 +38,7 @@ class ItemsModel : public QAbstractTableModel
 Q_OBJECT
   
 public:
-  ItemsModel(const QList<ItemsData> &data, QObject *parent = 0);
+  ItemsModel(QList<Item> &data, QObject *parent = 0);
   
   int rowCount(const QModelIndex &parent = QModelIndex()) const override;
   int columnCount(const QModelIndex &parent = QModelIndex()) const override;
@@ -60,7 +60,7 @@ signals:
   void updateItems(const ItemsData &data) const;
   
 private:
-  QList<ItemsData> rowList;
+  QList<Item> &items;
 };
 
 #endif // __ITEMSMODEL_H__
