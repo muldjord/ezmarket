@@ -44,6 +44,7 @@ struct Item {
   double discount = 0.0; // Subtracted from price.
   int stock = 0;
   int age = 0; // Seconds. Reset whenever one or more is added to stock emulating renewal.
+  QString icon = "";
 };
 
 struct Category {
