@@ -28,12 +28,14 @@
 #define __ITEMSTAB_H__
 
 #include "datatypes.h"
+#include "itemode.h"
 
+#include <QWidget>
 #include <QListWidget>
 #include <QElapsedTimer>
 #include <QTimer>
 
-class ItemsTab : public QListWidget
+class ItemsTab : public QWidget
 {
   Q_OBJECT
     
@@ -47,6 +49,9 @@ private slots:
   void itemSelected(QListWidgetItem *item);
 
 private:
+  QTableView *itemView = nullptr;
+  ItemModel *itemModel = nullptr;
+
   QElapsedTimer elapsedTime;
   QList<Item> &items;
   QTimer refreshTimer;
