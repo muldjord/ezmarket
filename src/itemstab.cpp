@@ -24,21 +24,34 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
 
-#include <stdio.h>
-
 #include "itemstab.h"
+#include "entryeditor.h"
 
-ItemsTab::ItemsTab(QList<Item> &items, QWidget *parent)
-  : QListWidget(parent), items(items)
+#include <QVBoxLayout>
+#include <QLabel>
+#include <QHeaderView>
+
+ItemsTab::ItemsTab(QList<Account> &accounts,
+                   QList<Item> &items,
+                   QList<Category> &categories,
+                   const QMap<QString, QIcon> &icons,
+                   QWidget *parent)
+  : QWidget(parent), accounts(accounts), items(items), categories(categories), icons(icons)
 {
-  refreshTimer.setInterval(1000);
-  refreshTimer.setSingleShot(true);
-  connect(&refreshTimer, &QTimer::timeout, this, &ItemsTab::refreshItems);
-  refreshTimer.start();
-
-  elapsedTime.start();
-
-  connect(this, &ItemsTab::itemPressed, this, &ItemsTab::itemSelected);
+  setStyleSheet("QTableWidget {qproperty-iconSize: 35px; font-size: 30px;}"
+                "QHeaderView {font-size: 30px;}"
+                "QTableWidget QLabel {background-color: black;}");
+  itemsList = new QTableWidget(this);
+  itemsList->setEditTriggers(QAbstractItemView::NoEditTriggers);
+  itemsList->verticalHeader()->setVisible(false);
+  itemsList->setSelectionBehavior(QTableView::SelectRows);
+  itemsList->setSelectionMode(QAbstractItemView::SingleSelection);
+  itemsList->setSortingEnabled(true);
+  connect(itemsList, &QTableWidget::cellDoubleClicked, this, &ItemsTab::editItem);
+  QVBoxLayout *layout = new QVBoxLayout;
+  layout->addWidget(itemsList);
+  setLayout(layout);
+  refreshItems();
 }
 
 ItemsTab::~ItemsTab()
@@ -48,37 +61,69 @@ ItemsTab::~ItemsTab()
 void ItemsTab::refreshItems()
 {
   printf("REFRESHING ITEMS!\n");
-  clear();
+  itemsList->clear();
+  itemsList->setColumnCount(8);
+  itemsList->setRowCount(items.length());
 
-  for(auto &item: items) {
-    item.age += elapsedTime.elapsed();
-    printf("Item: %s, age: %d\n", qPrintable(item.id), item.age);
-    /*
-    if(!item.loanedBy.isEmpty()) {
-    } else {
-      item.loanedTimer = 0.0;
-    }
-    */
-    QListWidgetItem *listItem = new QListWidgetItem;
-    listItem->setText(item.id + " (" + item.barcode + ")");
-    /*
-    if(item.loanedTimer > 240 * 1000) {
-      listItem->setForeground(Qt::red);
-    } else if(!item.reservedBy.isEmpty()) {
-      listItem->setForeground(Qt::blue);
-    } else if(!item.loanedBy.isEmpty()) {
-      listItem->setForeground(Qt::gray);
-    }
-    */
-    listItem->setData(Qt::UserRole, item.barcode);
-    addItem(listItem);
+  itemsList->setHorizontalHeaderLabels({"",
+      tr("Item"),
+      tr("Category"),
+      tr("Price"),
+      tr("Discount"),
+      tr("Stock"),
+      tr("Age"),
+      tr("Barcode")});
+  for(int row = 0; row < items.length(); ++row) {
+
+    QLabel *iconLabel = new QLabel();
+    iconLabel->setAlignment(Qt::AlignHCenter);
+    iconLabel->setPixmap(icons[items.at(row).icon].pixmap(50, 50));
+    //QTableWidgetItem *iconItem = new QTableWidgetItem(icons[items.at(row).icon], "");
+    //iconItem->setData(Qt::UserRole, items.at(row).barcode);
+    //iconItem->setTextAlignment(Qt::AlignCenter);
+    //itemsList->setItem(row, 0, iconItem);
+    itemsList->setCellWidget(row, 0, iconLabel);
+    
+    QTableWidgetItem *idItem = new QTableWidgetItem(items.at(row).id);
+    idItem->setData(Qt::UserRole, items.at(row).barcode);
+    itemsList->setItem(row, 1, idItem);
+
+    QTableWidgetItem *categoryItem = new QTableWidgetItem(items.at(row).category);
+    categoryItem->setData(Qt::UserRole, items.at(row).barcode);
+    itemsList->setItem(row, 2, categoryItem);
+
+    QTableWidgetItem *priceItem = new QTableWidgetItem();
+    priceItem->setData(Qt::DisplayRole, items.at(row).price);
+    priceItem->setData(Qt::UserRole, items.at(row).barcode);
+    itemsList->setItem(row, 3, priceItem);
+
+    QTableWidgetItem *discountItem = new QTableWidgetItem();
+    discountItem->setData(Qt::DisplayRole, items.at(row).discount);
+    discountItem->setData(Qt::UserRole, items.at(row).barcode);
+    itemsList->setItem(row, 4, discountItem);
+
+    QTableWidgetItem *stockItem = new QTableWidgetItem();
+    stockItem->setData(Qt::DisplayRole, items.at(row).stock);
+    stockItem->setData(Qt::UserRole, items.at(row).barcode);
+    itemsList->setItem(row, 5, stockItem);
+
+    QTableWidgetItem *ageItem = new QTableWidgetItem();
+    ageItem->setData(Qt::DisplayRole, items.at(row).age);
+    ageItem->setData(Qt::UserRole, items.at(row).barcode);
+    itemsList->setItem(row, 6, ageItem);
+
+    QTableWidgetItem *barcodeItem = new QTableWidgetItem(items.at(row).barcode);
+    barcodeItem->setData(Qt::UserRole, items.at(row).barcode);
+    itemsList->setItem(row, 7, barcodeItem);
   }
-  elapsedTime.restart();
-  refreshTimer.start();
+  itemsList->resizeColumnsToContents();
+  itemsList->resizeRowsToContents();
 }
 
-void ItemsTab::itemSelected(QListWidgetItem *item)
+void ItemsTab::editItem(int row, int)
 {
-  //emit focusItem(item->data(Qt::UserRole).toString());
-  refreshTimer.start();
+  EntryEditor entryEditor(itemsList->item(row, 1)->data(Qt::UserRole).toString(), accounts, items, categories, icons, this);
+  entryEditor.exec();
+  
+  printf("EDITING ROW %d, BARCODE %s\n", row, qPrintable(itemsList->item(row, 1)->data(Qt::UserRole).toString()));
 }

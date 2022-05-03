@@ -1,6 +1,6 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            newentry.cpp
+ *            entryeditor.cpp
  *
  *  Sat Apr 30 09:03:00 CEST 2022
  *  Copyright 2022 Lars Muldjord
@@ -24,8 +24,8 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
 
-#ifndef __NEWENTRY_H__
-#define __NEWENTRY_H__
+#ifndef __ENTRYEDITOR_H__
+#define __ENTRYEDITOR_H__
 
 #include "datatypes.h"
 #include "accountwidget.h"
@@ -35,15 +35,17 @@
 #include <QAbstractButton>
 #include <QStackedLayout>
 
-class NewEntry : public QDialog
+class EntryEditor : public QDialog
 {
 Q_OBJECT
 
 public:
-  NewEntry(const QString &barcode,
-           QList<Account> &accounts,
-           QList<Item> &items, const QList<Category> &categories,
-           QWidget *parent);
+  EntryEditor(const QString &barcode,
+              QList<Account> &accounts,
+              QList<Item> &items,
+              QList<Category> &categories,
+              const QMap<QString, QIcon> &icons,
+              QWidget *parent);
   QString getType();
 
 public slots:
@@ -62,10 +64,13 @@ private:
 
   QStackedLayout *typeLayout = nullptr;
 
+  QString entryType = "";
+
+  const QString &barcode;
   QList<Account> &accounts;
   QList<Item> &items;
-  const QList<Category> &categories;
+  QList<Category> &categories;
 };
 
 
-#endif // __NEWENTRY_H__
+#endif // __ENTRYEDITOR_H__

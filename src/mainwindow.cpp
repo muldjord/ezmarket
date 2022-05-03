@@ -26,7 +26,7 @@
 
 #include "mainwindow.h"
 #include "aboutbox.h"
-#include "newentry.h"
+#include "entryeditor.h"
 
 #include <QLabel>
 #include <QVBoxLayout>
@@ -43,19 +43,20 @@ MainWindow::MainWindow()
   setWindowTitle("EZMarket v" VERSION);
   showFullScreen();
 
-  setStyleSheet("QLabel {font-size: 25px;}"
-                "QLineEdit {font-size: 25px;}"
-                "QTabWidget {font-size: 25px;}"
-                "QListWidget {font-size: 25px;}"
-                "QGroupBox{font-size: 30px; padding-left: 20px; padding-top: 40px; padding-bottom: 20px; padding-right: 20px;}");
+  setStyleSheet("QLabel {font-size: 30px;}"
+                "QLineEdit {font-size: 30px;}"
+                "QTabWidget {font-size: 30px;}"
+                "QListWidget {font-size: 30px;}"
+                "QGroupBox{font-size: 35px; padding-left: 20px; padding-top: 40px; padding-bottom: 20px; padding-right: 20px;}");
   createActions();
   createMenus();
   createToolBar();
   
+  loadIcons();
   loadDatabase();
   
   accountsTab = new AccountsTab(accounts, this); 
-  itemsTab = new ItemsTab(items, this);
+  itemsTab = new ItemsTab(accounts, items, categories, icons, this);
   categoriesTab = new CategoriesTab(categories, this);
  /*
   CheckoutTab *checkoutTab = new CheckoutTab(this);
@@ -159,6 +160,15 @@ void MainWindow::createToolBar()
   addToolBar(Qt::TopToolBarArea, toolBar);
 }
 
+void MainWindow::loadIcons()
+{
+  QDir iconsDir("graphics/icons", "*.png", QDir::Name, QDir::Files);
+  QList<QFileInfo> iconInfos = iconsDir.entryInfoList();
+  for(const auto &iconInfo: iconInfos) {
+    icons[iconInfo.baseName()] = QIcon(iconInfo.absoluteFilePath());
+  }
+}
+
 void MainWindow::loadDatabase()
 {
   QFile database("database.dat");
@@ -252,15 +262,19 @@ void MainWindow::parseItem(const QString &string)
   if(vars.contains("age")) {
     item.age = vars["age"].toInt();
   }
+  if(vars.contains("icon")) {
+    item.icon = vars["icon"];
+  }
 
-  printf("Item:\n  barcode=%s\n  id=%s\n  category=%s\n  price=%f\n  discount=%f\n  stock=%d\n  age=%d\n",
+  printf("Item:\n  barcode=%s\n  id=%s\n  category=%s\n  price=%f\n  discount=%f\n  stock=%d\n  age=%d\n  icon=%s\n",
          qPrintable(item.barcode),
          qPrintable(item.id),
          qPrintable(item.category),
          item.price,
          item.discount,
          item.stock,
-         item.age);
+         item.age,
+         qPrintable(item.icon));
 
   items.append(item);
 }
@@ -280,9 +294,13 @@ void MainWindow::parseCategory(const QString &string)
   if(vars.contains("id")) {
     category.id = vars["id"];
   }
-  printf("Category:\n  barcode=%s\n  id=%s\n",
+  if(vars.contains("icon")) {
+    category.icon = vars["icon"];
+  }
+  printf("Category:\n  barcode=%s\n  id=%s\n  icon=%s\n",
          qPrintable(category.barcode),
-         qPrintable(category.id));
+         qPrintable(category.id),
+         qPrintable(category.icon));
   
   categories.append(category);
 }
@@ -316,12 +334,12 @@ void MainWindow::saveDatabase()
     database.write("\n");
     database.write("items:\n");
     for(const auto &item: items) {
-      database.write(QString("barcode=" + item.barcode + ";id=" + item.id + ";category=" + item.category + ";price=" + QString::number(item.price) + ";discount=" + QString::number(item.discount) + ";stock=" + QString::number(item.stock) + ";age=" + QString::number(item.age) + "\n").toUtf8());
+      database.write(QString("barcode=" + item.barcode + ";id=" + item.id + ";category=" + item.category + ";price=" + QString::number(item.price) + ";discount=" + QString::number(item.discount) + ";stock=" + QString::number(item.stock) + ";age=" + QString::number(item.age) + ";icon=" + item.icon + "\n").toUtf8());
     }
     database.write("\n");
     database.write("categories:\n");
     for(const auto &category: categories) {
-      database.write(QString("barcode=" + category.barcode + ";id=" + category.id + "\n").toUtf8());
+      database.write(QString("barcode=" + category.barcode + ";id=" + category.id + ";icon=" + category.icon + "\n").toUtf8());
     }
     database.close();
   }
@@ -361,12 +379,10 @@ void MainWindow::checkBarcode()
   }
 
   if(!barcodeFound) {
-    QSound::play("sounds/ny_konto_eller_vare.wav");
-
     printf("NEW BARCODE!\n");
-    NewEntry newEntry(barcode, accounts, items, categories, this);
-    newEntry.exec();
-    type = newEntry.getType();
+    EntryEditor entryEditor(barcode, accounts, items, categories, icons, this);
+    entryEditor.exec();
+    type = entryEditor.getType();
     if(type == "account") {
       std::sort(accounts.begin(), accounts.end(), [](const Account a, const Account b) -> bool { return a.id.toLower() < b.id.toLower(); });
     } else if(type == "item") {
@@ -471,22 +487,22 @@ void MainWindow::checkBarcode()
   if(!barcodeFound) {
     QSound::play("sounds/ny_account_eller_bog.wav");
     printf("NEW BARCODE!\n");
-    NewEntry newEntry(barcode, this);
-    newEntry.exec();
-    if(newEntry.result() == QDialog::Accepted) {
-      if(newEntry.getType() == "account") {
+    EntryEditor entryEditor(barcode, this);
+    entryEditor.exec();
+    if(entryEditor.result() == QDialog::Accepted) {
+      if(entryEditor.getType() == "account") {
         QSound::play("sounds/account_registreret.wav");
         printf("ADDING NEW ACCOUNT!\n");
         Account account;
         account.barcode = barcode;
-        account.id = newEntry.getNameTitle();
+        account.id = entryEditor.getNameTitle();
         accounts.append(account);
-      } else if(newEntry.getType() == "item") {
+      } else if(entryEditor.getType() == "item") {
         QSound::play("sounds/bog_registreret.wav");
         printf("ADDING NEW ITEM!\n");
         Item item;
         item.barcode = barcode;
-        item.id = newEntry.getNameTitle();
+        item.id = entryEditor.getNameTitle();
         items.append(item);
         std::sort(items.begin(), items.end(), [](const Item a, const Item b) -> bool { return a.id.toLower() < b.id.toLower(); });
 

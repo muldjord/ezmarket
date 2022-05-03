@@ -16,10 +16,8 @@ HEADERS += src/mainwindow.h \
            src/datatypes.h \
            src/accountstab.h \
            src/itemstab.h \
-           src/itemsmodel.h \
-           src/itemdata.h \
            src/categoriestab.h \
-           src/newentry.h \
+           src/entryeditor.h \
            src/lineedit.h \
            src/accountwidget.h \
            src/itemwidget.h \
@@ -29,10 +27,8 @@ SOURCES += src/main.cpp \
            src/mainwindow.cpp \
            src/accountstab.cpp \
            src/itemstab.cpp \
-           src/itemsmodel.cpp \
-           src/itemdata.cpp \
            src/categoriestab.cpp \
-           src/newentry.cpp \
+           src/entryeditor.cpp \
            src/lineedit.cpp \
            src/accountwidget.cpp \
            src/itemwidget.cpp \

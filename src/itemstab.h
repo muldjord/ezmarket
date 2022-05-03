@@ -28,11 +28,9 @@
 #define __ITEMSTAB_H__
 
 #include "datatypes.h"
-#include "itemode.h"
 
 #include <QWidget>
-#include <QListWidget>
-#include <QElapsedTimer>
+#include <QTableWidget>
 #include <QTimer>
 
 class ItemsTab : public QWidget
@@ -40,21 +38,23 @@ class ItemsTab : public QWidget
   Q_OBJECT
     
 public:
-  ItemsTab(QList<Item> &items, QWidget *parent);
+  ItemsTab(QList<Account> &accounts,
+           QList<Item> &items,
+           QList<Category> &categories,
+           const QMap<QString, QIcon> &icons,
+           QWidget *parent);
   ~ItemsTab();
   
-
 private slots:
   void refreshItems();
-  void itemSelected(QListWidgetItem *item);
+  void editItem(int row, int);
 
 private:
-  QTableView *itemView = nullptr;
-  ItemModel *itemModel = nullptr;
-
-  QElapsedTimer elapsedTime;
+  QTableWidget *itemsList = nullptr;
+  QList<Account> &accounts;
   QList<Item> &items;
-  QTimer refreshTimer;
+  QList<Category> &categories;
+  const QMap<QString, QIcon> &icons;
 };
 
 #endif // __ITEMSTAB_H__

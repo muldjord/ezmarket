@@ -30,30 +30,56 @@
 #include <QVBoxLayout>
 #include <QLocale>
 
-ItemWidget::ItemWidget(const QString &barcode, const QList<Category> &categories, QWidget *parent)
-  : QWidget(parent), barcode(barcode)
+ItemWidget::ItemWidget(const QString &barcode,
+                       const QList<Item> &items,
+                       const QMap<QString, QIcon> &icons,
+                       const QList<Category> &categories,
+                       QWidget *parent)
+  : QWidget(parent), barcode(barcode), items(items), icons(icons)
 {
   QLabel *idLabel = new QLabel(tr("Item name:"));
   idLineEdit = new LineEdit(this);
+  connect(idLineEdit, &LineEdit::textChanged, this, &ItemWidget::searchIcons);
   setFocusProxy(idLineEdit);
 
   QLabel *categoryLabel = new QLabel(tr("Category:"));
   categoryComboBox = new QComboBox(this);
   for(const auto &category: categories) {
-    categoryComboBox->addItem(category.id, category.barcode);
+    categoryComboBox->addItem(icons[category.icon], category.id, category.barcode);
   }
+
+  QLabel *iconLabel = new QLabel(tr("Icon:"));
+  iconComboBox = new QComboBox(this);
 
   QLabel *priceLabel = new QLabel(tr("Price:"));
   priceLineEdit = new LineEdit(this);
   priceLineEdit->setText("0.0");
 
+  QLabel *discountLabel = new QLabel(tr("Discount:"));
+  discountLineEdit = new LineEdit(this);
+  discountLineEdit->setText("0.0");
+
+  for(const auto &item: items) {
+    if(barcode == item.barcode) {
+      idLineEdit->setText(item.id);
+      categoryComboBox->setCurrentIndex(categoryComboBox->findText(item.category));
+      iconComboBox->setCurrentIndex(iconComboBox->findText(item.icon));
+      priceLineEdit->setText(QLocale().toString(item.price));
+      discountLineEdit->setText(item.id);
+      break;
+    }
+  }
   QVBoxLayout *layout = new QVBoxLayout(this);
   layout->addWidget(idLabel);
   layout->addWidget(idLineEdit);
   layout->addWidget(categoryLabel);
   layout->addWidget(categoryComboBox);
+  layout->addWidget(iconLabel);
+  layout->addWidget(iconComboBox);
   layout->addWidget(priceLabel);
   layout->addWidget(priceLineEdit);
+  layout->addWidget(discountLabel);
+  layout->addWidget(discountLineEdit);
 
   setLayout(layout);
 }
@@ -79,7 +105,28 @@ Item ItemWidget::getItem()
   item.barcode = this->barcode;
   item.id = idLineEdit->text();
   item.category = categoryComboBox->currentData().toString();
+  item.icon = iconComboBox->currentData().toString();
   item.price = QLocale().toDouble(priceLineEdit->text());
+  item.discount = QLocale().toDouble(discountLineEdit->text());
 
   return item;
+}
+
+void ItemWidget::searchIcons()
+{
+  QList<QString> snippets = idLineEdit->text().toLower().split(" ");
+  iconComboBox->clear();
+  for(const auto &key: icons.keys()) {
+    QString tmpKey = key;
+    tmpKey.replace("_", " ").replace("ae", "æ").replace("oe", "ø").replace("aa", "å");
+    tmpKey = tmpKey.left(1).toUpper() + tmpKey.mid(1);
+    for(const auto &snippet: snippets) {
+      if(tmpKey.toLower().contains(snippet)) {
+        iconComboBox->addItem(icons[key], tmpKey, key);
+        break;
+      }
+    }
+  }
+  iconComboBox->model()->sort(0, Qt::AscendingOrder);
+  iconComboBox->addItem(tr("None"), "");
 }

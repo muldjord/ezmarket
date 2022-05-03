@@ -63,6 +63,7 @@ private slots:
   void initRandomSound();
   
 private:
+  void loadIcons();
   void loadDatabase();
   void saveDatabase();
 
@@ -103,6 +104,7 @@ private:
   QList<Account> accounts;
   QList<Item> items;
   QList<Category> categories;
+  QMap<QString, QIcon> icons;
 };
 
 #endif // __MAINWINDOW_H__

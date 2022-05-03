@@ -38,16 +38,27 @@ class ItemWidget : public QWidget
   Q_OBJECT
     
 public:
-  ItemWidget(const QString &barcode, const QList<Category> &categories, QWidget *parent);
+  ItemWidget(const QString &barcode,
+             const QList<Item> &items,
+             const QMap<QString, QIcon> &icons,
+             const QList<Category> &categories,
+             QWidget *parent);
   ~ItemWidget();
   bool isSane();
   Item getItem();
 
+private slots:
+  void searchIcons();
+  
 private:
   const QString &barcode;
+  const QList<Item> &items;
+  const QMap<QString, QIcon> &icons;
   LineEdit *idLineEdit = nullptr;
+  QComboBox *iconComboBox = nullptr;
   QComboBox *categoryComboBox = nullptr;
   LineEdit *priceLineEdit = nullptr;
+  LineEdit *discountLineEdit = nullptr;
 };
 
 #endif // __ITEMWIDGET_H__
