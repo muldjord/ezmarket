@@ -30,7 +30,9 @@
 #include <QVBoxLayout>
 #include <QLocale>
 
-AccountWidget::AccountWidget(const QString &barcode, QWidget *parent)
+AccountWidget::AccountWidget(const QString &barcode,
+                             const QList<Account> &accounts,
+                             QWidget *parent)
   : QWidget(parent), barcode(barcode)
 {
   QLabel *idLabel = new QLabel(tr("Account holder:"));
@@ -41,11 +43,26 @@ AccountWidget::AccountWidget(const QString &barcode, QWidget *parent)
   balanceLineEdit = new LineEdit(this);
   balanceLineEdit->setText("100.0");
 
+  QLabel *bonusLabel = new QLabel(tr("Bonus points:"));
+  bonusLineEdit = new LineEdit(this);
+  bonusLineEdit->setText("0");
+
+  for(const auto &account: accounts) {
+    if(barcode == account.barcode) {
+      idLineEdit->setText(account.id);
+      balanceLineEdit->setText(QLocale().toString(account.balance));
+      bonusLineEdit->setText(QLocale().toString(account.bonus));
+      break;
+    }
+  }
+
   QVBoxLayout *layout = new QVBoxLayout(this);
   layout->addWidget(idLabel);
   layout->addWidget(idLineEdit);
   layout->addWidget(balanceLabel);
   layout->addWidget(balanceLineEdit);
+  layout->addWidget(bonusLabel);
+  layout->addWidget(bonusLineEdit);
   layout->addSpacerItem(new QSpacerItem(1, 1, QSizePolicy::Ignored, QSizePolicy::Expanding));
 
   setLayout(layout);
@@ -71,6 +88,7 @@ Account AccountWidget::getAccount()
   account.barcode = this->barcode;
   account.id = idLineEdit->text();
   account.balance = QLocale().toDouble(balanceLineEdit->text());
+  account.bonus = QLocale().toInt(bonusLineEdit->text());
 
   return account;
 }

@@ -45,8 +45,10 @@ public:
            QWidget *parent);
   ~ItemsTab();
   
-private slots:
+public slots:
   void refreshItems();
+
+private slots:
   void editItem(int row, int);
 
 private:

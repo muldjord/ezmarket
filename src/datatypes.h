@@ -33,7 +33,7 @@ struct Account {
   QString barcode = "";
   QString id = "";
   double balance = 0.0;
-  double bonus = 0.0;
+  int bonus = 0;
 };
 
 struct Item {

@@ -46,7 +46,7 @@ ItemsTab::ItemsTab(QList<Account> &accounts,
   itemsList->verticalHeader()->setVisible(false);
   itemsList->setSelectionBehavior(QTableView::SelectRows);
   itemsList->setSelectionMode(QAbstractItemView::SingleSelection);
-  itemsList->setSortingEnabled(true);
+  //itemsList->setSortingEnabled(true);
   connect(itemsList, &QTableWidget::cellDoubleClicked, this, &ItemsTab::editItem);
   QVBoxLayout *layout = new QVBoxLayout;
   layout->addWidget(itemsList);
@@ -124,6 +124,7 @@ void ItemsTab::editItem(int row, int)
 {
   EntryEditor entryEditor(itemsList->item(row, 1)->data(Qt::UserRole).toString(), accounts, items, categories, icons, this);
   entryEditor.exec();
+  refreshItems();
   
   printf("EDITING ROW %d, BARCODE %s\n", row, qPrintable(itemsList->item(row, 1)->data(Qt::UserRole).toString()));
 }

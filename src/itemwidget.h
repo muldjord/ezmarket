@@ -48,6 +48,7 @@ public:
   Item getItem();
 
 private slots:
+  void setIconSearchText();
   void searchIcons();
   
 private:
@@ -55,6 +56,7 @@ private:
   const QList<Item> &items;
   const QMap<QString, QIcon> &icons;
   LineEdit *idLineEdit = nullptr;
+  LineEdit *searchLineEdit = nullptr;
   QComboBox *iconComboBox = nullptr;
   QComboBox *categoryComboBox = nullptr;
   LineEdit *priceLineEdit = nullptr;

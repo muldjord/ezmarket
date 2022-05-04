@@ -29,26 +29,34 @@
 
 #include "datatypes.h"
 
-#include <QListWidget>
-#include <QElapsedTimer>
+#include <QWidget>
+#include <QTableWidget>
 #include <QTimer>
 
-class AccountsTab : public QListWidget
+class AccountsTab : public QWidget
 {
   Q_OBJECT
     
 public:
-  AccountsTab(const QList<Account> &accounts, QWidget *parent);
+  AccountsTab(QList<Account> &accounts,
+           QList<Item> &items,
+           QList<Category> &categories,
+           const QMap<QString, QIcon> &icons,
+           QWidget *parent);
   ~AccountsTab();
   
+public slots:
+  void refreshAccounts();
 
 private slots:
-  void refreshAccounts();
-  void accountSelected(QListWidgetItem *item);
+  void editAccount(int row, int);
 
 private:
-  const QList<Account> &accounts;
-  QTimer refreshTimer;
+  QTableWidget *accountsList = nullptr;
+  QList<Account> &accounts;
+  QList<Item> &items;
+  QList<Category> &categories;
+  const QMap<QString, QIcon> &icons;
 };
 
 #endif // __ACCOUNTSTAB_H__

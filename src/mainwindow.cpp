@@ -55,7 +55,7 @@ MainWindow::MainWindow()
   loadIcons();
   loadDatabase();
   
-  accountsTab = new AccountsTab(accounts, this); 
+  accountsTab = new AccountsTab(accounts, items, categories, icons, this);
   itemsTab = new ItemsTab(accounts, items, categories, icons, this);
   categoriesTab = new CategoriesTab(categories, this);
  /*
@@ -220,10 +220,10 @@ void MainWindow::parseAccount(const QString &string)
     account.balance = vars["balance"].toDouble();
   }
   if(vars.contains("bonus")) {
-    account.bonus = vars["bonus"].toDouble();
+    account.bonus = vars["bonus"].toInt();
   }
 
-  printf("Account:\n  barcode=%s\n  id=%s\n  balance=%f\n  bonus=%f\n",
+  printf("Account:\n  barcode=%s\n  id=%s\n  balance=%f\n  bonus=%d\n",
          qPrintable(account.barcode),
          qPrintable(account.id),
          account.balance,
@@ -385,8 +385,10 @@ void MainWindow::checkBarcode()
     type = entryEditor.getType();
     if(type == "account") {
       std::sort(accounts.begin(), accounts.end(), [](const Account a, const Account b) -> bool { return a.id.toLower() < b.id.toLower(); });
+      accountsTab->refreshAccounts();
     } else if(type == "item") {
       std::sort(items.begin(), items.end(), [](const Item a, const Item b) -> bool { return a.id.toLower() < b.id.toLower(); });
+      itemsTab->refreshItems();
     }
   }
 

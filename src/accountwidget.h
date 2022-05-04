@@ -37,7 +37,9 @@ class AccountWidget : public QWidget
   Q_OBJECT
     
 public:
-  AccountWidget(const QString &barcode, QWidget *parent);
+  AccountWidget(const QString &barcode,
+                const QList<Account> &accounts,
+                QWidget *parent);
   ~AccountWidget();
   bool isSane();
   Account getAccount();
@@ -46,6 +48,7 @@ private:
   const QString &barcode;
   LineEdit *idLineEdit = nullptr;
   LineEdit *balanceLineEdit = nullptr;
+  LineEdit *bonusLineEdit = nullptr;
 };
 
 #endif // __ACCOUNTWIDGET_H__

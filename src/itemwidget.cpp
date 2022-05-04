@@ -39,7 +39,6 @@ ItemWidget::ItemWidget(const QString &barcode,
 {
   QLabel *idLabel = new QLabel(tr("Item name:"));
   idLineEdit = new LineEdit(this);
-  connect(idLineEdit, &LineEdit::textChanged, this, &ItemWidget::searchIcons);
   setFocusProxy(idLineEdit);
 
   QLabel *categoryLabel = new QLabel(tr("Category:"));
@@ -47,10 +46,14 @@ ItemWidget::ItemWidget(const QString &barcode,
   for(const auto &category: categories) {
     categoryComboBox->addItem(icons[category.icon], category.id, category.barcode);
   }
-
+  
   QLabel *iconLabel = new QLabel(tr("Icon:"));
+  searchLineEdit = new LineEdit(this);
+  searchLineEdit->setPlaceholderText(tr("Icon search"));
+  connect(searchLineEdit, &LineEdit::textChanged, this, &ItemWidget::searchIcons);
   iconComboBox = new QComboBox(this);
-
+  searchIcons();
+  
   QLabel *priceLabel = new QLabel(tr("Price:"));
   priceLineEdit = new LineEdit(this);
   priceLineEdit->setText("0.0");
@@ -62,19 +65,23 @@ ItemWidget::ItemWidget(const QString &barcode,
   for(const auto &item: items) {
     if(barcode == item.barcode) {
       idLineEdit->setText(item.id);
-      categoryComboBox->setCurrentIndex(categoryComboBox->findText(item.category));
-      iconComboBox->setCurrentIndex(iconComboBox->findText(item.icon));
+      printf("FOUND AT %d\n", categoryComboBox->findData(item.category));
+      categoryComboBox->setCurrentIndex(categoryComboBox->findData(item.category));
+      iconComboBox->setCurrentIndex(iconComboBox->findData(item.icon));
       priceLineEdit->setText(QLocale().toString(item.price));
-      discountLineEdit->setText(item.id);
+      discountLineEdit->setText(QLocale().toString(item.discount));
       break;
     }
   }
+  connect(idLineEdit, &LineEdit::textChanged, this, &ItemWidget::setIconSearchText);
+
   QVBoxLayout *layout = new QVBoxLayout(this);
   layout->addWidget(idLabel);
   layout->addWidget(idLineEdit);
   layout->addWidget(categoryLabel);
   layout->addWidget(categoryComboBox);
   layout->addWidget(iconLabel);
+  layout->addWidget(searchLineEdit);
   layout->addWidget(iconComboBox);
   layout->addWidget(priceLabel);
   layout->addWidget(priceLineEdit);
@@ -112,9 +119,14 @@ Item ItemWidget::getItem()
   return item;
 }
 
+void ItemWidget::setIconSearchText()
+{
+  searchLineEdit->setText(idLineEdit->text());
+}
+
 void ItemWidget::searchIcons()
 {
-  QList<QString> snippets = idLineEdit->text().toLower().split(" ");
+  QList<QString> snippets = searchLineEdit->text().toLower().split(" ");
   iconComboBox->clear();
   for(const auto &key: icons.keys()) {
     QString tmpKey = key;

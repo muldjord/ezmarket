@@ -24,19 +24,34 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
 
-#include <stdio.h>
-
 #include "accountstab.h"
+#include "entryeditor.h"
 
-AccountsTab::AccountsTab(const QList<Account> &accounts, QWidget *parent)
-  : QListWidget(parent), accounts(accounts)
+#include <QVBoxLayout>
+#include <QLabel>
+#include <QHeaderView>
+
+AccountsTab::AccountsTab(QList<Account> &accounts,
+                   QList<Item> &items,
+                   QList<Category> &categories,
+                   const QMap<QString, QIcon> &icons,
+                   QWidget *parent)
+  : QWidget(parent), accounts(accounts), items(items), categories(categories), icons(icons)
 {
-  refreshTimer.setInterval(1000);
-  refreshTimer.setSingleShot(true);
-  connect(&refreshTimer, &QTimer::timeout, this, &AccountsTab::refreshAccounts);
-  refreshTimer.start();
-
-  connect(this, &AccountsTab::itemPressed, this, &AccountsTab::accountSelected);
+  setStyleSheet("QTableWidget {qproperty-iconSize: 35px; font-size: 30px;}"
+                "QHeaderView {font-size: 30px;}"
+                "QTableWidget QLabel {background-color: black;}");
+  accountsList = new QTableWidget(this);
+  accountsList->setEditTriggers(QAbstractItemView::NoEditTriggers);
+  accountsList->verticalHeader()->setVisible(false);
+  accountsList->setSelectionBehavior(QTableView::SelectRows);
+  accountsList->setSelectionMode(QAbstractItemView::SingleSelection);
+  //accountsList->setSortingEnabled(true);
+  connect(accountsList, &QTableWidget::cellDoubleClicked, this, &AccountsTab::editAccount);
+  QVBoxLayout *layout = new QVBoxLayout;
+  layout->addWidget(accountsList);
+  setLayout(layout);
+  refreshAccounts();
 }
 
 AccountsTab::~AccountsTab()
@@ -46,37 +61,48 @@ AccountsTab::~AccountsTab()
 void AccountsTab::refreshAccounts()
 {
   printf("REFRESHING ACCOUNTS!\n");
-  clear();
+  accountsList->clear();
+  accountsList->setColumnCount(5);
+  accountsList->setRowCount(accounts.length());
 
-  for(auto &account: accounts) {
-    /*
-    if(!account.loanedBy.isEmpty()) {
-      account.loanedTimer += elapsedTime.elapsed();
-      printf("Account: %s, loaned time: %d\n", qPrintable(account.title), account.loanedTimer);
-    } else {
-      account.loanedTimer = 0.0;
-    }
-    */
-    QListWidgetItem *item = new QListWidgetItem;
-    item->setText(account.id + " (" + account.barcode + ")");
-    /*
-    if(account.loanedTimer > 240 * 1000) {
-      item->setForeground(Qt::red);
-    } else if(!account.reservedBy.isEmpty()) {
-      item->setForeground(Qt::blue);
-    } else if(!account.loanedBy.isEmpty()) {
-      item->setForeground(Qt::gray);
-    }
-    */
-    item->setData(Qt::UserRole, account.barcode);
-    addItem(item);
+  accountsList->setHorizontalHeaderLabels({"",
+      tr("Account"),
+      tr("Balance"),
+      tr("Bonus"),
+      tr("Barcode")});
+  for(int row = 0; row < accounts.length(); ++row) {
+
+    QLabel *iconLabel = new QLabel();
+    iconLabel->setAlignment(Qt::AlignHCenter);
+    iconLabel->setPixmap(QIcon("graphics/account.png").pixmap(50, 50));
+    accountsList->setCellWidget(row, 0, iconLabel);
+    
+    QTableWidgetItem *idItem = new QTableWidgetItem(accounts.at(row).id);
+    idItem->setData(Qt::UserRole, accounts.at(row).barcode);
+    accountsList->setItem(row, 1, idItem);
+
+    QTableWidgetItem *balanceItem = new QTableWidgetItem();
+    balanceItem->setData(Qt::DisplayRole, accounts.at(row).balance);
+    balanceItem->setData(Qt::UserRole, accounts.at(row).barcode);
+    accountsList->setItem(row, 2, balanceItem);
+
+    QTableWidgetItem *bonusItem = new QTableWidgetItem();
+    bonusItem->setData(Qt::DisplayRole, accounts.at(row).bonus);
+    bonusItem->setData(Qt::UserRole, accounts.at(row).barcode);
+    accountsList->setItem(row, 3, bonusItem);
+
+    QTableWidgetItem *barcodeItem = new QTableWidgetItem(accounts.at(row).barcode);
+    barcodeItem->setData(Qt::UserRole, accounts.at(row).barcode);
+    accountsList->setItem(row, 4, barcodeItem);
   }
-  //elapsedTime.restart();
-  refreshTimer.start();
+  accountsList->resizeColumnsToContents();
+  accountsList->resizeRowsToContents();
 }
 
-void AccountsTab::accountSelected(QListWidgetItem *item)
+void AccountsTab::editAccount(int row, int)
 {
-  //emit focusAccount(item->data(Qt::UserRole).toString());
-  refreshTimer.start();
+  EntryEditor entryEditor(accountsList->item(row, 1)->data(Qt::UserRole).toString(), accounts, items, categories, icons, this);
+  entryEditor.exec();
+  
+  printf("EDITING ROW %d, BARCODE %s\n", row, qPrintable(accountsList->item(row, 1)->data(Qt::UserRole).toString()));
 }

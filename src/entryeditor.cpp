@@ -42,7 +42,7 @@ EntryEditor::EntryEditor(const QString &barcode,
   : QDialog(parent), barcode(barcode), accounts(accounts), items(items), categories(categories)
 {
   setWindowTitle(tr("Barcode: ") + barcode);
-  setFixedSize(450, 650);
+  setFixedSize(450, 700);
 
   setStyleSheet("QLabel {font-size: 35px; qproperty-alignment: AlignCenter;}"
                 "QLineEdit {font-size: 35px;}"
@@ -95,7 +95,7 @@ EntryEditor::EntryEditor(const QString &barcode,
   buttonLayout->addWidget(accountButton);
   buttonLayout->addWidget(itemButton);
 
-  accountWidget = new AccountWidget(barcode, this);
+  accountWidget = new AccountWidget(barcode, accounts, this);
   itemWidget = new ItemWidget(barcode, items, icons, categories, this);
 
   typeLayout = new QStackedLayout;
