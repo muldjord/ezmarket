@@ -37,14 +37,14 @@ struct Account {
 };
 
 struct Item {
-  QString barcode = "";
+  QString icon = ""; // PNG file basename
   QString id = "";
   QString category = ""; // Category barcode.
   double price = 0.0;
   double discount = 0.0; // Subtracted from price.
   int stock = 0;
   int age = 0; // Seconds. Reset whenever one or more is added to stock emulating renewal.
-  QString icon = ""; // PNG file basename
+  QString barcode = "";
 };
 
 struct Category {

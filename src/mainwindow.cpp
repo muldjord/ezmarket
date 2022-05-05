@@ -56,7 +56,7 @@ MainWindow::MainWindow()
   loadDatabase();
   
   accountsTab = new AccountsTab(accounts, items, categories, icons, this);
-  itemsTab = new ItemsTab(accounts, items, categories, icons, this);
+  itemsTab = new ItemsTab(items, categories, icons, this);
   categoriesTab = new CategoriesTab(categories, this);
  /*
   CheckoutTab *checkoutTab = new CheckoutTab(this);
@@ -388,7 +388,7 @@ void MainWindow::checkBarcode()
       accountsTab->refreshAccounts();
     } else if(type == "item") {
       std::sort(items.begin(), items.end(), [](const Item a, const Item b) -> bool { return a.id.toLower() < b.id.toLower(); });
-      itemsTab->refreshItems();
+      //itemsTab->refreshItems();
     }
   }
 

@@ -25,106 +25,36 @@
  */
 
 #include "itemstab.h"
+#include "itemsmodel.h"
 #include "entryeditor.h"
 
 #include <QVBoxLayout>
 #include <QLabel>
 #include <QHeaderView>
 
-ItemsTab::ItemsTab(QList<Account> &accounts,
-                   QList<Item> &items,
-                   QList<Category> &categories,
+ItemsTab::ItemsTab(QList<Item> &items,
+                   const QList<Category> &categories,
                    const QMap<QString, QIcon> &icons,
                    QWidget *parent)
-  : QWidget(parent), accounts(accounts), items(items), categories(categories), icons(icons)
+  : QWidget(parent), items(items), categories(categories), icons(icons)
 {
-  setStyleSheet("QTableWidget {qproperty-iconSize: 35px; font-size: 30px;}"
-                "QHeaderView {font-size: 30px;}"
-                "QTableWidget QLabel {background-color: black;}");
-  itemsList = new QTableWidget(this);
-  itemsList->setEditTriggers(QAbstractItemView::NoEditTriggers);
-  itemsList->verticalHeader()->setVisible(false);
-  itemsList->setSelectionBehavior(QTableView::SelectRows);
-  itemsList->setSelectionMode(QAbstractItemView::SingleSelection);
-  //itemsList->setSortingEnabled(true);
-  connect(itemsList, &QTableWidget::cellDoubleClicked, this, &ItemsTab::editItem);
+  setStyleSheet("QTableView {font-size: 30px;}"
+                "QHeaderView {font-size: 30px;}");
+  itemsView = new QTableView(this);
+  ItemsModel *itemsModel = new ItemsModel(items, icons, this);
+  itemsView->setModel(itemsModel);
+  itemsView->setSelectionBehavior(QTableView::SelectRows);
+  itemsView->setSelectionMode(QAbstractItemView::SingleSelection);
+  itemsView->verticalHeader()->setVisible(false);
+  itemsView->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+  //itemsView->setSortingEnabled(true);
+  //connect(itemsView, &QTableView::cellDoubleClicked, this, &ItemsTab::editItem);
   QVBoxLayout *layout = new QVBoxLayout;
-  layout->addWidget(itemsList);
+  layout->addWidget(itemsView);
   setLayout(layout);
-  refreshItems();
+  //refreshItems();
 }
 
 ItemsTab::~ItemsTab()
 {
-}
-
-void ItemsTab::refreshItems()
-{
-  printf("REFRESHING ITEMS!\n");
-  itemsList->clear();
-  itemsList->setColumnCount(8);
-  itemsList->setRowCount(items.length());
-
-  itemsList->setHorizontalHeaderLabels({"",
-      tr("Item"),
-      tr("Category"),
-      tr("Price"),
-      tr("Discount"),
-      tr("Stock"),
-      tr("Age"),
-      tr("Barcode")});
-  for(int row = 0; row < items.length(); ++row) {
-
-    QLabel *iconLabel = new QLabel();
-    iconLabel->setAlignment(Qt::AlignHCenter);
-    iconLabel->setPixmap(icons[items.at(row).icon].pixmap(50, 50));
-    //QTableWidgetItem *iconItem = new QTableWidgetItem(icons[items.at(row).icon], "");
-    //iconItem->setData(Qt::UserRole, items.at(row).barcode);
-    //iconItem->setTextAlignment(Qt::AlignCenter);
-    //itemsList->setItem(row, 0, iconItem);
-    itemsList->setCellWidget(row, 0, iconLabel);
-    
-    QTableWidgetItem *idItem = new QTableWidgetItem(items.at(row).id);
-    idItem->setData(Qt::UserRole, items.at(row).barcode);
-    itemsList->setItem(row, 1, idItem);
-
-    QTableWidgetItem *categoryItem = new QTableWidgetItem(items.at(row).category);
-    categoryItem->setData(Qt::UserRole, items.at(row).barcode);
-    itemsList->setItem(row, 2, categoryItem);
-
-    QTableWidgetItem *priceItem = new QTableWidgetItem();
-    priceItem->setData(Qt::DisplayRole, items.at(row).price);
-    priceItem->setData(Qt::UserRole, items.at(row).barcode);
-    itemsList->setItem(row, 3, priceItem);
-
-    QTableWidgetItem *discountItem = new QTableWidgetItem();
-    discountItem->setData(Qt::DisplayRole, items.at(row).discount);
-    discountItem->setData(Qt::UserRole, items.at(row).barcode);
-    itemsList->setItem(row, 4, discountItem);
-
-    QTableWidgetItem *stockItem = new QTableWidgetItem();
-    stockItem->setData(Qt::DisplayRole, items.at(row).stock);
-    stockItem->setData(Qt::UserRole, items.at(row).barcode);
-    itemsList->setItem(row, 5, stockItem);
-
-    QTableWidgetItem *ageItem = new QTableWidgetItem();
-    ageItem->setData(Qt::DisplayRole, items.at(row).age);
-    ageItem->setData(Qt::UserRole, items.at(row).barcode);
-    itemsList->setItem(row, 6, ageItem);
-
-    QTableWidgetItem *barcodeItem = new QTableWidgetItem(items.at(row).barcode);
-    barcodeItem->setData(Qt::UserRole, items.at(row).barcode);
-    itemsList->setItem(row, 7, barcodeItem);
-  }
-  itemsList->resizeColumnsToContents();
-  itemsList->resizeRowsToContents();
-}
-
-void ItemsTab::editItem(int row, int)
-{
-  EntryEditor entryEditor(itemsList->item(row, 1)->data(Qt::UserRole).toString(), accounts, items, categories, icons, this);
-  entryEditor.exec();
-  refreshItems();
-  
-  printf("EDITING ROW %d, BARCODE %s\n", row, qPrintable(itemsList->item(row, 1)->data(Qt::UserRole).toString()));
 }

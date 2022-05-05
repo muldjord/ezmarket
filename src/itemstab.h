@@ -38,24 +38,16 @@ class ItemsTab : public QWidget
   Q_OBJECT
     
 public:
-  ItemsTab(QList<Account> &accounts,
-           QList<Item> &items,
-           QList<Category> &categories,
+  ItemsTab(QList<Item> &items,
+           const QList<Category> &categories,
            const QMap<QString, QIcon> &icons,
            QWidget *parent);
   ~ItemsTab();
   
-public slots:
-  void refreshItems();
-
-private slots:
-  void editItem(int row, int);
-
 private:
-  QTableWidget *itemsList = nullptr;
-  QList<Account> &accounts;
+  QTableView *itemsView = nullptr;
   QList<Item> &items;
-  QList<Category> &categories;
+  const QList<Category> &categories;
   const QMap<QString, QIcon> &icons;
 };
 
