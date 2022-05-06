@@ -83,11 +83,11 @@ QVariant ItemsModel::data(const QModelIndex &index, int role) const
   } else if(role == Qt::DecorationRole) {
     switch(index.column()) {
     case 0:
-      return icons[items.at(index.row()).icon].pixmap(60, 60);
+      return icons[items.at(index.row()).icon].pixmap(64, 64);
       break;
     }
   } else if(role == Qt::TextAlignmentRole) {
-    return Qt::AlignHCenter;
+    return Qt::AlignCenter;
   } else if(role == Qt::BackgroundRole) {
     switch(index.column()) {
       // No case 0 as it is an icon and handled by Qt::DecorationRole below
@@ -95,10 +95,33 @@ QVariant ItemsModel::data(const QModelIndex &index, int role) const
       return QBrush(QColor(0, 0, 0));
       break;
     }
-  }
-    /*
   } else if(role == Qt::EditRole) {
-    return QVariant(items[index.row()].values[index.column()].value.toString());
+    switch(index.column()) {
+      // No case 0 as it is an icon and handled by Qt::DecorationRole below
+    case 1:
+      return items.at(index.row()).id;
+      break;
+    case 2:
+      return items.at(index.row()).category;
+      break;
+    case 3:
+      return items.at(index.row()).price;
+      break;
+    case 4:
+      return items.at(index.row()).discount;
+      break;
+    case 5:
+      return items.at(index.row()).stock;
+      break;
+    case 6:
+      return items.at(index.row()).age;
+      break;
+    case 7:
+      return items.at(index.row()).barcode;
+      break;
+    };
+  }
+  /*
   } else if(role == Qt::ForegroundRole) {
     if(items[index.row()].values[index.column()].writeable) {
       if(items[index.row()].values[index.column()].eye == DB::E_OD) {
@@ -122,6 +145,37 @@ QVariant ItemsModel::data(const QModelIndex &index, int role) const
   return QVariant();
 }
 
+bool ItemsModel::setData(const QModelIndex &index, const QVariant &value, int role)
+{
+  if(!index.isValid() ||
+     role != Qt::EditRole) {
+    return false;
+  }
+
+  switch(index.column()) {
+  case 1:
+    items[index.row()].id = value.toString();
+    break;
+  case 2:
+    items[index.row()].category= value.toString();
+    break;
+  case 3:
+    items[index.row()].price = value.toDouble();
+    break;
+  case 4:
+    items[index.row()].discount = value.toDouble();
+    break;
+  case 5:
+    items[index.row()].stock = value.toInt();
+    break;
+  case 6:
+    items[index.row()].age = value.toInt();
+    break;
+  }
+  emit dataChanged(index, index); // Inform the model that this index has changed
+  return true;
+}
+
 QVariant ItemsModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
   if(!items.isEmpty()) {
@@ -129,7 +183,7 @@ QVariant ItemsModel::headerData(int section, Qt::Orientation orientation, int ro
       if(orientation == Qt::Horizontal) {
         switch(section) {
         case 0:
-          return tr("Icon");
+          return tr("");
           break;
         case 1:
           return tr("Item");
@@ -171,38 +225,9 @@ Qt::ItemFlags ItemsModel::flags(const QModelIndex &index) const
     return Qt::ItemIsEnabled;
   }
 
+  if(index.column() != 0 && index.column() != 7) {
+    return Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable;
+  }
+  
   return Qt::ItemIsEnabled | Qt::ItemIsSelectable;
 }
-
-/*
-QList<ExamData> ItemsModel::getRows(const QModelIndexList &indexes) const
-{
-  int rows = 0;
-  QList<ExamData> selectedRows;
-  for(const auto &index: indexes) {
-    // Only count each row once, so only process when at column == 0
-    if(index.column() == 0) {
-      //if(!items.at(index.row()).images.isEmpty()) {
-        selectedRows.append(items.at(index.row()));
-        rows++;
-        //}
-      if(rows == 4) {
-        break;
-      }
-    }
-  }
-  return selectedRows;
-}
-
-int ItemsModel::getFocusRow(const int &examinationUid) const
-{
-  if(examinationUid != DB::NONE) {
-    for(int a = 0; a < items.count(); ++a) {
-      if(items.at(a).getExaminationUid() == examinationUid) {
-        return a;
-      }
-    }
-  }
-  return DB::NONE;
-}
-*/

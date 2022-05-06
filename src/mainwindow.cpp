@@ -37,6 +37,7 @@
 #include <QDir>
 #include <QToolBar>
 #include <QLocale>
+#include <QKeyEvent>
 
 MainWindow::MainWindow()
 {
@@ -57,6 +58,7 @@ MainWindow::MainWindow()
   
   accountsTab = new AccountsTab(accounts, items, categories, icons, this);
   itemsTab = new ItemsTab(items, categories, icons, this);
+  connect(itemsTab->itemsModel, &ItemsModel::dataChanged, this, &MainWindow::focusBarcodeLineEdit);
   categoriesTab = new CategoriesTab(categories, this);
  /*
   CheckoutTab *checkoutTab = new CheckoutTab(this);
@@ -88,7 +90,9 @@ MainWindow::MainWindow()
   focusTimer.setInterval(500);
   focusTimer.setSingleShot(false);
   connect(&focusTimer, &QTimer::timeout, this, &MainWindow::focusBarcodeLineEdit);
-  focusTimer.start();
+  //focusTimer.start();
+
+  installEventFilter(this);
 
   show();
 }
@@ -584,3 +588,21 @@ void MainWindow::focusBarcodeLineEdit()
 {
   barcodeLineEdit->setFocus();
 }
+
+/*
+bool MainWindow::eventFilter(QObject *, QEvent *event)
+{
+  if(event->type() == QEvent::KeyPress) {
+    QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
+    if(keyEvent->modifiers() != 0) {
+      return false;
+    }
+    // Reset hibernation inactivity timer
+    barcodeLineEdit->setText(keyEvent->text());
+    barcodeLineEdit->setFocus();    
+    return true;
+  }
+
+  return false;
+}
+*/

@@ -28,6 +28,7 @@
 #define __ITEMSTAB_H__
 
 #include "datatypes.h"
+#include "itemsmodel.h"
 
 #include <QWidget>
 #include <QTableWidget>
@@ -43,6 +44,7 @@ public:
            const QMap<QString, QIcon> &icons,
            QWidget *parent);
   ~ItemsTab();
+  ItemsModel *itemsModel = nullptr;
   
 private:
   QTableView *itemsView = nullptr;

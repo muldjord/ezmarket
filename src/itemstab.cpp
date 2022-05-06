@@ -25,12 +25,12 @@
  */
 
 #include "itemstab.h"
-#include "itemsmodel.h"
 #include "entryeditor.h"
 
 #include <QVBoxLayout>
 #include <QLabel>
 #include <QHeaderView>
+#include <QSortFilterProxyModel>
 
 ItemsTab::ItemsTab(QList<Item> &items,
                    const QList<Category> &categories,
@@ -38,16 +38,25 @@ ItemsTab::ItemsTab(QList<Item> &items,
                    QWidget *parent)
   : QWidget(parent), items(items), categories(categories), icons(icons)
 {
-  setStyleSheet("QTableView {font-size: 30px;}"
-                "QHeaderView {font-size: 30px;}");
+  setStyleSheet("QTableView {font-size: 35px;}"
+                "QHeaderView {font-size: 35px;}");
   itemsView = new QTableView(this);
-  ItemsModel *itemsModel = new ItemsModel(items, icons, this);
-  itemsView->setModel(itemsModel);
+  itemsModel = new ItemsModel(items, icons, this);
+
+  QSortFilterProxyModel *proxyModel = new QSortFilterProxyModel(this);
+  proxyModel->setSourceModel(itemsModel);
+  
+  itemsView->setModel(proxyModel);
+  itemsView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+  itemsView->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Fixed);
+  itemsView->horizontalHeader()->setMinimumSectionSize(70);
+  itemsView->horizontalHeader()->resizeSection(0, 64);
+  itemsView->verticalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
   itemsView->setSelectionBehavior(QTableView::SelectRows);
   itemsView->setSelectionMode(QAbstractItemView::SingleSelection);
   itemsView->verticalHeader()->setVisible(false);
   itemsView->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-  //itemsView->setSortingEnabled(true);
+  itemsView->setSortingEnabled(true);
   //connect(itemsView, &QTableView::cellDoubleClicked, this, &ItemsTab::editItem);
   QVBoxLayout *layout = new QVBoxLayout;
   layout->addWidget(itemsView);

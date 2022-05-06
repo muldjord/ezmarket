@@ -50,12 +50,6 @@ class MainWindow : public QMainWindow
   MainWindow();
   ~MainWindow();
   
-public slots:
-  
-protected:
-  
-signals:
-
 private slots:
   void showAbout();
   void checkBarcode();
