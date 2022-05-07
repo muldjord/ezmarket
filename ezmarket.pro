@@ -21,6 +21,7 @@ HEADERS += src/mainwindow.h \
            src/entryeditor.h \
            src/lineedit.h \
            src/accountwidget.h \
+           src/itemeditor.h \
            src/itemwidget.h \
            src/aboutbox.h
 
@@ -33,5 +34,6 @@ SOURCES += src/main.cpp \
            src/entryeditor.cpp \
            src/lineedit.cpp \
            src/accountwidget.cpp \
+           src/itemeditor.cpp \
            src/itemwidget.cpp \
            src/aboutbox.cpp

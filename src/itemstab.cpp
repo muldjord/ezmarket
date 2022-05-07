@@ -25,12 +25,11 @@
  */
 
 #include "itemstab.h"
-#include "entryeditor.h"
+#include "itemeditor.h"
 
 #include <QVBoxLayout>
 #include <QLabel>
 #include <QHeaderView>
-#include <QSortFilterProxyModel>
 
 ItemsTab::ItemsTab(QList<Item> &items,
                    const QList<Category> &categories,
@@ -38,32 +37,41 @@ ItemsTab::ItemsTab(QList<Item> &items,
                    QWidget *parent)
   : QWidget(parent), items(items), categories(categories), icons(icons)
 {
-  setStyleSheet("QTableView {font-size: 35px;}"
-                "QHeaderView {font-size: 35px;}");
+  setStyleSheet("QTableView {font-size: 30px;}"
+                "QHeaderView {font-size: 30px;}");
   itemsView = new QTableView(this);
-  itemsModel = new ItemsModel(items, icons, this);
+  itemsModel = new ItemsModel(items, categories, icons, this);
 
-  QSortFilterProxyModel *proxyModel = new QSortFilterProxyModel(this);
+  proxyModel = new QSortFilterProxyModel(this);
   proxyModel->setSourceModel(itemsModel);
-  
+
   itemsView->setModel(proxyModel);
   itemsView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-  itemsView->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Fixed);
-  itemsView->horizontalHeader()->setMinimumSectionSize(70);
-  itemsView->horizontalHeader()->resizeSection(0, 64);
-  itemsView->verticalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+  itemsView->horizontalHeader()->setSectionResizeMode(2, QHeaderView::ResizeToContents);
+  itemsView->horizontalHeader()->setSectionResizeMode(3, QHeaderView::ResizeToContents);
+  itemsView->horizontalHeader()->setSectionResizeMode(4, QHeaderView::ResizeToContents);
+  itemsView->horizontalHeader()->setSectionResizeMode(5, QHeaderView::ResizeToContents);
+  itemsView->horizontalHeader()->setSectionResizeMode(6, QHeaderView::ResizeToContents);
+  itemsView->verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
+  itemsView->verticalHeader()->setMinimumSectionSize(54);
+  itemsView->verticalHeader()->setMaximumSectionSize(54);
   itemsView->setSelectionBehavior(QTableView::SelectRows);
   itemsView->setSelectionMode(QAbstractItemView::SingleSelection);
   itemsView->verticalHeader()->setVisible(false);
   itemsView->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
   itemsView->setSortingEnabled(true);
-  //connect(itemsView, &QTableView::cellDoubleClicked, this, &ItemsTab::editItem);
+  connect(itemsView, &QTableView::doubleClicked, this, &ItemsTab::editItem);
   QVBoxLayout *layout = new QVBoxLayout;
   layout->addWidget(itemsView);
   setLayout(layout);
-  //refreshItems();
 }
 
 ItemsTab::~ItemsTab()
 {
+}
+
+void ItemsTab::editItem(const QModelIndex &index)
+{
+  ItemEditor itemEditor(items.at(proxyModel->mapToSource(index).row()).barcode, items, categories, icons, this);
+  itemEditor.exec();
 }

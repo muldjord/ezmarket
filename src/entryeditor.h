@@ -33,6 +33,7 @@
 
 #include <QDialog>
 #include <QAbstractButton>
+#include <QPushButton>
 #include <QStackedLayout>
 
 class EntryEditor : public QDialog
@@ -46,7 +47,6 @@ public:
               QList<Category> &categories,
               const QMap<QString, QIcon> &icons,
               QWidget *parent);
-  QString getType();
 
 public slots:
 
@@ -59,12 +59,16 @@ private slots:
 private:
   QButtonGroup *typeGroup = nullptr;
 
+  QPushButton *accountButton = nullptr;
+  QPushButton *itemButton = nullptr;
+
   AccountWidget *accountWidget = nullptr;
   ItemWidget *itemWidget = nullptr;
 
   QStackedLayout *typeLayout = nullptr;
 
-  QString entryType = "";
+  Item item;
+  Account account;
 
   const QString &barcode;
   QList<Account> &accounts;

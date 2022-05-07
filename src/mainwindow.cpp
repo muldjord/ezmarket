@@ -386,14 +386,6 @@ void MainWindow::checkBarcode()
     printf("NEW BARCODE!\n");
     EntryEditor entryEditor(barcode, accounts, items, categories, icons, this);
     entryEditor.exec();
-    type = entryEditor.getType();
-    if(type == "account") {
-      std::sort(accounts.begin(), accounts.end(), [](const Account a, const Account b) -> bool { return a.id.toLower() < b.id.toLower(); });
-      accountsTab->refreshAccounts();
-    } else if(type == "item") {
-      std::sort(items.begin(), items.end(), [](const Item a, const Item b) -> bool { return a.id.toLower() < b.id.toLower(); });
-      //itemsTab->refreshItems();
-    }
   }
 
   if(modeTabs->currentWidget() == accountsTab) {

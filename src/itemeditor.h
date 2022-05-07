@@ -1,6 +1,6 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            itemstab.h
+ *            itemeditor.cpp
  *
  *  Sat Apr 30 09:03:00 CEST 2022
  *  Copyright 2022 Lars Muldjord
@@ -24,38 +24,39 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
 
-#ifndef __ITEMSTAB_H__
-#define __ITEMSTAB_H__
+#ifndef __ITEMEDITOR_H__
+#define __ITEMEDITOR_H__
 
 #include "datatypes.h"
-#include "itemsmodel.h"
+#include "itemwidget.h"
 
-#include <QWidget>
-#include <QTableWidget>
-#include <QTimer>
-#include <QSortFilterProxyModel>
+#include <QDialog>
+#include <QAbstractButton>
 
-class ItemsTab : public QWidget
+class ItemEditor : public QDialog
 {
-  Q_OBJECT
-    
+Q_OBJECT
+
 public:
-  ItemsTab(QList<Item> &items,
-           const QList<Category> &categories,
-           const QMap<QString, QIcon> &icons,
-           QWidget *parent);
-  ~ItemsTab();
-  ItemsModel *itemsModel = nullptr;
-  
+  ItemEditor(const QString &barcode,
+             QList<Item> &items,
+             const QList<Category> &categories,
+             const QMap<QString, QIcon> &icons,
+             QWidget *parent);
+
+public slots:
+
+signals:
+
 private slots:
-  void editItem(const QModelIndex &index);
+  void checkSanity();
 
 private:
-  QSortFilterProxyModel *proxyModel = nullptr;
-  QTableView *itemsView = nullptr;
+  ItemWidget *itemWidget = nullptr;
+  const QString &barcode;
   QList<Item> &items;
   const QList<Category> &categories;
-  const QMap<QString, QIcon> &icons;
 };
 
-#endif // __ITEMSTAB_H__
+
+#endif // __ITEMEDITOR_H__

@@ -30,9 +30,10 @@
 #include <QBrush>
 
 ItemsModel::ItemsModel(QList<Item> &items,
+                       const QList<Category> &categories,
                        const QMap<QString, QIcon> &icons,
                        QObject *parent)
-  : QAbstractTableModel(parent), items(items), icons(icons)
+  : QAbstractTableModel(parent), items(items), categories(categories), icons(icons)
 {
 }
 
@@ -46,7 +47,7 @@ int ItemsModel::columnCount(const QModelIndex &) const
   if(items.isEmpty()) {
     return 0;
   }
-  return 8;
+  return 7;
 }
 
 QVariant ItemsModel::data(const QModelIndex &index, int role) const
@@ -58,68 +59,73 @@ QVariant ItemsModel::data(const QModelIndex &index, int role) const
   if(role == Qt::DisplayRole) {
     switch(index.column()) {
       // No case 0 as it is an icon and handled by Qt::DecorationRole below
-    case 1:
+    case 0:
       return items.at(index.row()).id;
       break;
-    case 2:
-      return items.at(index.row()).category;
+    case 1:
+      for(const auto &category: categories) {
+        if(category.barcode == items.at(index.row()).category) {
+          return category.id;
+        }
+      }
       break;
-    case 3:
+    case 2:
       return items.at(index.row()).price;
       break;
-    case 4:
+    case 3:
       return items.at(index.row()).discount;
       break;
-    case 5:
+    case 4:
       return items.at(index.row()).stock;
       break;
-    case 6:
+    case 5:
       return items.at(index.row()).age;
       break;
-    case 7:
+    case 6:
       return items.at(index.row()).barcode;
       break;
     };
   } else if(role == Qt::DecorationRole) {
     switch(index.column()) {
     case 0:
-      return icons[items.at(index.row()).icon].pixmap(64, 64);
+      return icons[items.at(index.row()).icon].pixmap(48, 48);
       break;
-    }
-  } else if(role == Qt::TextAlignmentRole) {
-    return Qt::AlignCenter;
-  } else if(role == Qt::BackgroundRole) {
-    switch(index.column()) {
-      // No case 0 as it is an icon and handled by Qt::DecorationRole below
-    case 0:
-      return QBrush(QColor(0, 0, 0));
+    case 1:
+      for(const auto &category: categories) {
+        if(category.barcode == items.at(index.row()).category) {
+          return icons[category.icon].pixmap(48, 48);
+        }
+      }
       break;
     }
   } else if(role == Qt::EditRole) {
+      //itemsTab->refreshItems();
+    /*
     switch(index.column()) {
-      // No case 0 as it is an icon and handled by Qt::DecorationRole below
-    case 1:
+    case 0:
       return items.at(index.row()).id;
       break;
-    case 2:
+    case 1:
       return items.at(index.row()).category;
       break;
-    case 3:
+    case 2:
       return items.at(index.row()).price;
       break;
-    case 4:
+    case 3:
       return items.at(index.row()).discount;
       break;
-    case 5:
+    case 4:
       return items.at(index.row()).stock;
       break;
-    case 6:
+    case 5:
       return items.at(index.row()).age;
       break;
-    case 7:
+    case 6:
       return items.at(index.row()).barcode;
       break;
     };
+    */
+    //dataChanged();
   }
   /*
   } else if(role == Qt::ForegroundRole) {
@@ -145,36 +151,16 @@ QVariant ItemsModel::data(const QModelIndex &index, int role) const
   return QVariant();
 }
 
+/*
 bool ItemsModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
   if(!index.isValid() ||
      role != Qt::EditRole) {
     return false;
   }
-
-  switch(index.column()) {
-  case 1:
-    items[index.row()].id = value.toString();
-    break;
-  case 2:
-    items[index.row()].category= value.toString();
-    break;
-  case 3:
-    items[index.row()].price = value.toDouble();
-    break;
-  case 4:
-    items[index.row()].discount = value.toDouble();
-    break;
-  case 5:
-    items[index.row()].stock = value.toInt();
-    break;
-  case 6:
-    items[index.row()].age = value.toInt();
-    break;
-  }
-  emit dataChanged(index, index); // Inform the model that this index has changed
-  return true;
+    return true;
 }
+*/
 
 QVariant ItemsModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
@@ -183,27 +169,24 @@ QVariant ItemsModel::headerData(int section, Qt::Orientation orientation, int ro
       if(orientation == Qt::Horizontal) {
         switch(section) {
         case 0:
-          return tr("");
-          break;
-        case 1:
           return tr("Item");
           break;
-        case 2:
+        case 1:
           return tr("Category");
           break;
-        case 3:
+        case 2:
           return tr("Price");
           break;
-        case 4:
+        case 3:
           return tr("Discount");
           break;
-        case 5:
+        case 4:
           return tr("Stock");
           break;
-        case 6:
+        case 5:
           return tr("Age");
           break;
-        case 7:
+        case 6:
           return tr("Barcode");
           break;
         default:
@@ -225,9 +208,12 @@ Qt::ItemFlags ItemsModel::flags(const QModelIndex &index) const
     return Qt::ItemIsEnabled;
   }
 
-  if(index.column() != 0 && index.column() != 7) {
+  /*
+  if(index.column() == 2 ||
+     index.column() == 3) {
     return Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable;
   }
+  */
   
   return Qt::ItemIsEnabled | Qt::ItemIsSelectable;
 }

@@ -34,7 +34,7 @@ CategoriesTab::CategoriesTab(const QList<Category> &categories, QWidget *parent)
   refreshTimer.setInterval(1000);
   refreshTimer.setSingleShot(true);
   connect(&refreshTimer, &QTimer::timeout, this, &CategoriesTab::refreshCategories);
-  refreshTimer.start();
+  //refreshTimer.start();
 
   connect(this, &CategoriesTab::itemPressed, this, &CategoriesTab::categorySelected);
 }

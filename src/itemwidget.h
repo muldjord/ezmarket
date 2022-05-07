@@ -39,13 +39,12 @@ class ItemWidget : public QWidget
     
 public:
   ItemWidget(const QString &barcode,
-             const QList<Item> &items,
-             const QMap<QString, QIcon> &icons,
+             Item &item,
              const QList<Category> &categories,
+             const QMap<QString, QIcon> &icons,
              QWidget *parent);
   ~ItemWidget();
   bool isSane();
-  Item getItem();
 
 private slots:
   void setIconSearchText();
@@ -53,7 +52,7 @@ private slots:
   
 private:
   const QString &barcode;
-  const QList<Item> &items;
+  Item &item;
   const QMap<QString, QIcon> &icons;
   LineEdit *idLineEdit = nullptr;
   LineEdit *searchLineEdit = nullptr;
