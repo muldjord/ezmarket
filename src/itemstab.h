@@ -28,6 +28,7 @@
 #define __ITEMSTAB_H__
 
 #include "datatypes.h"
+#include "data.h"
 #include "itemsmodel.h"
 
 #include <QWidget>
@@ -40,9 +41,7 @@ class ItemsTab : public QWidget
   Q_OBJECT
     
 public:
-  ItemsTab(QList<Item> &items,
-           const QList<Category> &categories,
-           const QMap<QString, QIcon> &icons,
+  ItemsTab(Data &data,
            QWidget *parent);
   ~ItemsTab();
   ItemsModel *itemsModel = nullptr;
@@ -53,9 +52,7 @@ private slots:
 private:
   QSortFilterProxyModel *proxyModel = nullptr;
   QTableView *itemsView = nullptr;
-  QList<Item> &items;
-  const QList<Category> &categories;
-  const QMap<QString, QIcon> &icons;
+  Data &data;
 };
 
 #endif // __ITEMSTAB_H__

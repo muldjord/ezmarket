@@ -1,6 +1,6 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            itemwidget.cpp
+ *            categorywidget.cpp
  *
  *  Sat Apr 30 09:03:00 CEST 2022
  *  Copyright 2022 Lars Muldjord
@@ -24,92 +24,73 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
 
-#include "itemwidget.h"
+#include "categorywidget.h"
 
 #include <QLabel>
 #include <QVBoxLayout>
 #include <QLocale>
 
-ItemWidget::ItemWidget(const QString &barcode,
+CategoryWidget::CategoryWidget(const QString &barcode,
                        Data &data,
                        QWidget *parent)
   : QWidget(parent), barcode(barcode), data(data)
 {
-  QLabel *idLabel = new QLabel(tr("Item name:"));
+  QLabel *idLabel = new QLabel(tr("Category name:"));
   idLineEdit = new LineEdit(this);
   setFocusProxy(idLineEdit);
 
-  QLabel *categoryLabel = new QLabel(tr("Category:"));
-  categoryComboBox = new QComboBox(this);
-  for(const auto &category: data.categories) {
-    categoryComboBox->addItem(data.icons[category.icon], category.id, category.barcode);
-  }
-  
   QLabel *iconLabel = new QLabel(tr("Icon:"));
   searchLineEdit = new LineEdit(this);
   searchLineEdit->setPlaceholderText(tr("Icon search"));
-  connect(searchLineEdit, &LineEdit::textChanged, this, &ItemWidget::searchIcons);
+  connect(searchLineEdit, &LineEdit::textChanged, this, &CategoryWidget::searchIcons);
   iconComboBox = new QComboBox(this);
   searchIcons();
   
-  QLabel *priceLabel = new QLabel(tr("Price:"));
-  priceLineEdit = new LineEdit(this);
-  priceLineEdit->setText("0.0");
+  QLabel *lifespanLabel = new QLabel(tr("Lifespan:"));
+  lifespanLineEdit = new LineEdit(this);
+  lifespanLineEdit->setText("0");
 
-  QLabel *discountLabel = new QLabel(tr("Discount:"));
-  discountLineEdit = new LineEdit(this);
-  discountLineEdit->setText("0.0");
-
-  for(auto &item: data.items) {
-    if(item.barcode == barcode) {
-      idLineEdit->setText(item.id);
-      printf("FOUND AT %d\n", categoryComboBox->findData(item.category));
-      categoryComboBox->setCurrentIndex(categoryComboBox->findData(item.category));
-      iconComboBox->setCurrentIndex(iconComboBox->findData(item.icon));
-      priceLineEdit->setText(QLocale().toString(item.price));
-      discountLineEdit->setText(QLocale().toString(item.discount));
-      //connect(idLineEdit, &LineEdit::textChanged, this, &ItemWidget::setIconSearchText);
+  for(auto &category: data.categories) {
+    if(category.barcode == barcode) {
+      idLineEdit->setText(category.id);
+      iconComboBox->setCurrentIndex(iconComboBox->findData(category.icon));
+      lifespanLineEdit->setText(QLocale().toString(category.lifespan));
+      //connect(idLineEdit, &LineEdit::textChanged, this, &CategoryWidget::setIconSearchText);
     }
   }
-
 
   QVBoxLayout *layout = new QVBoxLayout(this);
   layout->addWidget(idLabel);
   layout->addWidget(idLineEdit);
-  layout->addWidget(categoryLabel);
-  layout->addWidget(categoryComboBox);
   layout->addWidget(iconLabel);
   layout->addWidget(searchLineEdit);
   layout->addWidget(iconComboBox);
-  layout->addWidget(priceLabel);
-  layout->addWidget(priceLineEdit);
-  layout->addWidget(discountLabel);
-  layout->addWidget(discountLineEdit);
+  layout->addWidget(lifespanLabel);
+  layout->addWidget(lifespanLineEdit);
   layout->addSpacerItem(new QSpacerItem(1, 1, QSizePolicy::Ignored, QSizePolicy::Expanding));
 
   setLayout(layout);
 }
 
-ItemWidget::~ItemWidget()
+CategoryWidget::~CategoryWidget()
 {
 }
 
-bool ItemWidget::isSane()
+bool CategoryWidget::isSane()
 {
   if(!idLineEdit->text().isEmpty() &&
-     !categoryComboBox->currentData().toString().isEmpty() &&
-     !priceLineEdit->text().isEmpty()) {
+     !lifespanLineEdit->text().isEmpty()) {
     return true;
   }
   return false;
 }
 
-void ItemWidget::setIconSearchText()
+void CategoryWidget::setIconSearchText()
 {
   searchLineEdit->setText(idLineEdit->text());
 }
 
-void ItemWidget::searchIcons()
+void CategoryWidget::searchIcons()
 {
   QList<QString> snippets = searchLineEdit->text().toLower().split(" ");
   iconComboBox->clear();
@@ -128,15 +109,13 @@ void ItemWidget::searchIcons()
   iconComboBox->addItem(tr("None"), "");
 }
 
-Item ItemWidget::getItem()
+Category CategoryWidget::getCategory()
 {
-  Item item;
-  item.barcode = this->barcode;
-  item.id = idLineEdit->text();
-  item.category = categoryComboBox->currentData().toString();
-  item.icon = iconComboBox->currentData().toString();
-  item.price = QLocale().toDouble(priceLineEdit->text());
-  item.discount = QLocale().toDouble(discountLineEdit->text());
+  Category category;
+  category.barcode = this->barcode;
+  category.id = idLineEdit->text();
+  category.icon = iconComboBox->currentData().toString();
+  category.lifespan = QLocale().toInt(lifespanLineEdit->text());
 
-  return item;
+  return category;
 }

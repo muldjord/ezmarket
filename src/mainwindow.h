@@ -27,6 +27,7 @@
 #ifndef __MAINWINDOW_H__
 #define __MAINWINDOW_H__
 
+#include "data.h"
 #include "datatypes.h"
 #include "accountstab.h"
 #include "itemstab.h"
@@ -95,10 +96,7 @@ private:
   QTimer randomTimer;
   QTimer focusTimer;
 
-  QList<Account> accounts;
-  QList<Item> items;
-  QList<Category> categories;
-  QMap<QString, QIcon> icons;
+  Data data;
 };
 
 #endif // __MAINWINDOW_H__

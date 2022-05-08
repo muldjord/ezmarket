@@ -28,6 +28,7 @@
 #define __ITEMWIDGET_H__
 
 #include "datatypes.h"
+#include "data.h"
 #include "lineedit.h"
 
 #include <QWidget>
@@ -39,12 +40,11 @@ class ItemWidget : public QWidget
     
 public:
   ItemWidget(const QString &barcode,
-             Item &item,
-             const QList<Category> &categories,
-             const QMap<QString, QIcon> &icons,
+             Data &data,
              QWidget *parent);
   ~ItemWidget();
   bool isSane();
+  Item getItem();
 
 private slots:
   void setIconSearchText();
@@ -52,8 +52,7 @@ private slots:
   
 private:
   const QString &barcode;
-  Item &item;
-  const QMap<QString, QIcon> &icons;
+  Data &data;
   LineEdit *idLineEdit = nullptr;
   LineEdit *searchLineEdit = nullptr;
   QComboBox *iconComboBox = nullptr;

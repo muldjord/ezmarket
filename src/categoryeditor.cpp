@@ -1,6 +1,6 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            itemeditor.cpp
+ *            categoryeditor.cpp
  *
  *  Sat Apr 30 09:03:00 CEST 2022
  *  Copyright 2022 Lars Muldjord
@@ -24,7 +24,7 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
 
-#include "itemeditor.h"
+#include "categoryeditor.h"
 
 #include <QPushButton>
 #include <QButtonGroup>
@@ -33,13 +33,13 @@
 #include <QLabel>
 #include <QSound>
 
-ItemEditor::ItemEditor(const QString &barcode,
-                       Data &data,
-                       QWidget *parent)
+CategoryEditor::CategoryEditor(const QString &barcode,
+                               Data &data,
+                               QWidget *parent)
   : QDialog(parent), barcode(barcode), data(data)
 {
   setWindowTitle(tr("Barcode: ") + barcode);
-  setFixedSize(550, 700);
+  setFixedSize(450, 700);
 
   setStyleSheet("QLabel {font-size: 35px; qproperty-alignment: AlignCenter;}"
                 "QLineEdit {font-size: 35px;}"
@@ -48,28 +48,28 @@ ItemEditor::ItemEditor(const QString &barcode,
   
   //QSound::play("sounds/ny_konto_eller_vare.wav");
 
-  for(auto &item: data.items) {
-    if(barcode == item.barcode) {
-      itemWidget = new ItemWidget(barcode, data, this);
+  for(auto &category: data.categories) {
+    if(barcode == category.barcode) {
+      categoryWidget = new CategoryWidget(barcode, data, this);
       break;
     }
   }
 
   QDialogButtonBox *dialogButtons = new QDialogButtonBox(QDialogButtonBox::Save |
                                                          QDialogButtonBox::Cancel);
-  connect(dialogButtons, &QDialogButtonBox::accepted, this, &ItemEditor::checkSanity);
-  connect(dialogButtons, &QDialogButtonBox::rejected, this, &ItemEditor::reject);
+  connect(dialogButtons, &QDialogButtonBox::accepted, this, &CategoryEditor::checkSanity);
+  connect(dialogButtons, &QDialogButtonBox::rejected, this, &CategoryEditor::reject);
 
   QVBoxLayout *layout = new QVBoxLayout;
-  layout->addWidget(itemWidget);
+  layout->addWidget(categoryWidget);
   layout->addWidget(dialogButtons);
   
   setLayout(layout);
 }
 
-void ItemEditor::checkSanity()
+void CategoryEditor::checkSanity()
 {
-  if(itemWidget->isSane()) {
+  if(categoryWidget->isSane()) {
     accept();
   }
 }

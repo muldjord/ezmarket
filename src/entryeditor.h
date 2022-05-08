@@ -28,8 +28,10 @@
 #define __ENTRYEDITOR_H__
 
 #include "datatypes.h"
+#include "data.h"
 #include "accountwidget.h"
 #include "itemwidget.h"
+#include "categorywidget.h"
 
 #include <QDialog>
 #include <QAbstractButton>
@@ -42,10 +44,7 @@ Q_OBJECT
 
 public:
   EntryEditor(const QString &barcode,
-              QList<Account> &accounts,
-              QList<Item> &items,
-              QList<Category> &categories,
-              const QMap<QString, QIcon> &icons,
+              Data &data,
               QWidget *parent);
 
 public slots:
@@ -61,19 +60,16 @@ private:
 
   QPushButton *accountButton = nullptr;
   QPushButton *itemButton = nullptr;
+  QPushButton *categoryButton = nullptr;
 
   AccountWidget *accountWidget = nullptr;
   ItemWidget *itemWidget = nullptr;
+  CategoryWidget *categoryWidget = nullptr;
 
   QStackedLayout *typeLayout = nullptr;
 
-  Item item;
-  Account account;
-
   const QString &barcode;
-  QList<Account> &accounts;
-  QList<Item> &items;
-  QList<Category> &categories;
+  Data &data;
 };
 
 

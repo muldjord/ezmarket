@@ -1,6 +1,6 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            itemsmodel.cpp
+ *            categoriesmodel.cpp
  *
  *  Sat Apr 30 09:03:00 CEST 2022
  *  Copyright 2022 Lars Muldjord
@@ -24,32 +24,32 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
 
-#include "itemsmodel.h"
+#include "categoriesmodel.h"
 
 #include <QIcon>
 #include <QPainter>
 #include <QBrush>
 
-ItemsModel::ItemsModel(Data &data,
+CategoriesModel::CategoriesModel(Data &data,
                        QObject *parent)
   : QAbstractTableModel(parent), allData(data)
 {
 }
 
-int ItemsModel::rowCount(const QModelIndex &) const
+int CategoriesModel::rowCount(const QModelIndex &) const
 {
-  return allData.items.size();
+  return allData.categories.size();
 }
 
-int ItemsModel::columnCount(const QModelIndex &) const
+int CategoriesModel::columnCount(const QModelIndex &) const
 {
-  if(allData.items.isEmpty()) {
+  if(allData.categories.isEmpty()) {
     return 0;
   }
-  return 7;
+  return 3;
 }
 
-QVariant ItemsModel::data(const QModelIndex &index, int role) const
+QVariant CategoriesModel::data(const QModelIndex &index, int role) const
 {
   if(!index.isValid()) {
     return QVariant();
@@ -58,40 +58,18 @@ QVariant ItemsModel::data(const QModelIndex &index, int role) const
   if(role == Qt::DisplayRole) {
     switch(index.column()) {
     case 0:
-      return allData.items.at(index.row()).id;
+      return allData.categories.at(index.row()).id;
       break;
     case 1:
-      for(const auto &category: allData.categories) {
-        if(category.barcode == allData.items.at(index.row()).category) {
-          return category.id;
-        }
-      }
+      return allData.categories.at(index.row()).lifespan;
       break;
     case 2:
-      return allData.items.at(index.row()).price;
-      break;
-    case 3:
-      return allData.items.at(index.row()).discount;
-      break;
-    case 4:
-      return allData.items.at(index.row()).stock;
-      break;
-    case 5:
-      return allData.items.at(index.row()).age;
-      break;
-    case 6:
-      return allData.items.at(index.row()).barcode;
+      return allData.categories.at(index.row()).barcode;
       break;
     };
   } else if(role == Qt::DecorationRole) {
     if(index.column() == 0) {
-      return getPreparedIcon(allData.icons[allData.items.at(index.row()).icon]);
-    } else if(index.column() == 1) {
-      for(const auto &category: allData.categories) {
-        if(category.barcode == allData.items.at(index.row()).category) {
-          return getPreparedIcon(allData.icons[category.icon]);
-        }
-      }
+      return getPreparedIcon(allData.icons[allData.categories.at(index.row()).icon]);
     }
     /*
   } else if(role == Qt::ForegroundRole) {
@@ -110,30 +88,30 @@ QVariant ItemsModel::data(const QModelIndex &index, int role) const
   }
   /*
   } else if(role == Qt::ForegroundRole) {
-    if(allData.items[index.row()].values[index.column()].writeable) {
-      if(allData.items[index.row()].values[index.column()].eye == DB::E_OD) {
+    if(allData.categories[index.row()].values[index.column()].writeable) {
+      if(allData.categories[index.row()].values[index.column()].eye == DB::E_OD) {
         return QVariant(QBrush(QColor(0, 80, 0)));
-      } else if(allData.items[index.row()].values[index.column()].eye == DB::E_OS) {
+      } else if(allData.categories[index.row()].values[index.column()].eye == DB::E_OS) {
         return QVariant(QBrush(QColor(128, 0, 0)));
       }
     } else {
       return QVariant(QBrush(QColor(128, 128, 128)));
     }
   } else if(role == Qt::BackgroundRole) {
-    if(allData.items[index.row()].values[index.column()].eye == DB::E_OD) {
+    if(allData.categories[index.row()].values[index.column()].eye == DB::E_OD) {
       return QVariant(QBrush(QColor(242, 255, 242)));
-    } else if(allData.items[index.row()].values[index.column()].eye == DB::E_OS) {
+    } else if(allData.categories[index.row()].values[index.column()].eye == DB::E_OS) {
       return QVariant(QBrush(QColor(255, 242, 242)));
     }
   } else if(role == Qt::ToolTipRole &&
-            allData.items[index.row()].values[index.column()].conclusionUid != DB::NONE) {
-    return QVariant(allData.items[index.row()].values[index.column()].conclusionExaminer);
+            allData.categories[index.row()].values[index.column()].conclusionUid != DB::NONE) {
+    return QVariant(allData.categories[index.row()].values[index.column()].conclusionExaminer);
     */
   return QVariant();
 }
 
 /*
-bool ItemsModel::setData(const QModelIndex &index, const QVariant &value, int role)
+bool CategoriesModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
   if(!index.isValid() ||
      role != Qt::EditRole) {
@@ -143,31 +121,19 @@ bool ItemsModel::setData(const QModelIndex &index, const QVariant &value, int ro
 }
 */
 
-QVariant ItemsModel::headerData(int section, Qt::Orientation orientation, int role) const
+QVariant CategoriesModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
-  if(!allData.items.isEmpty()) {
+  if(!allData.categories.isEmpty()) {
     if(role == Qt::DisplayRole) {
       if(orientation == Qt::Horizontal) {
         switch(section) {
         case 0:
-          return tr("Item");
-          break;
-        case 1:
           return tr("Category");
           break;
+        case 1:
+          return tr("Lifespan");
+          break;
         case 2:
-          return tr("Price");
-          break;
-        case 3:
-          return tr("Discount");
-          break;
-        case 4:
-          return tr("Stock");
-          break;
-        case 5:
-          return tr("Age");
-          break;
-        case 6:
           return tr("Barcode");
           break;
         default:
@@ -176,14 +142,14 @@ QVariant ItemsModel::headerData(int section, Qt::Orientation orientation, int ro
       }
     } else if(role == Qt::DecorationRole) {
       if(orientation == Qt::Vertical) {
-        //return icons[allData.items.at(section).icon].pixmap(60, 60);
+        //return icons[allData.categories.at(section).icon].pixmap(60, 60);
       }
     }
   }
   return QVariant();
 }
 
-Qt::ItemFlags ItemsModel::flags(const QModelIndex &index) const
+Qt::ItemFlags CategoriesModel::flags(const QModelIndex &index) const
 {
   if(!index.isValid()) {
     return Qt::ItemIsEnabled;
@@ -199,24 +165,24 @@ Qt::ItemFlags ItemsModel::flags(const QModelIndex &index) const
   return Qt::ItemIsEnabled | Qt::ItemIsSelectable;
 }
 
-void ItemsModel::beginInsertRow(int row)
+void CategoriesModel::beginInsertRow(int row)
 {
   beginInsertRows(QModelIndex(), row, row);
 }
 
-bool ItemsModel::insertRows(int, int, const QModelIndex &)
+bool CategoriesModel::insertRows(int, int, const QModelIndex &)
 {
   endInsertRows();
   return true;
 }
 
-void ItemsModel::refreshAll()
+void CategoriesModel::refreshAll()
 {
   beginResetModel();
   endResetModel();
 }
 
-QPixmap ItemsModel::getPreparedIcon(const QPixmap &icon) const
+QPixmap CategoriesModel::getPreparedIcon(const QPixmap &icon) const
 {
   QImage image(icon.width() + 2, icon.height() + 2, QImage::Format_ARGB32);
   image.fill(Qt::transparent);

@@ -28,27 +28,31 @@
 #define __CATEGORIESTAB_H__
 
 #include "datatypes.h"
+#include "data.h"
+#include "categoriesmodel.h"
 
-#include <QListWidget>
-#include <QElapsedTimer>
+#include <QWidget>
+#include <QTableWidget>
 #include <QTimer>
+#include <QSortFilterProxyModel>
 
-class CategoriesTab : public QListWidget
+class CategoriesTab : public QWidget
 {
   Q_OBJECT
     
 public:
-  CategoriesTab(const QList<Category> &categories, QWidget *parent);
+  CategoriesTab(Data &data,
+           QWidget *parent);
   ~CategoriesTab();
+  CategoriesModel *categoriesModel = nullptr;
   
-
 private slots:
-  void refreshCategories();
-  void categorySelected(QListWidgetItem *item);
+  void editCategory(const QModelIndex &index);
 
 private:
-  const QList<Category> &categories;
-  QTimer refreshTimer;
+  QSortFilterProxyModel *proxyModel = nullptr;
+  QTableView *categoriesView = nullptr;
+  Data &data;
 };
 
 #endif // __CATEGORIESTAB_H__

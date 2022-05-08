@@ -56,10 +56,10 @@ MainWindow::MainWindow()
   loadIcons();
   loadDatabase();
   
-  accountsTab = new AccountsTab(accounts, items, categories, icons, this);
-  itemsTab = new ItemsTab(items, categories, icons, this);
+  accountsTab = new AccountsTab(data, this);
+  itemsTab = new ItemsTab(data, this);
   connect(itemsTab->itemsModel, &ItemsModel::dataChanged, this, &MainWindow::focusBarcodeLineEdit);
-  categoriesTab = new CategoriesTab(categories, this);
+  categoriesTab = new CategoriesTab(data, this);
  /*
   CheckoutTab *checkoutTab = new CheckoutTab(this);
   */
@@ -132,7 +132,7 @@ void MainWindow::createToolBar()
 {
   barcodeLineEdit = new QLineEdit(this);
   barcodeLineEdit->setStyleSheet("QLineEdit {background-image: url(graphics/barcode_background.png);}");
-  barcodeLineEdit->setMaximumHeight(48);
+  barcodeLineEdit->setMaximumHeight(data.iconSize);
   barcodeLineEdit->setMaximumWidth(300);
   barcodeLineEdit->setPlaceholderText(tr("Barcode"));
   connect(barcodeLineEdit, &QLineEdit::returnPressed, this, &MainWindow::checkBarcode);
@@ -145,7 +145,7 @@ void MainWindow::createToolBar()
   */
 
   QToolBar *toolBar = new QToolBar(tr("Main functions"));
-  toolBar->setMinimumHeight(64);
+  toolBar->setMinimumHeight(data.iconSize);
   toolBar->setStyleSheet("QToolBar {background-image: url(graphics/marquee.png); border: 0px;}");
 
   /*
@@ -169,7 +169,7 @@ void MainWindow::loadIcons()
   QDir iconsDir("graphics/icons", "*.png", QDir::Name, QDir::Files);
   QList<QFileInfo> iconInfos = iconsDir.entryInfoList();
   for(const auto &iconInfo: iconInfos) {
-    icons[iconInfo.baseName()] = QIcon(iconInfo.absoluteFilePath());
+    data.icons[iconInfo.baseName()] = QPixmap(iconInfo.absoluteFilePath()).scaled(data.iconSize, data.iconSize, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
   }
 }
 
@@ -233,7 +233,7 @@ void MainWindow::parseAccount(const QString &string)
          account.balance,
          account.bonus);
   
-  accounts.append(account);
+  data.accounts.append(account);
 }
 
 void MainWindow::parseItem(const QString &string)
@@ -280,7 +280,7 @@ void MainWindow::parseItem(const QString &string)
          item.age,
          qPrintable(item.icon));
 
-  items.append(item);
+  data.items.append(item);
 }
 
 void MainWindow::parseCategory(const QString &string)
@@ -301,17 +301,21 @@ void MainWindow::parseCategory(const QString &string)
   if(vars.contains("icon")) {
     category.icon = vars["icon"];
   }
-  printf("Category:\n  barcode=%s\n  id=%s\n  icon=%s\n",
+  if(vars.contains("lifespan")) {
+    category.lifespan = vars["lifespan"].toInt();
+  }
+  printf("Category:\n  barcode=%s\n  id=%s\n  icon=%s\n  lifespan=%d\n",
          qPrintable(category.barcode),
          qPrintable(category.id),
-         qPrintable(category.icon));
+         qPrintable(category.icon),
+         category.lifespan);
   
-  categories.append(category);
+  data.categories.append(category);
 }
 
 void MainWindow::saveDatabase()
 {
-  if(accounts.isEmpty() && items.isEmpty()) {
+  if(data.accounts.isEmpty() && data.items.isEmpty()) {
     return;
   }
 
@@ -332,18 +336,18 @@ void MainWindow::saveDatabase()
   QFile database("database.dat");
   if(database.open(QIODevice::WriteOnly)) {
     database.write("accounts:\n");
-    for(const auto &account: accounts) {
+    for(const auto &account: data.accounts) {
       database.write(QString("barcode=" + account.barcode + ";id=" + account.id + ";balance=" + QString::number(account.balance) + ";bonus=" + QString::number(account.bonus) + "\n").toUtf8());
     }
     database.write("\n");
     database.write("items:\n");
-    for(const auto &item: items) {
+    for(const auto &item: data.items) {
       database.write(QString("barcode=" + item.barcode + ";id=" + item.id + ";category=" + item.category + ";price=" + QString::number(item.price) + ";discount=" + QString::number(item.discount) + ";stock=" + QString::number(item.stock) + ";age=" + QString::number(item.age) + ";icon=" + item.icon + "\n").toUtf8());
     }
     database.write("\n");
     database.write("categories:\n");
-    for(const auto &category: categories) {
-      database.write(QString("barcode=" + category.barcode + ";id=" + category.id + ";icon=" + category.icon + "\n").toUtf8());
+    for(const auto &category: data.categories) {
+      database.write(QString("barcode=" + category.barcode + ";id=" + category.id + ";icon=" + category.icon + ";lifespan=" + QString::number(category.lifespan) + "\n").toUtf8());
     }
     database.close();
   }
@@ -367,25 +371,42 @@ void MainWindow::checkBarcode()
 
   printf("CHECKING BARCODE: '%s'\n", qPrintable(barcode));
   bool barcodeFound = false;
-  for(const auto &account: accounts) {
+  for(const auto &account: data.accounts) {
     if(barcode == account.barcode) {
       printf("THIS IS AN ACCOUNT!\n");
       type = "account";
       barcodeFound = true;
     }
   }
-  for(const auto &item: items) {
+  for(const auto &item: data.items) {
     if(barcode == item.barcode) {
       printf("THIS IS AN ITEM!\n");
       type = "item";
       barcodeFound = true;
     }
   }
+  for(const auto &category: data.categories) {
+    if(barcode == category.barcode) {
+      printf("THIS IS A CATEGORY!\n");
+      type = "category";
+      barcodeFound = true;
+    }
+  }
 
   if(!barcodeFound) {
     printf("NEW BARCODE!\n");
-    EntryEditor entryEditor(barcode, accounts, items, categories, icons, this);
-    entryEditor.exec();
+    if(type == "account") {
+    } else if(type == "item") {
+      itemsTab->itemsModel->beginInsertRow(data.items.length());
+      EntryEditor entryEditor(barcode, data, this);
+      entryEditor.exec();
+      itemsTab->itemsModel->insertRows(data.items.length(), 1);
+    } else if(type == "category") {
+      categoriesTab->categoriesModel->beginInsertRow(data.categories.length());
+      EntryEditor entryEditor(barcode, data, this);
+      entryEditor.exec();
+      categoriesTab->categoriesModel->insertRows(data.categories.length(), 1);
+    }
   }
 
   if(modeTabs->currentWidget() == accountsTab) {
@@ -399,13 +420,30 @@ void MainWindow::checkBarcode()
     if(type == "account") {
       modeTabs->setCurrentWidget(accountsTab);
     } else if(type == "item") {
+      for(int a = 0; a < data.items.length(); ++a) {
+        if(data.items.at(a).barcode == barcode) {
+          data.items[a].stock += 1;
+          itemsTab->itemsModel->refreshAll();
+        }
+      }
     }
   } else if(modeTabs->currentWidget() == categoriesTab) {
     printf("CATEGORIES TAB ACTIVE!\n");
+    if(type == "account") {
+      modeTabs->setCurrentWidget(accountsTab);
+    } else if(type == "item") {
+      modeTabs->setCurrentWidget(itemsTab);
+    } else if(type == "category") {
+      for(int a = 0; a < data.categories.length(); ++a) {
+        if(data.categories.at(a).barcode == barcode) {
+          categoriesTab->categoriesModel->refreshAll();
+        }
+      }
+    }
   }
   
   /*  
-  for(const auto &account: accounts) {
+  for(const auto &account: data.accounts) {
     if(barcode == account.barcode) {
       printf("THIS IS A ACCOUNT!\n");
       barcodeFound = true;
@@ -414,7 +452,7 @@ void MainWindow::checkBarcode()
       accountOnLoanList->clear();
       accountReservedList->clear();
       clearItem();
-      for(const auto &item: items) {
+      for(const auto &item: data.items) {
         if(item.loanedBy == account.barcode) {
           accountOnLoanList->addItem(item.id);
         } else if(item.reservedBy == account.barcode) {
@@ -423,7 +461,7 @@ void MainWindow::checkBarcode()
       }
     }
   }
-  for(auto &item: items) {
+  for(auto &item: data.items) {
     if(barcode == item.barcode) {
       printf("THIS IS A ITEM!\n");
       barcodeFound = true;
@@ -436,7 +474,7 @@ void MainWindow::checkBarcode()
         break;
       }
       if(!accountBarcodeLineEdit->text().isEmpty()) {
-        for(const auto &account: accounts) {
+        for(const auto &account: data.accounts) {
           if(accountBarcodeLineEdit->text() == account.barcode) {
 
             if(item.reservedBy.isEmpty() && item.loanedBy.isEmpty()) {
@@ -494,15 +532,15 @@ void MainWindow::checkBarcode()
         Account account;
         account.barcode = barcode;
         account.id = entryEditor.getNameTitle();
-        accounts.append(account);
+        data.accounts.append(account);
       } else if(entryEditor.getType() == "item") {
         QSound::play("sounds/bog_registreret.wav");
         printf("ADDING NEW ITEM!\n");
         Item item;
         item.barcode = barcode;
         item.id = entryEditor.getNameTitle();
-        items.append(item);
-        std::sort(items.begin(), items.end(), [](const Item a, const Item b) -> bool { return a.id.toLower() < b.id.toLower(); });
+        data.items.append(item);
+        std::sort(data.items.begin(), data.items.end(), [](const Item a, const Item b) -> bool { return a.id.toLower() < b.id.toLower(); });
 
       }
       clearAll();
@@ -517,7 +555,7 @@ void MainWindow::checkBarcode()
 
 QString MainWindow::getAccountFromBarcode(const QString &barcode)
 {
-  for(const auto &account: accounts) {
+  for(const auto &account: data.accounts) {
     if(account.barcode == barcode) {
       return account.id;
     }
@@ -527,7 +565,7 @@ QString MainWindow::getAccountFromBarcode(const QString &barcode)
 
 QString MainWindow::getItemFromBarcode(const QString &barcode)
 {
-  for(const auto &item: items) {
+  for(const auto &item: data.items) {
     if(item.barcode == barcode) {
       return item.id;
     }
@@ -537,7 +575,7 @@ QString MainWindow::getItemFromBarcode(const QString &barcode)
 
 QString MainWindow::getCategoryFromBarcode(const QString &barcode)
 {
-  for(const auto &category: categories) {
+  for(const auto &category: data.categories) {
     if(category.barcode == barcode) {
       return category.id;
     }

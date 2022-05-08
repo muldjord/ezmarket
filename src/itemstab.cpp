@@ -31,16 +31,14 @@
 #include <QLabel>
 #include <QHeaderView>
 
-ItemsTab::ItemsTab(QList<Item> &items,
-                   const QList<Category> &categories,
-                   const QMap<QString, QIcon> &icons,
+ItemsTab::ItemsTab(Data &data,
                    QWidget *parent)
-  : QWidget(parent), items(items), categories(categories), icons(icons)
+  : QWidget(parent), data(data)
 {
   setStyleSheet("QTableView {font-size: 30px;}"
                 "QHeaderView {font-size: 30px;}");
   itemsView = new QTableView(this);
-  itemsModel = new ItemsModel(items, categories, icons, this);
+  itemsModel = new ItemsModel(data, this);
 
   proxyModel = new QSortFilterProxyModel(this);
   proxyModel->setSourceModel(itemsModel);
@@ -53,8 +51,8 @@ ItemsTab::ItemsTab(QList<Item> &items,
   itemsView->horizontalHeader()->setSectionResizeMode(5, QHeaderView::ResizeToContents);
   itemsView->horizontalHeader()->setSectionResizeMode(6, QHeaderView::ResizeToContents);
   itemsView->verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
-  itemsView->verticalHeader()->setMinimumSectionSize(54);
-  itemsView->verticalHeader()->setMaximumSectionSize(54);
+  itemsView->verticalHeader()->setMinimumSectionSize(data.iconSize + 6);
+  itemsView->verticalHeader()->setMaximumSectionSize(data.iconSize + 6);
   itemsView->setSelectionBehavior(QTableView::SelectRows);
   itemsView->setSelectionMode(QAbstractItemView::SingleSelection);
   itemsView->verticalHeader()->setVisible(false);
@@ -72,6 +70,6 @@ ItemsTab::~ItemsTab()
 
 void ItemsTab::editItem(const QModelIndex &index)
 {
-  ItemEditor itemEditor(items.at(proxyModel->mapToSource(index).row()).barcode, items, categories, icons, this);
+  ItemEditor itemEditor(data.items.at(proxyModel->mapToSource(index).row()).barcode, data, this);
   itemEditor.exec();
 }

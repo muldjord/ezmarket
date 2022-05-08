@@ -1,6 +1,6 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            datatypes.h
+ *            data.h
  *
  *  Sat Apr 30 09:03:00 CEST 2022
  *  Copyright 2022 Lars Muldjord
@@ -24,35 +24,22 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
 
-#ifndef __DATATYPES_H__
-#define __DATATYPES_H__
+#ifndef __MAINSETTINGS_H__
+#define __MAINSETTINGS_H__
+
+#include "datatypes.h"
 
 #include <QString>
+#include <QList>
+#include <QMap>
+#include <QPixmap>
 
-struct Account {
-  QString barcode = "";
-  QString id = "";
-  double balance = 0.0;
-  int bonus = 0;
+struct Data {
+  int iconSize = 48;
+  QList<Account> accounts;
+  QList<Item> items;
+  QList<Category> categories;
+  QMap<QString, QPixmap> icons;
 };
 
-struct Item {
-  QString icon = ""; // PNG file basename
-  QString id = "";
-  QString category = ""; // Category barcode.
-  double price = 0.0;
-  double discount = 0.0; // Subtracted from price.
-  int stock = 0;
-  int age = 0; // Seconds. Reset whenever one or more is added to stock emulating renewal.
-  QString barcode = "";
-};
-
-struct Category {
-  QString barcode = "";
-  QString id = "";
-  QString icon = ""; // PNG file basename
-  int lifespan = -1;
-};
-
-
-#endif // __DATATYPES_H__
+#endif // __MAINSETTINGS_H__

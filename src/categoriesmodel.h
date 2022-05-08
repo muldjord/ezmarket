@@ -1,6 +1,6 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            itemsmodel.h
+ *            categoriesmodel.h
  *
  *  Sat Apr 30 09:03:00 CEST 2022
  *  Copyright 2022 Lars Muldjord
@@ -24,20 +24,20 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
 
-#ifndef __ITEMSMODEL_H__
-#define __ITEMSMODEL_H__
+#ifndef __CATEGORIESMODEL_H__
+#define __CATEGORIESMODEL_H__
 
 #include "datatypes.h"
 #include "data.h"
 
 #include <QAbstractTableModel>
 
-class ItemsModel : public QAbstractTableModel
+class CategoriesModel : public QAbstractTableModel
 {
 Q_OBJECT
   
 public:
-  ItemsModel(Data &data,
+  CategoriesModel(Data &data,
              QObject *parent);
   
   int rowCount(const QModelIndex &parent = QModelIndex()) const override;
@@ -67,4 +67,4 @@ private:
   Data &allData;
 };
 
-#endif // __ITEMSMODEL_H__
+#endif // __CATEGORIESMODEL_H__

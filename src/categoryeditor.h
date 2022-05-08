@@ -1,6 +1,6 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            datatypes.h
+ *            categoryeditor.cpp
  *
  *  Sat Apr 30 09:03:00 CEST 2022
  *  Copyright 2022 Lars Muldjord
@@ -24,35 +24,37 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
 
-#ifndef __DATATYPES_H__
-#define __DATATYPES_H__
+#ifndef __CATEGORYEDITOR_H__
+#define __CATEGORYEDITOR_H__
 
-#include <QString>
+#include "datatypes.h"
+#include "data.h"
+#include "categorywidget.h"
 
-struct Account {
-  QString barcode = "";
-  QString id = "";
-  double balance = 0.0;
-  int bonus = 0;
+#include <QDialog>
+#include <QAbstractButton>
+
+class CategoryEditor : public QDialog
+{
+Q_OBJECT
+
+public:
+  CategoryEditor(const QString &barcode,
+             Data &data,
+             QWidget *parent);
+
+public slots:
+
+signals:
+
+private slots:
+  void checkSanity();
+
+private:
+  CategoryWidget *categoryWidget = nullptr;
+  const QString &barcode;
+  Data &data;
 };
 
-struct Item {
-  QString icon = ""; // PNG file basename
-  QString id = "";
-  QString category = ""; // Category barcode.
-  double price = 0.0;
-  double discount = 0.0; // Subtracted from price.
-  int stock = 0;
-  int age = 0; // Seconds. Reset whenever one or more is added to stock emulating renewal.
-  QString barcode = "";
-};
 
-struct Category {
-  QString barcode = "";
-  QString id = "";
-  QString icon = ""; // PNG file basename
-  int lifespan = -1;
-};
-
-
-#endif // __DATATYPES_H__
+#endif // __CATEGORYEDITOR_H__

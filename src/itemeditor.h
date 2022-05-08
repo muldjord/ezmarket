@@ -28,6 +28,7 @@
 #define __ITEMEDITOR_H__
 
 #include "datatypes.h"
+#include "data.h"
 #include "itemwidget.h"
 
 #include <QDialog>
@@ -39,9 +40,7 @@ Q_OBJECT
 
 public:
   ItemEditor(const QString &barcode,
-             QList<Item> &items,
-             const QList<Category> &categories,
-             const QMap<QString, QIcon> &icons,
+             Data &data,
              QWidget *parent);
 
 public slots:
@@ -54,8 +53,7 @@ private slots:
 private:
   ItemWidget *itemWidget = nullptr;
   const QString &barcode;
-  QList<Item> &items;
-  const QList<Category> &categories;
+  Data &data;
 };
 
 

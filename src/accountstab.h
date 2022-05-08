@@ -28,6 +28,7 @@
 #define __ACCOUNTSTAB_H__
 
 #include "datatypes.h"
+#include "data.h"
 
 #include <QWidget>
 #include <QTableWidget>
@@ -38,11 +39,8 @@ class AccountsTab : public QWidget
   Q_OBJECT
     
 public:
-  AccountsTab(QList<Account> &accounts,
-           QList<Item> &items,
-           QList<Category> &categories,
-           const QMap<QString, QIcon> &icons,
-           QWidget *parent);
+  AccountsTab(Data &data,
+              QWidget *parent);
   ~AccountsTab();
   
 public slots:
@@ -53,10 +51,7 @@ private slots:
 
 private:
   QTableWidget *accountsList = nullptr;
-  QList<Account> &accounts;
-  QList<Item> &items;
-  QList<Category> &categories;
-  const QMap<QString, QIcon> &icons;
+  Data &data;
 };
 
 #endif // __ACCOUNTSTAB_H__

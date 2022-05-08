@@ -28,6 +28,7 @@
 #define __ACCOUNTWIDGET_H__
 
 #include "datatypes.h"
+#include "data.h"
 #include "lineedit.h"
 
 #include <QWidget>
@@ -38,7 +39,7 @@ class AccountWidget : public QWidget
     
 public:
   AccountWidget(const QString &barcode,
-                const QList<Account> &accounts,
+                Data &data,
                 QWidget *parent);
   ~AccountWidget();
   bool isSane();

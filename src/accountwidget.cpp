@@ -31,7 +31,7 @@
 #include <QLocale>
 
 AccountWidget::AccountWidget(const QString &barcode,
-                             const QList<Account> &accounts,
+                             Data &data,
                              QWidget *parent)
   : QWidget(parent), barcode(barcode)
 {
@@ -47,7 +47,7 @@ AccountWidget::AccountWidget(const QString &barcode,
   bonusLineEdit = new LineEdit(this);
   bonusLineEdit->setText("0");
 
-  for(const auto &account: accounts) {
+  for(const auto &account: data.accounts) {
     if(barcode == account.barcode) {
       idLineEdit->setText(account.id);
       balanceLineEdit->setText(QLocale().toString(account.balance));

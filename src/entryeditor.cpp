@@ -34,15 +34,12 @@
 #include <QSound>
 
 EntryEditor::EntryEditor(const QString &barcode,
-                         QList<Account> &accounts,
-                         QList<Item> &items,
-                         QList<Category> &categories,
-                         const QMap<QString, QIcon> &icons,
+                         Data &data,
                          QWidget *parent)
-  : QDialog(parent), barcode(barcode), accounts(accounts), items(items), categories(categories)
+  : QDialog(parent), barcode(barcode), data(data)
 {
   setWindowTitle(tr("Barcode: ") + barcode);
-  setFixedSize(450, 700);
+  setFixedSize(550, 750);
 
   setStyleSheet("QLabel {font-size: 35px; qproperty-alignment: AlignCenter;}"
                 "QLineEdit {font-size: 35px;}"
@@ -56,32 +53,39 @@ EntryEditor::EntryEditor(const QString &barcode,
   accountButton = new QPushButton(tr("Account"));
   accountButton->setIcon(QIcon("graphics/account.png"));
   accountButton->setCheckable(true);
-  accountButton->setObjectName("account");
   accountButton->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Expanding);
 
   itemButton = new QPushButton(tr("Item"));
   itemButton->setIcon(QIcon("graphics/item.png"));
   itemButton->setCheckable(true);
-  itemButton->setObjectName("item");
   itemButton->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Expanding);
 
+  categoryButton = new QPushButton(tr("Category"));
+  categoryButton->setIcon(QIcon("graphics/category.png"));
+  categoryButton->setCheckable(true);
+  categoryButton->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Expanding);
+  
   typeGroup = new QButtonGroup(this);
   typeGroup->addButton(accountButton);
   typeGroup->addButton(itemButton);
+  typeGroup->addButton(categoryButton);
   typeGroup->setExclusive(true);
   connect(typeGroup, qOverload<QAbstractButton *>(&QButtonGroup::buttonReleased), this, &EntryEditor::typeChanged);
 
   QHBoxLayout *buttonLayout = new QHBoxLayout;
   buttonLayout->addWidget(accountButton);
   buttonLayout->addWidget(itemButton);
+  buttonLayout->addWidget(categoryButton);
 
-  accountWidget = new AccountWidget(barcode, accounts, this);
-  itemWidget = new ItemWidget(barcode, item, categories, icons, this);
+  accountWidget = new AccountWidget(barcode, data, this);
+  itemWidget = new ItemWidget(barcode, data, this);
+  categoryWidget = new CategoryWidget(barcode, data, this);
 
   typeLayout = new QStackedLayout;
   typeLayout->addWidget(new QWidget);
   typeLayout->addWidget(accountWidget);
   typeLayout->addWidget(itemWidget);
+  typeLayout->addWidget(categoryWidget);
   
   QDialogButtonBox *dialogButtons = new QDialogButtonBox(QDialogButtonBox::Save |
                                                          QDialogButtonBox::Cancel);
@@ -105,6 +109,9 @@ void EntryEditor::typeChanged(QAbstractButton *button)
   } else if(button == itemButton) {
     typeLayout->setCurrentWidget(itemWidget);
     itemWidget->setFocus();
+  } else if(button == categoryButton) {
+    typeLayout->setCurrentWidget(categoryWidget);
+    categoryWidget->setFocus();
   }
 }
 
@@ -112,13 +119,19 @@ void EntryEditor::checkSanity()
 {
   if(typeLayout->currentWidget() == accountWidget) {
     if(accountWidget->isSane()) {
-      accounts.append(accountWidget->getAccount());
+      data.accounts.append(accountWidget->getAccount());
     } else {
       return;
     }
   } else if(typeLayout->currentWidget() == itemWidget) {
     if(itemWidget->isSane()) {
-      items.append(item);
+      data.items.append(itemWidget->getItem());
+    } else {
+      return;
+    }
+  } else if(typeLayout->currentWidget() == categoryWidget) {
+    if(categoryWidget->isSane()) {
+      data.categories.append(categoryWidget->getCategory());
     } else {
       return;
     }

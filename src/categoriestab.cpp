@@ -24,59 +24,63 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
 
-#include <stdio.h>
-
 #include "categoriestab.h"
+#include "categoryeditor.h"
 
-CategoriesTab::CategoriesTab(const QList<Category> &categories, QWidget *parent)
-  : QListWidget(parent), categories(categories)
+#include <QVBoxLayout>
+#include <QLabel>
+#include <QHeaderView>
+
+CategoriesTab::CategoriesTab(Data &data,
+                   QWidget *parent)
+  : QWidget(parent), data(data)
 {
-  refreshTimer.setInterval(1000);
-  refreshTimer.setSingleShot(true);
-  connect(&refreshTimer, &QTimer::timeout, this, &CategoriesTab::refreshCategories);
-  //refreshTimer.start();
+  setStyleSheet("QTableView {font-size: 30px;}"
+                "QHeaderView {font-size: 30px;}");
+  categoriesView = new QTableView(this);
+  categoriesModel = new CategoriesModel(data, this);
 
-  connect(this, &CategoriesTab::itemPressed, this, &CategoriesTab::categorySelected);
+  proxyModel = new QSortFilterProxyModel(this);
+  proxyModel->setSourceModel(categoriesModel);
+
+  categoriesView->setModel(proxyModel);
+  categoriesView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+  categoriesView->verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
+  categoriesView->verticalHeader()->setMinimumSectionSize(data.iconSize + 6);
+  categoriesView->verticalHeader()->setMaximumSectionSize(data.iconSize + 6);
+  categoriesView->setSelectionBehavior(QTableView::SelectRows);
+  categoriesView->setSelectionMode(QAbstractItemView::SingleSelection);
+  categoriesView->verticalHeader()->setVisible(false);
+  categoriesView->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+  categoriesView->setSortingEnabled(true);
+  connect(categoriesView, &QTableView::doubleClicked, this, &CategoriesTab::editCategory);
+  /*
+  QPusbButton *addButton = new QPushButton(tr("Add category"));
+  connect(addButton, &QPushButton::clicked, this, &CategoriesTab::addCategory);
+
+  QHBoxLayout *functionLayout = new QHBoxLayout;
+  functionsLayout->addWidget(addButton);
+  */
+  
+  QVBoxLayout *layout = new QVBoxLayout;
+  layout->addWidget(categoriesView);
+  setLayout(layout);
 }
 
 CategoriesTab::~CategoriesTab()
 {
 }
 
-void CategoriesTab::refreshCategories()
+void CategoriesTab::editCategory(const QModelIndex &index)
 {
-  printf("REFRESHING CATEGORIES!\n");
-  clear();
-
-  for(auto &category: categories) {
-    /*
-    if(!category.loanedBy.isEmpty()) {
-      category.loanedTimer += elapsedTime.elapsed();
-      printf("Category: %s, loaned time: %d\n", qPrintable(category.title), category.loanedTimer);
-    } else {
-      category.loanedTimer = 0.0;
-    }
-    */
-    QListWidgetItem *item = new QListWidgetItem;
-    item->setText(category.id + " (" + category.barcode + ")");
-    /*
-    if(category.loanedTimer > 240 * 1000) {
-      item->setForeground(Qt::red);
-    } else if(!category.reservedBy.isEmpty()) {
-      item->setForeground(Qt::blue);
-    } else if(!category.loanedBy.isEmpty()) {
-      item->setForeground(Qt::gray);
-    }
-    */
-    item->setData(Qt::UserRole, category.barcode);
-    addItem(item);
-  }
-  //elapsedTime.restart();
-  refreshTimer.start();
+  CategoryEditor categoryEditor(data.categories.at(proxyModel->mapToSource(index).row()).barcode, data, this);
+  categoryEditor.exec();
 }
 
-void CategoriesTab::categorySelected(QListWidgetItem *item)
+/*
+void CategoriesTab::addCategory()
 {
-  //emit focusCategory(item->data(Qt::UserRole).toString());
-  refreshTimer.start();
+  CategoryEditor categoryEditor(data.categories.at(proxyModel->mapToSource(index).row()).barcode, data, this);
+  categoryEditor.exec();
 }
+*/

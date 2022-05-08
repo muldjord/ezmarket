@@ -31,12 +31,9 @@
 #include <QLabel>
 #include <QHeaderView>
 
-AccountsTab::AccountsTab(QList<Account> &accounts,
-                   QList<Item> &items,
-                   QList<Category> &categories,
-                   const QMap<QString, QIcon> &icons,
-                   QWidget *parent)
-  : QWidget(parent), accounts(accounts), items(items), categories(categories), icons(icons)
+AccountsTab::AccountsTab(Data &data,
+                         QWidget *parent)
+  : QWidget(parent), data(data)
 {
   setStyleSheet("QTableWidget {qproperty-iconSize: 35px; font-size: 30px;}"
                 "QHeaderView {font-size: 30px;}"
@@ -63,36 +60,36 @@ void AccountsTab::refreshAccounts()
   printf("REFRESHING ACCOUNTS!\n");
   accountsList->clear();
   accountsList->setColumnCount(5);
-  accountsList->setRowCount(accounts.length());
+  accountsList->setRowCount(data.accounts.length());
 
   accountsList->setHorizontalHeaderLabels({"",
       tr("Account"),
       tr("Balance"),
       tr("Bonus"),
       tr("Barcode")});
-  for(int row = 0; row < accounts.length(); ++row) {
+  for(int row = 0; row < data.accounts.length(); ++row) {
 
     QLabel *iconLabel = new QLabel();
     iconLabel->setAlignment(Qt::AlignHCenter);
     iconLabel->setPixmap(QIcon("graphics/account.png").pixmap(50, 50));
     accountsList->setCellWidget(row, 0, iconLabel);
     
-    QTableWidgetItem *idItem = new QTableWidgetItem(accounts.at(row).id);
-    idItem->setData(Qt::UserRole, accounts.at(row).barcode);
+    QTableWidgetItem *idItem = new QTableWidgetItem(data.accounts.at(row).id);
+    idItem->setData(Qt::UserRole, data.accounts.at(row).barcode);
     accountsList->setItem(row, 1, idItem);
 
     QTableWidgetItem *balanceItem = new QTableWidgetItem();
-    balanceItem->setData(Qt::DisplayRole, accounts.at(row).balance);
-    balanceItem->setData(Qt::UserRole, accounts.at(row).barcode);
+    balanceItem->setData(Qt::DisplayRole, data.accounts.at(row).balance);
+    balanceItem->setData(Qt::UserRole, data.accounts.at(row).barcode);
     accountsList->setItem(row, 2, balanceItem);
 
     QTableWidgetItem *bonusItem = new QTableWidgetItem();
-    bonusItem->setData(Qt::DisplayRole, accounts.at(row).bonus);
-    bonusItem->setData(Qt::UserRole, accounts.at(row).barcode);
+    bonusItem->setData(Qt::DisplayRole, data.accounts.at(row).bonus);
+    bonusItem->setData(Qt::UserRole, data.accounts.at(row).barcode);
     accountsList->setItem(row, 3, bonusItem);
 
-    QTableWidgetItem *barcodeItem = new QTableWidgetItem(accounts.at(row).barcode);
-    barcodeItem->setData(Qt::UserRole, accounts.at(row).barcode);
+    QTableWidgetItem *barcodeItem = new QTableWidgetItem(data.accounts.at(row).barcode);
+    barcodeItem->setData(Qt::UserRole, data.accounts.at(row).barcode);
     accountsList->setItem(row, 4, barcodeItem);
   }
   accountsList->resizeColumnsToContents();
@@ -101,7 +98,7 @@ void AccountsTab::refreshAccounts()
 
 void AccountsTab::editAccount(int row, int)
 {
-  EntryEditor entryEditor(accountsList->item(row, 1)->data(Qt::UserRole).toString(), accounts, items, categories, icons, this);
+  EntryEditor entryEditor(accountsList->item(row, 1)->data(Qt::UserRole).toString(), data, this);
   entryEditor.exec();
   
   printf("EDITING ROW %d, BARCODE %s\n", row, qPrintable(accountsList->item(row, 1)->data(Qt::UserRole).toString()));
