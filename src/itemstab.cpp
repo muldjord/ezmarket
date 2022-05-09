@@ -44,6 +44,7 @@ ItemsTab::ItemsTab(Data &data,
   proxyModel->setSourceModel(itemsModel);
 
   itemsView->setModel(proxyModel);
+  //itemsView->setItemDelegate();
   itemsView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
   itemsView->horizontalHeader()->setSectionResizeMode(2, QHeaderView::ResizeToContents);
   itemsView->horizontalHeader()->setSectionResizeMode(3, QHeaderView::ResizeToContents);
@@ -72,4 +73,5 @@ void ItemsTab::editItem(const QModelIndex &index)
 {
   ItemEditor itemEditor(data.items.at(proxyModel->mapToSource(index).row()).barcode, data, this);
   itemEditor.exec();
+  itemsModel->emit dataChanged(proxyModel->mapToSource(index), proxyModel->mapToSource(index));
 }

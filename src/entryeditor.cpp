@@ -55,27 +55,27 @@ EntryEditor::EntryEditor(const QString &barcode,
   accountButton->setCheckable(true);
   accountButton->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Expanding);
 
-  itemButton = new QPushButton(tr("Item"));
-  itemButton->setIcon(QIcon("graphics/item.png"));
-  itemButton->setCheckable(true);
-  itemButton->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Expanding);
-
   categoryButton = new QPushButton(tr("Category"));
   categoryButton->setIcon(QIcon("graphics/category.png"));
   categoryButton->setCheckable(true);
   categoryButton->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Expanding);
+
+  itemButton = new QPushButton(tr("Item"));
+  itemButton->setIcon(QIcon("graphics/item.png"));
+  itemButton->setCheckable(true);
+  itemButton->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Expanding);
   
   typeGroup = new QButtonGroup(this);
   typeGroup->addButton(accountButton);
-  typeGroup->addButton(itemButton);
   typeGroup->addButton(categoryButton);
+  typeGroup->addButton(itemButton);
   typeGroup->setExclusive(true);
   connect(typeGroup, qOverload<QAbstractButton *>(&QButtonGroup::buttonReleased), this, &EntryEditor::typeChanged);
 
   QHBoxLayout *buttonLayout = new QHBoxLayout;
   buttonLayout->addWidget(accountButton);
-  buttonLayout->addWidget(itemButton);
   buttonLayout->addWidget(categoryButton);
+  buttonLayout->addWidget(itemButton);
 
   accountWidget = new AccountWidget(barcode, data, this);
   itemWidget = new ItemWidget(barcode, data, this);
@@ -84,8 +84,8 @@ EntryEditor::EntryEditor(const QString &barcode,
   typeLayout = new QStackedLayout;
   typeLayout->addWidget(new QWidget);
   typeLayout->addWidget(accountWidget);
-  typeLayout->addWidget(itemWidget);
   typeLayout->addWidget(categoryWidget);
+  typeLayout->addWidget(itemWidget);
   
   QDialogButtonBox *dialogButtons = new QDialogButtonBox(QDialogButtonBox::Save |
                                                          QDialogButtonBox::Cancel);
@@ -118,23 +118,44 @@ void EntryEditor::typeChanged(QAbstractButton *button)
 void EntryEditor::checkSanity()
 {
   if(typeLayout->currentWidget() == accountWidget) {
-    if(accountWidget->isSane()) {
-      data.accounts.append(accountWidget->getAccount());
-    } else {
+    if(!accountWidget->isSane()) {
       return;
     }
   } else if(typeLayout->currentWidget() == itemWidget) {
-    if(itemWidget->isSane()) {
-      data.items.append(itemWidget->getItem());
-    } else {
+    if(!itemWidget->isSane()) {
       return;
     }
   } else if(typeLayout->currentWidget() == categoryWidget) {
-    if(categoryWidget->isSane()) {
-      data.categories.append(categoryWidget->getCategory());
-    } else {
+    if(!categoryWidget->isSane()) {
       return;
     }
   }
   accept();
+}
+
+QString EntryEditor::getType()
+{
+  if(typeLayout->currentWidget() == accountWidget) {
+    return "account";
+  } else if(typeLayout->currentWidget() == itemWidget) {
+    return "item";
+  } else if(typeLayout->currentWidget() == categoryWidget) {
+    return "category";
+  }
+  return "";
+}
+
+Account EntryEditor::getAccount()
+{
+  return accountWidget->getAccount();
+}
+
+Item EntryEditor::getItem()
+{
+  return itemWidget->getItem();
+}
+
+Category EntryEditor::getCategory()
+{
+  return categoryWidget->getCategory();
 }

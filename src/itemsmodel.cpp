@@ -43,9 +43,6 @@ int ItemsModel::rowCount(const QModelIndex &) const
 
 int ItemsModel::columnCount(const QModelIndex &) const
 {
-  if(allData.items.isEmpty()) {
-    return 0;
-  }
   return 7;
 }
 
@@ -145,39 +142,33 @@ bool ItemsModel::setData(const QModelIndex &index, const QVariant &value, int ro
 
 QVariant ItemsModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
-  if(!allData.items.isEmpty()) {
-    if(role == Qt::DisplayRole) {
-      if(orientation == Qt::Horizontal) {
-        switch(section) {
-        case 0:
-          return tr("Item");
-          break;
-        case 1:
-          return tr("Category");
-          break;
-        case 2:
-          return tr("Price");
-          break;
-        case 3:
-          return tr("Discount");
-          break;
-        case 4:
-          return tr("Stock");
-          break;
-        case 5:
-          return tr("Age");
-          break;
-        case 6:
-          return tr("Barcode");
-          break;
-        default:
-          return tr("Unknown");
-        };
-      }
-    } else if(role == Qt::DecorationRole) {
-      if(orientation == Qt::Vertical) {
-        //return icons[allData.items.at(section).icon].pixmap(60, 60);
-      }
+  if(role == Qt::DisplayRole) {
+    if(orientation == Qt::Horizontal) {
+      switch(section) {
+      case 0:
+        return tr("Item");
+        break;
+      case 1:
+        return tr("Category");
+        break;
+      case 2:
+        return tr("Price");
+        break;
+      case 3:
+        return tr("Discount");
+        break;
+      case 4:
+        return tr("Stock");
+        break;
+      case 5:
+        return tr("Age");
+        break;
+      case 6:
+        return tr("Barcode");
+        break;
+      default:
+        return tr("Unknown");
+      };
     }
   }
   return QVariant();

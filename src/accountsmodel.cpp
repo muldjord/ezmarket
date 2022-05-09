@@ -1,6 +1,6 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            categoriesmodel.cpp
+ *            accountsmodel.cpp
  *
  *  Sat Apr 30 09:03:00 CEST 2022
  *  Copyright 2022 Lars Muldjord
@@ -24,29 +24,29 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
 
-#include "categoriesmodel.h"
+#include "accountsmodel.h"
 
 #include <QIcon>
 #include <QPainter>
 #include <QBrush>
 
-CategoriesModel::CategoriesModel(Data &data,
+AccountsModel::AccountsModel(Data &data,
                        QObject *parent)
   : QAbstractTableModel(parent), allData(data)
 {
 }
 
-int CategoriesModel::rowCount(const QModelIndex &) const
+int AccountsModel::rowCount(const QModelIndex &) const
 {
-  return allData.categories.size();
+  return allData.accounts.size();
 }
 
-int CategoriesModel::columnCount(const QModelIndex &) const
+int AccountsModel::columnCount(const QModelIndex &) const
 {
-  return 3;
+  return 4;
 }
 
-QVariant CategoriesModel::data(const QModelIndex &index, int role) const
+QVariant AccountsModel::data(const QModelIndex &index, int role) const
 {
   if(!index.isValid()) {
     return QVariant();
@@ -55,18 +55,21 @@ QVariant CategoriesModel::data(const QModelIndex &index, int role) const
   if(role == Qt::DisplayRole) {
     switch(index.column()) {
     case 0:
-      return allData.categories.at(index.row()).id;
+      return allData.accounts.at(index.row()).id;
       break;
     case 1:
-      return allData.categories.at(index.row()).lifespan;
+      return allData.accounts.at(index.row()).balance;
       break;
     case 2:
-      return allData.categories.at(index.row()).barcode;
+      return allData.accounts.at(index.row()).bonus;
+      break;
+    case 3:
+      return allData.accounts.at(index.row()).barcode;
       break;
     };
   } else if(role == Qt::DecorationRole) {
     if(index.column() == 0) {
-      return getPreparedIcon(allData.icons[allData.categories.at(index.row()).icon]);
+      return QIcon("graphics/account.png");
     }
     /*
   } else if(role == Qt::ForegroundRole) {
@@ -85,30 +88,30 @@ QVariant CategoriesModel::data(const QModelIndex &index, int role) const
   }
   /*
   } else if(role == Qt::ForegroundRole) {
-    if(allData.categories[index.row()].values[index.column()].writeable) {
-      if(allData.categories[index.row()].values[index.column()].eye == DB::E_OD) {
+    if(allData.accounts[index.row()].values[index.column()].writeable) {
+      if(allData.accounts[index.row()].values[index.column()].eye == DB::E_OD) {
         return QVariant(QBrush(QColor(0, 80, 0)));
-      } else if(allData.categories[index.row()].values[index.column()].eye == DB::E_OS) {
+      } else if(allData.accounts[index.row()].values[index.column()].eye == DB::E_OS) {
         return QVariant(QBrush(QColor(128, 0, 0)));
       }
     } else {
       return QVariant(QBrush(QColor(128, 128, 128)));
     }
   } else if(role == Qt::BackgroundRole) {
-    if(allData.categories[index.row()].values[index.column()].eye == DB::E_OD) {
+    if(allData.accounts[index.row()].values[index.column()].eye == DB::E_OD) {
       return QVariant(QBrush(QColor(242, 255, 242)));
-    } else if(allData.categories[index.row()].values[index.column()].eye == DB::E_OS) {
+    } else if(allData.accounts[index.row()].values[index.column()].eye == DB::E_OS) {
       return QVariant(QBrush(QColor(255, 242, 242)));
     }
   } else if(role == Qt::ToolTipRole &&
-            allData.categories[index.row()].values[index.column()].conclusionUid != DB::NONE) {
-    return QVariant(allData.categories[index.row()].values[index.column()].conclusionExaminer);
+            allData.accounts[index.row()].values[index.column()].conclusionUid != DB::NONE) {
+    return QVariant(allData.accounts[index.row()].values[index.column()].conclusionExaminer);
     */
   return QVariant();
 }
 
 /*
-bool CategoriesModel::setData(const QModelIndex &index, const QVariant &value, int role)
+bool AccountsModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
   if(!index.isValid() ||
      role != Qt::EditRole) {
@@ -118,18 +121,21 @@ bool CategoriesModel::setData(const QModelIndex &index, const QVariant &value, i
 }
 */
 
-QVariant CategoriesModel::headerData(int section, Qt::Orientation orientation, int role) const
+QVariant AccountsModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
   if(role == Qt::DisplayRole) {
     if(orientation == Qt::Horizontal) {
       switch(section) {
       case 0:
-        return tr("Category");
+        return tr("Account");
         break;
       case 1:
-        return tr("Lifespan");
+        return tr("Balance");
         break;
       case 2:
+        return tr("Bonus");
+        break;
+      case 3:
         return tr("Barcode");
         break;
       default:
@@ -140,7 +146,7 @@ QVariant CategoriesModel::headerData(int section, Qt::Orientation orientation, i
   return QVariant();
 }
 
-Qt::ItemFlags CategoriesModel::flags(const QModelIndex &index) const
+Qt::ItemFlags AccountsModel::flags(const QModelIndex &index) const
 {
   if(!index.isValid()) {
     return Qt::ItemIsEnabled;
@@ -156,48 +162,19 @@ Qt::ItemFlags CategoriesModel::flags(const QModelIndex &index) const
   return Qt::ItemIsEnabled | Qt::ItemIsSelectable;
 }
 
-void CategoriesModel::beginInsertRow(int row)
+void AccountsModel::beginInsertRow(int row)
 {
   beginInsertRows(QModelIndex(), row, row);
 }
 
-bool CategoriesModel::insertRows(int, int, const QModelIndex &)
+bool AccountsModel::insertRows(int, int, const QModelIndex &)
 {
   endInsertRows();
   return true;
 }
 
-void CategoriesModel::refreshAll()
+void AccountsModel::refreshAll()
 {
   beginResetModel();
   endResetModel();
-}
-
-QPixmap CategoriesModel::getPreparedIcon(const QPixmap &icon) const
-{
-  QImage image(icon.width() + 2, icon.height() + 2, QImage::Format_ARGB32);
-  image.fill(Qt::transparent);
-  QPainter painter(&image);
-  QBrush brush(Qt::SolidPattern);
-  brush.setColor(Qt::black);
-  painter.setBrush(brush);
-  painter.drawRoundedRect(0, 0, icon.width() + 2, icon.height() + 2, 30, 30, Qt::RelativeSize);
-  painter.drawPixmap(1, 1, icon);
-  painter.end();
-  /*
-  QImage image(96, 96, QImage::Format_ARGB32);
-  image.fill(Qt::transparent);
-  QPainter painter(&image);
-  QBrush brush(Qt::SolidPattern);
-  brush.setColor(Qt::black);
-  painter.setBrush(brush);
-  painter.drawEllipse(0, 0, 95, 95);
-  painter.end();
-  image = image.scaled(data.iconSize8, data.iconSize, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
-  painter.begin(&image);
-  painter.drawPixmap(0, 0, icon.pixmap(data.iconSize, data.iconSize));
-  painter.end();
-  */
-
-  return QPixmap::fromImage(image);
 }

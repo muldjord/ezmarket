@@ -46,6 +46,10 @@ public:
   EntryEditor(const QString &barcode,
               Data &data,
               QWidget *parent);
+  QString getType();
+  Account getAccount();
+  Item getItem();
+  Category getCategory();
 
 public slots:
 

@@ -70,6 +70,12 @@ ItemEditor::ItemEditor(const QString &barcode,
 void ItemEditor::checkSanity()
 {
   if(itemWidget->isSane()) {
+    for(auto &item: data.items) {
+      if(barcode == item.barcode) {
+        item = itemWidget->getItem();
+        break;
+      }
+    }
     accept();
   }
 }

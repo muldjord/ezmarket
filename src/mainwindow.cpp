@@ -66,8 +66,8 @@ MainWindow::MainWindow()
   
   modeTabs = new QTabWidget(this);
   modeTabs->addTab(accountsTab, tr("Accounts"));
-  modeTabs->addTab(itemsTab, tr("Items"));
   modeTabs->addTab(categoriesTab, tr("Categories"));
+  modeTabs->addTab(itemsTab, tr("Items"));
   /*
   modeTabs->addTab(checkoutTab, tr("Checkout"));
   */
@@ -395,16 +395,19 @@ void MainWindow::checkBarcode()
 
   if(!barcodeFound) {
     printf("NEW BARCODE!\n");
-    if(type == "account") {
-    } else if(type == "item") {
+    EntryEditor entryEditor(barcode, data, this);
+    entryEditor.exec();
+    if(entryEditor.getType() == "account") {
+      accountsTab->accountsModel->beginInsertRow(data.accounts.length());
+      data.accounts.append(entryEditor.getAccount());
+      accountsTab->accountsModel->insertRows(data.accounts.length(), 1);
+    } else if(entryEditor.getType() == "item") {
       itemsTab->itemsModel->beginInsertRow(data.items.length());
-      EntryEditor entryEditor(barcode, data, this);
-      entryEditor.exec();
+      data.items.append(entryEditor.getItem());
       itemsTab->itemsModel->insertRows(data.items.length(), 1);
-    } else if(type == "category") {
+    } else if(entryEditor.getType() == "category") {
       categoriesTab->categoriesModel->beginInsertRow(data.categories.length());
-      EntryEditor entryEditor(barcode, data, this);
-      entryEditor.exec();
+      data.categories.append(entryEditor.getCategory());
       categoriesTab->categoriesModel->insertRows(data.categories.length(), 1);
     }
   }

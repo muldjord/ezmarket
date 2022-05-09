@@ -1,6 +1,6 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            categoryeditor.cpp
+ *            accounteditor.cpp
  *
  *  Sat Apr 30 09:03:00 CEST 2022
  *  Copyright 2022 Lars Muldjord
@@ -24,7 +24,7 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
 
-#include "categoryeditor.h"
+#include "accounteditor.h"
 
 #include <QPushButton>
 #include <QButtonGroup>
@@ -33,9 +33,9 @@
 #include <QLabel>
 #include <QSound>
 
-CategoryEditor::CategoryEditor(const QString &barcode,
-                               Data &data,
-                               QWidget *parent)
+AccountEditor::AccountEditor(const QString &barcode,
+                             Data &data,
+                             QWidget *parent)
   : QDialog(parent), barcode(barcode), data(data)
 {
   setWindowTitle(tr("Barcode: ") + barcode);
@@ -48,31 +48,31 @@ CategoryEditor::CategoryEditor(const QString &barcode,
   
   //QSound::play("sounds/ny_konto_eller_vare.wav");
 
-  for(auto &category: data.categories) {
-    if(barcode == category.barcode) {
-      categoryWidget = new CategoryWidget(barcode, data, this);
+  for(auto &account: data.accounts) {
+    if(barcode == account.barcode) {
+      accountWidget = new AccountWidget(barcode, data, this);
       break;
     }
   }
 
   QDialogButtonBox *dialogButtons = new QDialogButtonBox(QDialogButtonBox::Save |
                                                          QDialogButtonBox::Cancel);
-  connect(dialogButtons, &QDialogButtonBox::accepted, this, &CategoryEditor::checkSanity);
-  connect(dialogButtons, &QDialogButtonBox::rejected, this, &CategoryEditor::reject);
+  connect(dialogButtons, &QDialogButtonBox::accepted, this, &AccountEditor::checkSanity);
+  connect(dialogButtons, &QDialogButtonBox::rejected, this, &AccountEditor::reject);
 
   QVBoxLayout *layout = new QVBoxLayout;
-  layout->addWidget(categoryWidget);
+  layout->addWidget(accountWidget);
   layout->addWidget(dialogButtons);
   
   setLayout(layout);
 }
 
-void CategoryEditor::checkSanity()
+void AccountEditor::checkSanity()
 {
-  if(categoryWidget->isSane()) {
-    for(auto &category: data.categories) {
-      if(barcode == category.barcode) {
-        category = categoryWidget->getCategory();
+  if(accountWidget->isSane()) {
+    for(auto &account: data.accounts) {
+      if(barcode == account.barcode) {
+        account = accountWidget->getAccount();
         break;
       }
     }

@@ -25,81 +25,62 @@
  */
 
 #include "accountstab.h"
-#include "entryeditor.h"
+#include "accounteditor.h"
 
 #include <QVBoxLayout>
 #include <QLabel>
 #include <QHeaderView>
 
 AccountsTab::AccountsTab(Data &data,
-                         QWidget *parent)
+                   QWidget *parent)
   : QWidget(parent), data(data)
 {
-  setStyleSheet("QTableWidget {qproperty-iconSize: 35px; font-size: 30px;}"
-                "QHeaderView {font-size: 30px;}"
-                "QTableWidget QLabel {background-color: black;}");
-  accountsList = new QTableWidget(this);
-  accountsList->setEditTriggers(QAbstractItemView::NoEditTriggers);
-  accountsList->verticalHeader()->setVisible(false);
-  accountsList->setSelectionBehavior(QTableView::SelectRows);
-  accountsList->setSelectionMode(QAbstractItemView::SingleSelection);
-  //accountsList->setSortingEnabled(true);
-  connect(accountsList, &QTableWidget::cellDoubleClicked, this, &AccountsTab::editAccount);
+  setStyleSheet("QTableView {font-size: 30px;}"
+                "QHeaderView {font-size: 30px;}");
+  accountsView = new QTableView(this);
+  accountsModel = new AccountsModel(data, this);
+
+  proxyModel = new QSortFilterProxyModel(this);
+  proxyModel->setSourceModel(accountsModel);
+
+  accountsView->setModel(proxyModel);
+  accountsView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+  accountsView->verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
+  accountsView->verticalHeader()->setMinimumSectionSize(data.iconSize + 6);
+  accountsView->verticalHeader()->setMaximumSectionSize(data.iconSize + 6);
+  accountsView->setSelectionBehavior(QTableView::SelectRows);
+  accountsView->setSelectionMode(QAbstractItemView::SingleSelection);
+  accountsView->verticalHeader()->setVisible(false);
+  accountsView->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+  accountsView->setSortingEnabled(true);
+  connect(accountsView, &QTableView::doubleClicked, this, &AccountsTab::editAccount);
+  /*
+  QPusbButton *addButton = new QPushButton(tr("Add account"));
+  connect(addButton, &QPushButton::clicked, this, &AccountsTab::addAccount);
+
+  QHBoxLayout *functionLayout = new QHBoxLayout;
+  functionsLayout->addWidget(addButton);
+  */
+  
   QVBoxLayout *layout = new QVBoxLayout;
-  layout->addWidget(accountsList);
+  layout->addWidget(accountsView);
   setLayout(layout);
-  refreshAccounts();
 }
 
 AccountsTab::~AccountsTab()
 {
 }
 
-void AccountsTab::refreshAccounts()
+void AccountsTab::editAccount(const QModelIndex &index)
 {
-  printf("REFRESHING ACCOUNTS!\n");
-  accountsList->clear();
-  accountsList->setColumnCount(5);
-  accountsList->setRowCount(data.accounts.length());
-
-  accountsList->setHorizontalHeaderLabels({"",
-      tr("Account"),
-      tr("Balance"),
-      tr("Bonus"),
-      tr("Barcode")});
-  for(int row = 0; row < data.accounts.length(); ++row) {
-
-    QLabel *iconLabel = new QLabel();
-    iconLabel->setAlignment(Qt::AlignHCenter);
-    iconLabel->setPixmap(QIcon("graphics/account.png").pixmap(50, 50));
-    accountsList->setCellWidget(row, 0, iconLabel);
-    
-    QTableWidgetItem *idItem = new QTableWidgetItem(data.accounts.at(row).id);
-    idItem->setData(Qt::UserRole, data.accounts.at(row).barcode);
-    accountsList->setItem(row, 1, idItem);
-
-    QTableWidgetItem *balanceItem = new QTableWidgetItem();
-    balanceItem->setData(Qt::DisplayRole, data.accounts.at(row).balance);
-    balanceItem->setData(Qt::UserRole, data.accounts.at(row).barcode);
-    accountsList->setItem(row, 2, balanceItem);
-
-    QTableWidgetItem *bonusItem = new QTableWidgetItem();
-    bonusItem->setData(Qt::DisplayRole, data.accounts.at(row).bonus);
-    bonusItem->setData(Qt::UserRole, data.accounts.at(row).barcode);
-    accountsList->setItem(row, 3, bonusItem);
-
-    QTableWidgetItem *barcodeItem = new QTableWidgetItem(data.accounts.at(row).barcode);
-    barcodeItem->setData(Qt::UserRole, data.accounts.at(row).barcode);
-    accountsList->setItem(row, 4, barcodeItem);
-  }
-  accountsList->resizeColumnsToContents();
-  accountsList->resizeRowsToContents();
+  AccountEditor accountEditor(data.accounts.at(proxyModel->mapToSource(index).row()).barcode, data, this);
+  accountEditor.exec();
 }
 
-void AccountsTab::editAccount(int row, int)
+/*
+void AccountsTab::addAccount()
 {
-  EntryEditor entryEditor(accountsList->item(row, 1)->data(Qt::UserRole).toString(), data, this);
-  entryEditor.exec();
-  
-  printf("EDITING ROW %d, BARCODE %s\n", row, qPrintable(accountsList->item(row, 1)->data(Qt::UserRole).toString()));
+  AccountEditor accountEditor(data.accounts.at(proxyModel->mapToSource(index).row()).barcode, data, this);
+  accountEditor.exec();
 }
+*/

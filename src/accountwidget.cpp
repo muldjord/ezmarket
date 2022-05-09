@@ -41,7 +41,7 @@ AccountWidget::AccountWidget(const QString &barcode,
 
   QLabel *balanceLabel = new QLabel(tr("Balance:"));
   balanceLineEdit = new LineEdit(this);
-  balanceLineEdit->setText("100.0");
+  balanceLineEdit->setText("100");
 
   QLabel *bonusLabel = new QLabel(tr("Bonus points:"));
   bonusLineEdit = new LineEdit(this);

@@ -1,6 +1,6 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            accountstab.h
+ *            accounteditor.cpp
  *
  *  Sat Apr 30 09:03:00 CEST 2022
  *  Copyright 2022 Lars Muldjord
@@ -24,35 +24,37 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
 
-#ifndef __ACCOUNTSTAB_H__
-#define __ACCOUNTSTAB_H__
+#ifndef __ACCOUNTEDITOR_H__
+#define __ACCOUNTEDITOR_H__
 
 #include "datatypes.h"
 #include "data.h"
-#include "accountsmodel.h"
+#include "accountwidget.h"
 
-#include <QWidget>
-#include <QTableWidget>
-#include <QTimer>
-#include <QSortFilterProxyModel>
+#include <QDialog>
+#include <QAbstractButton>
 
-class AccountsTab : public QWidget
+class AccountEditor : public QDialog
 {
-  Q_OBJECT
-    
+Q_OBJECT
+
 public:
-  AccountsTab(Data &data,
-           QWidget *parent);
-  ~AccountsTab();
-  AccountsModel *accountsModel = nullptr;
-  
+  AccountEditor(const QString &barcode,
+                Data &data,
+                QWidget *parent);
+
+public slots:
+
+signals:
+
 private slots:
-  void editAccount(const QModelIndex &index);
+  void checkSanity();
 
 private:
-  QSortFilterProxyModel *proxyModel = nullptr;
-  QTableView *accountsView = nullptr;
+  AccountWidget *accountWidget = nullptr;
+  const QString &barcode;
   Data &data;
 };
 
-#endif // __ACCOUNTSTAB_H__
+
+#endif // __ACCOUNTEDITOR_H__
