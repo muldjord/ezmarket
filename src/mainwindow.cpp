@@ -44,11 +44,11 @@ MainWindow::MainWindow()
   setWindowTitle("EZMarket v" VERSION);
   showFullScreen();
 
-  setStyleSheet("QLabel {font-size: 30px;}"
-                "QLineEdit {font-size: 30px;}"
-                "QTabWidget {font-size: 30px;}"
-                "QListWidget {font-size: 30px;}"
-                "QGroupBox{font-size: 35px; padding-left: 20px; padding-top: 40px; padding-bottom: 20px; padding-right: 20px;}");
+  setStyleSheet("QLabel {font-size: " + QString::number(data.fontSizeSmall) + "px;}"
+                "QLineEdit {font-size: " + QString::number(data.fontSizeSmall) + "px;}"
+                "QTabWidget {qproperty-iconSize: " + QString::number(data.iconSizeSmall) + "px; font-size: " + QString::number(data.fontSizeSmall) + "px;}"
+                "QListWidget {font-size: " + QString::number(data.fontSizeSmall) + "px;}"
+                "QGroupBox{font-size: " + QString::number(data.fontSize) + "px; padding-left: 20px; padding-top: 40px; padding-bottom: 20px; padding-right: 20px;}");
   createActions();
   createMenus();
   createToolBar();
@@ -65,9 +65,9 @@ MainWindow::MainWindow()
   */
   
   modeTabs = new QTabWidget(this);
-  modeTabs->addTab(accountsTab, tr("Accounts"));
-  modeTabs->addTab(categoriesTab, tr("Categories"));
-  modeTabs->addTab(itemsTab, tr("Items"));
+  modeTabs->addTab(accountsTab, QIcon(QPixmap("graphics/account.png").scaled(data.iconSize, data.iconSize, Qt::IgnoreAspectRatio, Qt::SmoothTransformation)), tr("Accounts"));
+  modeTabs->addTab(categoriesTab, QIcon(QPixmap("graphics/account.png").scaled(data.iconSize, data.iconSize, Qt::IgnoreAspectRatio, Qt::SmoothTransformation)), tr("Categories"));
+  modeTabs->addTab(itemsTab, QIcon(QPixmap("graphics/account.png").scaled(data.iconSize, data.iconSize, Qt::IgnoreAspectRatio, Qt::SmoothTransformation)), tr("Items"));
   /*
   modeTabs->addTab(checkoutTab, tr("Checkout"));
   */
@@ -397,18 +397,23 @@ void MainWindow::checkBarcode()
     printf("NEW BARCODE!\n");
     EntryEditor entryEditor(barcode, data, this);
     entryEditor.exec();
-    if(entryEditor.getType() == "account") {
-      accountsTab->accountsModel->beginInsertRow(data.accounts.length());
-      data.accounts.append(entryEditor.getAccount());
-      accountsTab->accountsModel->insertRows(data.accounts.length(), 1);
-    } else if(entryEditor.getType() == "item") {
-      itemsTab->itemsModel->beginInsertRow(data.items.length());
-      data.items.append(entryEditor.getItem());
-      itemsTab->itemsModel->insertRows(data.items.length(), 1);
-    } else if(entryEditor.getType() == "category") {
-      categoriesTab->categoriesModel->beginInsertRow(data.categories.length());
-      data.categories.append(entryEditor.getCategory());
-      categoriesTab->categoriesModel->insertRows(data.categories.length(), 1);
+    if(entryEditor.result() == QDialog::Accepted) {
+      if(entryEditor.getType() == "account") {
+        accountsTab->accountsModel->beginInsertRow(data.accounts.length());
+        entryEditor.addAccount();
+        QSound::play("sounds/kundekort_registreret.wav");
+        accountsTab->accountsModel->insertRows(data.accounts.length(), 1);
+      } else if(entryEditor.getType() == "category") {
+        categoriesTab->categoriesModel->beginInsertRow(data.categories.length());
+        entryEditor.addCategory();
+        QSound::play("sounds/kategori_registreret.wav");
+        categoriesTab->categoriesModel->insertRows(data.categories.length(), 1);
+      } else if(entryEditor.getType() == "item") {
+        itemsTab->itemsModel->beginInsertRow(data.items.length());
+        entryEditor.addItem();
+        QSound::play("sounds/vare_registreret.wav");
+        itemsTab->itemsModel->insertRows(data.items.length(), 1);
+      }
     }
   }
 

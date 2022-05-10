@@ -63,6 +63,7 @@ signals:
 
 private:
   Data &allData;
+  QPixmap getPreparedIcon(const QPixmap &icon) const;
 };
 
 #endif // __ACCOUNTSMODEL_H__

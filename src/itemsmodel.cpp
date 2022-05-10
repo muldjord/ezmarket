@@ -43,7 +43,7 @@ int ItemsModel::rowCount(const QModelIndex &) const
 
 int ItemsModel::columnCount(const QModelIndex &) const
 {
-  return 7;
+  return 6;
 }
 
 QVariant ItemsModel::data(const QModelIndex &index, int role) const
@@ -76,9 +76,11 @@ QVariant ItemsModel::data(const QModelIndex &index, int role) const
     case 5:
       return allData.items.at(index.row()).age;
       break;
+      /*
     case 6:
       return allData.items.at(index.row()).barcode;
       break;
+      */
     };
   } else if(role == Qt::DecorationRole) {
     if(index.column() == 0) {
@@ -163,9 +165,11 @@ QVariant ItemsModel::headerData(int section, Qt::Orientation orientation, int ro
       case 5:
         return tr("Age");
         break;
+        /*
       case 6:
         return tr("Barcode");
         break;
+        */
       default:
         return tr("Unknown");
       };

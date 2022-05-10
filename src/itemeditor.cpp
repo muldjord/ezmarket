@@ -41,16 +41,16 @@ ItemEditor::ItemEditor(const QString &barcode,
   setWindowTitle(tr("Barcode: ") + barcode);
   setFixedSize(550, 700);
 
-  setStyleSheet("QLabel {font-size: 35px; qproperty-alignment: AlignCenter;}"
-                "QLineEdit {font-size: 35px;}"
-                "QComboBox {qproperty-iconSize: 35px; font-size: 35px;}"
-                "QPushButton {qproperty-iconSize: 35px; font-size: 35px;}");
+  setStyleSheet("QLabel {font-size: " + QString::number(data.fontSize) + "px; qproperty-alignment: AlignCenter;}"
+                "QLineEdit {font-size: " + QString::number(data.fontSize) + "px;}"
+                "QComboBox {qproperty-iconSize: " + QString::number(data.iconSizeSmall) + "px; font-size: " + QString::number(data.fontSize) + "px;}"
+                "QPushButton {qproperty-iconSize: " + QString::number(data.iconSizeSmall) + "px; font-size: " + QString::number(data.fontSize) + "px;}");
   
   //QSound::play("sounds/ny_konto_eller_vare.wav");
 
   for(auto &item: data.items) {
     if(barcode == item.barcode) {
-      itemWidget = new ItemWidget(barcode, data, this);
+      itemWidget = new ItemWidget(data, item, this);
       break;
     }
   }
@@ -70,12 +70,7 @@ ItemEditor::ItemEditor(const QString &barcode,
 void ItemEditor::checkSanity()
 {
   if(itemWidget->isSane()) {
-    for(auto &item: data.items) {
-      if(barcode == item.barcode) {
-        item = itemWidget->getItem();
-        break;
-      }
-    }
+    itemWidget->commitItem();
     accept();
   }
 }

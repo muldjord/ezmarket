@@ -41,16 +41,16 @@ CategoryEditor::CategoryEditor(const QString &barcode,
   setWindowTitle(tr("Barcode: ") + barcode);
   setFixedSize(450, 700);
 
-  setStyleSheet("QLabel {font-size: 35px; qproperty-alignment: AlignCenter;}"
-                "QLineEdit {font-size: 35px;}"
-                "QComboBox {qproperty-iconSize: 35px; font-size: 35px;}"
-                "QPushButton {qproperty-iconSize: 35px; font-size: 35px;}");
+  setStyleSheet("QLabel {font-size: " + QString::number(data.fontSize) + "px; qproperty-alignment: AlignCenter;}"
+                "QLineEdit {font-size: " + QString::number(data.fontSize) + "px;}"
+                "QComboBox {qproperty-iconSize: " + QString::number(data.iconSizeSmall) + "px; font-size: " + QString::number(data.fontSize) + "px;}"
+                "QPushButton {qproperty-iconSize: " + QString::number(data.iconSizeSmall) + "px; font-size: " + QString::number(data.fontSize) + "px;}");
   
   //QSound::play("sounds/ny_konto_eller_vare.wav");
 
   for(auto &category: data.categories) {
     if(barcode == category.barcode) {
-      categoryWidget = new CategoryWidget(barcode, data, this);
+      categoryWidget = new CategoryWidget(data, category, this);
       break;
     }
   }
@@ -70,12 +70,7 @@ CategoryEditor::CategoryEditor(const QString &barcode,
 void CategoryEditor::checkSanity()
 {
   if(categoryWidget->isSane()) {
-    for(auto &category: data.categories) {
-      if(barcode == category.barcode) {
-        category = categoryWidget->getCategory();
-        break;
-      }
-    }
+    categoryWidget->commitCategory();
     accept();
   }
 }

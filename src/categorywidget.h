@@ -39,20 +39,20 @@ class CategoryWidget : public QWidget
   Q_OBJECT
     
 public:
-  CategoryWidget(const QString &barcode,
-             Data &data,
-             QWidget *parent);
+  CategoryWidget(Data &data,
+                 Category &category,
+                 QWidget *parent);
   ~CategoryWidget();
   bool isSane();
-  Category getCategory();
+  void commitCategory();
 
 private slots:
   void setIconSearchText();
   void searchIcons();
   
 private:
-  const QString &barcode;
   Data &data;
+  Category &category;
   LineEdit *idLineEdit = nullptr;
   LineEdit *searchLineEdit = nullptr;
   QComboBox *iconComboBox = nullptr;

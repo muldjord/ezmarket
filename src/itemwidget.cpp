@@ -30,10 +30,10 @@
 #include <QVBoxLayout>
 #include <QLocale>
 
-ItemWidget::ItemWidget(const QString &barcode,
-                       Data &data,
+ItemWidget::ItemWidget(Data &data,
+                       Item &item,
                        QWidget *parent)
-  : QWidget(parent), barcode(barcode), data(data)
+  : QWidget(parent), data(data), item(item)
 {
   QLabel *idLabel = new QLabel(tr("Item name:"));
   idLineEdit = new LineEdit(this);
@@ -60,18 +60,13 @@ ItemWidget::ItemWidget(const QString &barcode,
   discountLineEdit = new LineEdit(this);
   discountLineEdit->setText("0.0");
 
-  for(auto &item: data.items) {
-    if(item.barcode == barcode) {
-      idLineEdit->setText(item.id);
-      printf("FOUND AT %d\n", categoryComboBox->findData(item.category));
-      categoryComboBox->setCurrentIndex(categoryComboBox->findData(item.category));
-      iconComboBox->setCurrentIndex(iconComboBox->findData(item.icon));
-      priceLineEdit->setText(QLocale().toString(item.price));
-      discountLineEdit->setText(QLocale().toString(item.discount));
-      //connect(idLineEdit, &LineEdit::textChanged, this, &ItemWidget::setIconSearchText);
-    }
-  }
-
+  idLineEdit->setText(item.id);
+  printf("FOUND AT %d\n", categoryComboBox->findData(item.category));
+  categoryComboBox->setCurrentIndex(categoryComboBox->findData(item.category));
+  iconComboBox->setCurrentIndex(iconComboBox->findData(item.icon));
+  priceLineEdit->setText(QLocale().toString(item.price));
+  discountLineEdit->setText(QLocale().toString(item.discount));
+  //connect(idLineEdit, &LineEdit::textChanged, this, &ItemWidget::setIconSearchText);
 
   QVBoxLayout *layout = new QVBoxLayout(this);
   layout->addWidget(idLabel);
@@ -128,15 +123,11 @@ void ItemWidget::searchIcons()
   iconComboBox->addItem(tr("None"), "");
 }
 
-Item ItemWidget::getItem()
+void ItemWidget::commitItem()
 {
-  Item item;
-  item.barcode = this->barcode;
   item.id = idLineEdit->text();
   item.category = categoryComboBox->currentData().toString();
   item.icon = iconComboBox->currentData().toString();
   item.price = QLocale().toDouble(priceLineEdit->text());
   item.discount = QLocale().toDouble(discountLineEdit->text());
-
-  return item;
 }

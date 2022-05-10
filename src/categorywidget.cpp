@@ -30,10 +30,10 @@
 #include <QVBoxLayout>
 #include <QLocale>
 
-CategoryWidget::CategoryWidget(const QString &barcode,
-                       Data &data,
-                       QWidget *parent)
-  : QWidget(parent), barcode(barcode), data(data)
+CategoryWidget::CategoryWidget(Data &data,
+                               Category &category,
+                               QWidget *parent)
+  : QWidget(parent), data(data), category(category)
 {
   QLabel *idLabel = new QLabel(tr("Category name:"));
   idLineEdit = new LineEdit(this);
@@ -50,14 +50,9 @@ CategoryWidget::CategoryWidget(const QString &barcode,
   lifespanLineEdit = new LineEdit(this);
   lifespanLineEdit->setText("0");
 
-  for(auto &category: data.categories) {
-    if(category.barcode == barcode) {
-      idLineEdit->setText(category.id);
-      iconComboBox->setCurrentIndex(iconComboBox->findData(category.icon));
-      lifespanLineEdit->setText(QLocale().toString(category.lifespan));
-      //connect(idLineEdit, &LineEdit::textChanged, this, &CategoryWidget::setIconSearchText);
-    }
-  }
+  idLineEdit->setText(category.id);
+  iconComboBox->setCurrentIndex(iconComboBox->findData(category.icon));
+  lifespanLineEdit->setText(QLocale().toString(category.lifespan));
 
   QVBoxLayout *layout = new QVBoxLayout(this);
   layout->addWidget(idLabel);
@@ -109,13 +104,9 @@ void CategoryWidget::searchIcons()
   iconComboBox->addItem(tr("None"), "");
 }
 
-Category CategoryWidget::getCategory()
+void CategoryWidget::commitCategory()
 {
-  Category category;
-  category.barcode = this->barcode;
   category.id = idLineEdit->text();
   category.icon = iconComboBox->currentData().toString();
   category.lifespan = QLocale().toInt(lifespanLineEdit->text());
-
-  return category;
 }

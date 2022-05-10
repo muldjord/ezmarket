@@ -35,8 +35,8 @@ ItemsTab::ItemsTab(Data &data,
                    QWidget *parent)
   : QWidget(parent), data(data)
 {
-  setStyleSheet("QTableView {font-size: 30px;}"
-                "QHeaderView {font-size: 30px;}");
+  setStyleSheet("QTableView {font-size: " + QString::number(data.fontSizeSmall) + "px;}"
+                "QHeaderView {font-size: " + QString::number(data.fontSizeSmall) + "px;}");
   itemsView = new QTableView(this);
   itemsModel = new ItemsModel(data, this);
 
@@ -50,7 +50,7 @@ ItemsTab::ItemsTab(Data &data,
   itemsView->horizontalHeader()->setSectionResizeMode(3, QHeaderView::ResizeToContents);
   itemsView->horizontalHeader()->setSectionResizeMode(4, QHeaderView::ResizeToContents);
   itemsView->horizontalHeader()->setSectionResizeMode(5, QHeaderView::ResizeToContents);
-  itemsView->horizontalHeader()->setSectionResizeMode(6, QHeaderView::ResizeToContents);
+  //itemsView->horizontalHeader()->setSectionResizeMode(6, QHeaderView::ResizeToContents);
   itemsView->verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
   itemsView->verticalHeader()->setMinimumSectionSize(data.iconSize + 6);
   itemsView->verticalHeader()->setMaximumSectionSize(data.iconSize + 6);

@@ -47,9 +47,9 @@ public:
               Data &data,
               QWidget *parent);
   QString getType();
-  Account getAccount();
-  Item getItem();
-  Category getCategory();
+  void addAccount();
+  void addItem();
+  void addCategory();
 
 public slots:
 
@@ -73,6 +73,9 @@ private:
   QStackedLayout *typeLayout = nullptr;
 
   const QString &barcode;
+  Account account;
+  Item item;
+  Category category;
   Data &data;
 };
 

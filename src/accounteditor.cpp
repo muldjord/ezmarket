@@ -41,16 +41,16 @@ AccountEditor::AccountEditor(const QString &barcode,
   setWindowTitle(tr("Barcode: ") + barcode);
   setFixedSize(450, 700);
 
-  setStyleSheet("QLabel {font-size: 35px; qproperty-alignment: AlignCenter;}"
-                "QLineEdit {font-size: 35px;}"
-                "QComboBox {qproperty-iconSize: 35px; font-size: 35px;}"
-                "QPushButton {qproperty-iconSize: 35px; font-size: 35px;}");
+  setStyleSheet("QLabel {font-size: " + QString::number(data.fontSize) + "px; qproperty-alignment: AlignCenter;}"
+                "QLineEdit {font-size: " + QString::number(data.fontSize) + "px;}"
+                "QComboBox {qproperty-iconSize: " + QString::number(data.iconSizeSmall) + "px; font-size: " + QString::number(data.fontSize) + "px;}"
+                "QPushButton {qproperty-iconSize: " + QString::number(data.iconSizeSmall) + "px; font-size: " + QString::number(data.fontSize) + "px;}");
   
   //QSound::play("sounds/ny_konto_eller_vare.wav");
 
   for(auto &account: data.accounts) {
     if(barcode == account.barcode) {
-      accountWidget = new AccountWidget(barcode, data, this);
+      accountWidget = new AccountWidget(data, account, this);
       break;
     }
   }
@@ -70,12 +70,7 @@ AccountEditor::AccountEditor(const QString &barcode,
 void AccountEditor::checkSanity()
 {
   if(accountWidget->isSane()) {
-    for(auto &account: data.accounts) {
-      if(barcode == account.barcode) {
-        account = accountWidget->getAccount();
-        break;
-      }
-    }
+    accountWidget->commitAccount();
     accept();
   }
 }

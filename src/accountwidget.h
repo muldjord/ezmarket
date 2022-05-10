@@ -38,15 +38,16 @@ class AccountWidget : public QWidget
   Q_OBJECT
     
 public:
-  AccountWidget(const QString &barcode,
-                Data &data,
+  AccountWidget(Data &data,
+                Account &account,
                 QWidget *parent);
   ~AccountWidget();
   bool isSane();
-  Account getAccount();
+  void commitAccount();
 
 private:
-  const QString &barcode;
+  Data &data;
+  Account &account;
   LineEdit *idLineEdit = nullptr;
   LineEdit *balanceLineEdit = nullptr;
   LineEdit *bonusLineEdit = nullptr;

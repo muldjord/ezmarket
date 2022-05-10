@@ -31,7 +31,7 @@
 #include <QBrush>
 
 AccountsModel::AccountsModel(Data &data,
-                       QObject *parent)
+                             QObject *parent)
   : QAbstractTableModel(parent), allData(data)
 {
 }
@@ -43,7 +43,7 @@ int AccountsModel::rowCount(const QModelIndex &) const
 
 int AccountsModel::columnCount(const QModelIndex &) const
 {
-  return 4;
+  return 3;
 }
 
 QVariant AccountsModel::data(const QModelIndex &index, int role) const
@@ -63,13 +63,15 @@ QVariant AccountsModel::data(const QModelIndex &index, int role) const
     case 2:
       return allData.accounts.at(index.row()).bonus;
       break;
+      /*
     case 3:
       return allData.accounts.at(index.row()).barcode;
       break;
+      */
     };
   } else if(role == Qt::DecorationRole) {
     if(index.column() == 0) {
-      return QIcon("graphics/account.png");
+      return getPreparedIcon(QPixmap("graphics/account.png").scaled(allData.iconSize, allData.iconSize, Qt::IgnoreAspectRatio, Qt::SmoothTransformation));
     }
     /*
   } else if(role == Qt::ForegroundRole) {
@@ -135,9 +137,11 @@ QVariant AccountsModel::headerData(int section, Qt::Orientation orientation, int
       case 2:
         return tr("Bonus");
         break;
+        /*
       case 3:
         return tr("Barcode");
         break;
+        */
       default:
         return tr("Unknown");
       };
@@ -177,4 +181,33 @@ void AccountsModel::refreshAll()
 {
   beginResetModel();
   endResetModel();
+}
+
+QPixmap AccountsModel::getPreparedIcon(const QPixmap &icon) const
+{
+  QImage image(icon.width() + 2, icon.height() + 2, QImage::Format_ARGB32);
+  image.fill(Qt::transparent);
+  QPainter painter(&image);
+  QBrush brush(Qt::SolidPattern);
+  brush.setColor(Qt::black);
+  painter.setBrush(brush);
+  painter.drawRoundedRect(0, 0, icon.width() + 2, icon.height() + 2, 30, 30, Qt::RelativeSize);
+  painter.drawPixmap(1, 1, icon);
+  painter.end();
+  /*
+  QImage image(96, 96, QImage::Format_ARGB32);
+  image.fill(Qt::transparent);
+  QPainter painter(&image);
+  QBrush brush(Qt::SolidPattern);
+  brush.setColor(Qt::black);
+  painter.setBrush(brush);
+  painter.drawEllipse(0, 0, 95, 95);
+  painter.end();
+  image = image.scaled(data.iconSize8, data.iconSize, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+  painter.begin(&image);
+  painter.drawPixmap(0, 0, icon.pixmap(data.iconSize, data.iconSize));
+  painter.end();
+  */
+
+  return QPixmap::fromImage(image);
 }

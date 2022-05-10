@@ -41,12 +41,12 @@ EntryEditor::EntryEditor(const QString &barcode,
   setWindowTitle(tr("Barcode: ") + barcode);
   setFixedSize(550, 750);
 
-  setStyleSheet("QLabel {font-size: 35px; qproperty-alignment: AlignCenter;}"
-                "QLineEdit {font-size: 35px;}"
-                "QComboBox {qproperty-iconSize: 35px; font-size: 35px;}"
-                "QPushButton {qproperty-iconSize: 35px; font-size: 35px;}");
+  setStyleSheet("QLabel {font-size: " + QString::number(data.fontSize) + "px; qproperty-alignment: AlignCenter;}"
+                "QLineEdit {font-size: " + QString::number(data.fontSize) + "px;}"
+                "QComboBox {qproperty-iconSize: " + QString::number(data.iconSizeSmall) + "px; font-size: " + QString::number(data.fontSize) + "px;}"
+                "QPushButton {qproperty-iconSize: " + QString::number(data.iconSizeSmall) + "px; font-size: " + QString::number(data.fontSize) + "px;}");
   
-  QSound::play("sounds/ny_konto_eller_vare.wav");
+  QSound::play("sounds/ny_stregkode.wav");
   
   QLabel *typeLabel = new QLabel(tr("New account, category or item?"));
 
@@ -77,9 +77,12 @@ EntryEditor::EntryEditor(const QString &barcode,
   buttonLayout->addWidget(categoryButton);
   buttonLayout->addWidget(itemButton);
 
-  accountWidget = new AccountWidget(barcode, data, this);
-  itemWidget = new ItemWidget(barcode, data, this);
-  categoryWidget = new CategoryWidget(barcode, data, this);
+  account.barcode = barcode;
+  accountWidget = new AccountWidget(data, account, this);
+  category.barcode = barcode;
+  categoryWidget = new CategoryWidget(data, category, this);
+  item.barcode = barcode;
+  itemWidget = new ItemWidget(data, item, this);
 
   typeLayout = new QStackedLayout;
   typeLayout->addWidget(new QWidget);
@@ -145,17 +148,20 @@ QString EntryEditor::getType()
   return "";
 }
 
-Account EntryEditor::getAccount()
+void EntryEditor::addAccount()
 {
-  return accountWidget->getAccount();
+  accountWidget->commitAccount();
+  data.accounts.append(account);
 }
 
-Item EntryEditor::getItem()
+void EntryEditor::addItem()
 {
-  return itemWidget->getItem();
+  itemWidget->commitItem();
+  data.items.append(item);
 }
 
-Category EntryEditor::getCategory()
+void EntryEditor::addCategory()
 {
-  return categoryWidget->getCategory();
+  categoryWidget->commitCategory();
+  data.categories.append(category);
 }

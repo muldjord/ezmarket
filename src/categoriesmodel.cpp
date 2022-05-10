@@ -43,7 +43,7 @@ int CategoriesModel::rowCount(const QModelIndex &) const
 
 int CategoriesModel::columnCount(const QModelIndex &) const
 {
-  return 3;
+  return 2;
 }
 
 QVariant CategoriesModel::data(const QModelIndex &index, int role) const
@@ -60,9 +60,11 @@ QVariant CategoriesModel::data(const QModelIndex &index, int role) const
     case 1:
       return allData.categories.at(index.row()).lifespan;
       break;
+      /*
     case 2:
       return allData.categories.at(index.row()).barcode;
       break;
+      */
     };
   } else if(role == Qt::DecorationRole) {
     if(index.column() == 0) {
@@ -129,9 +131,11 @@ QVariant CategoriesModel::headerData(int section, Qt::Orientation orientation, i
       case 1:
         return tr("Lifespan");
         break;
+        /*
       case 2:
         return tr("Barcode");
         break;
+        */
       default:
         return tr("Unknown");
       };

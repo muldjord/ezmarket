@@ -36,6 +36,9 @@
 
 struct Data {
   int iconSize = 48;
+  int iconSizeSmall = 35;
+  int fontSize = 35;
+  int fontSizeSmall = 30;
   QList<Account> accounts;
   QList<Item> items;
   QList<Category> categories;

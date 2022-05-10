@@ -39,20 +39,20 @@ class ItemWidget : public QWidget
   Q_OBJECT
     
 public:
-  ItemWidget(const QString &barcode,
-             Data &data,
+  ItemWidget(Data &data,
+             Item &item,
              QWidget *parent);
   ~ItemWidget();
   bool isSane();
-  Item getItem();
+  void commitItem();
 
 private slots:
   void setIconSearchText();
   void searchIcons();
   
 private:
-  const QString &barcode;
   Data &data;
+  Item &item;
   LineEdit *idLineEdit = nullptr;
   LineEdit *searchLineEdit = nullptr;
   QComboBox *iconComboBox = nullptr;

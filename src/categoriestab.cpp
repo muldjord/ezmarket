@@ -35,8 +35,8 @@ CategoriesTab::CategoriesTab(Data &data,
                    QWidget *parent)
   : QWidget(parent), data(data)
 {
-  setStyleSheet("QTableView {font-size: 30px;}"
-                "QHeaderView {font-size: 30px;}");
+  setStyleSheet("QTableView {font-size: " + QString::number(data.fontSizeSmall) + "px;}"
+                "QHeaderView {font-size: " + QString::number(data.fontSizeSmall) + "px;}");
   categoriesView = new QTableView(this);
   categoriesModel = new CategoriesModel(data, this);
 

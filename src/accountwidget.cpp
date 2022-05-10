@@ -30,10 +30,10 @@
 #include <QVBoxLayout>
 #include <QLocale>
 
-AccountWidget::AccountWidget(const QString &barcode,
-                             Data &data,
+AccountWidget::AccountWidget(Data &data,
+                             Account &account,
                              QWidget *parent)
-  : QWidget(parent), barcode(barcode)
+  : QWidget(parent), data(data), account(account)
 {
   QLabel *idLabel = new QLabel(tr("Account holder:"));
   idLineEdit = new LineEdit(this);
@@ -47,14 +47,9 @@ AccountWidget::AccountWidget(const QString &barcode,
   bonusLineEdit = new LineEdit(this);
   bonusLineEdit->setText("0");
 
-  for(const auto &account: data.accounts) {
-    if(barcode == account.barcode) {
-      idLineEdit->setText(account.id);
-      balanceLineEdit->setText(QLocale().toString(account.balance));
-      bonusLineEdit->setText(QLocale().toString(account.bonus));
-      break;
-    }
-  }
+  idLineEdit->setText(account.id);
+  balanceLineEdit->setText(QLocale().toString(account.balance));
+  bonusLineEdit->setText(QLocale().toString(account.bonus));
 
   QVBoxLayout *layout = new QVBoxLayout(this);
   layout->addWidget(idLabel);
@@ -81,14 +76,9 @@ bool AccountWidget::isSane()
   return false;
 }
 
-Account AccountWidget::getAccount()
+void AccountWidget::commitAccount()
 {
-  Account account;
-
-  account.barcode = this->barcode;
   account.id = idLineEdit->text();
   account.balance = QLocale().toDouble(balanceLineEdit->text());
   account.bonus = QLocale().toInt(bonusLineEdit->text());
-
-  return account;
 }
