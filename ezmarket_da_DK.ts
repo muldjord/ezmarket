@@ -29,7 +29,7 @@
     <message>
         <location filename="src/accountwidget.cpp" line="38"/>
         <source>Account holder:</source>
-        <translation>Konto ejer:</translation>
+        <translation>Kundens navn:</translation>
     </message>
     <message>
         <location filename="src/accountwidget.cpp" line="42"/>
@@ -47,7 +47,7 @@
     <message>
         <location filename="src/accountsmodel.cpp" line="132"/>
         <source>Account</source>
-        <translation>Konto</translation>
+        <translation>Kunde</translation>
     </message>
     <message>
         <location filename="src/accountsmodel.cpp" line="135"/>
@@ -57,7 +57,7 @@
     <message>
         <location filename="src/accountsmodel.cpp" line="138"/>
         <source>Bonus</source>
-        <translation>Bonus</translation>
+        <translation>Bonus point</translation>
     </message>
     <message>
         <location filename="src/accountsmodel.cpp" line="146"/>
@@ -75,7 +75,7 @@
     <message>
         <location filename="src/categoriesmodel.cpp" line="132"/>
         <source>Lifespan</source>
-        <translation>Holdbarhed</translation>
+        <translation>Holdbarhed (dage)</translation>
     </message>
     <message>
         <location filename="src/categoriesmodel.cpp" line="140"/>
@@ -111,7 +111,7 @@
     <message>
         <location filename="src/categorywidget.cpp" line="49"/>
         <source>Lifespan:</source>
-        <translation>Holdbarhed:</translation>
+        <translation>Holdbarhed (dage):</translation>
     </message>
     <message>
         <location filename="src/categorywidget.cpp" line="104"/>
@@ -135,7 +135,7 @@
     <message>
         <location filename="src/entryeditor.cpp" line="53"/>
         <source>Account</source>
-        <translation>Konto</translation>
+        <translation>Kundekort</translation>
     </message>
     <message>
         <location filename="src/entryeditor.cpp" line="58"/>
@@ -247,7 +247,7 @@
     <message>
         <location filename="src/mainwindow.cpp" line="68"/>
         <source>Accounts</source>
-        <translation>Kontoer</translation>
+        <translation>Kundekort</translation>
     </message>
     <message>
         <location filename="src/mainwindow.cpp" line="69"/>
