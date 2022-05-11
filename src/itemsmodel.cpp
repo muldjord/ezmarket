@@ -74,7 +74,13 @@ QVariant ItemsModel::data(const QModelIndex &index, int role) const
       return allData.items.at(index.row()).stock;
       break;
     case 5:
-      return allData.items.at(index.row()).age;
+      int lifespan = -1;
+      for(const auto &category: allData.categories) {
+        if(category.barcode == allData.items.at(index.row()).category) {
+          lifespan = category.lifespan;
+        }
+      }
+      return QString::number(allData.items.at(index.row()).age) + (lifespan != -1?"/" + QString::number(lifespan):"");
       break;
       /*
     case 6:
