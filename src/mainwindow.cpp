@@ -60,6 +60,7 @@ MainWindow::MainWindow()
   itemsTab = new ItemsTab(data, this);
   connect(itemsTab->itemsModel, &ItemsModel::dataChanged, this, &MainWindow::focusBarcodeLineEdit);
   categoriesTab = new CategoriesTab(data, this);
+  soundboardTab = new Soundboard(data, this);
  /*
   CheckoutTab *checkoutTab = new CheckoutTab(this);
   */
@@ -68,6 +69,7 @@ MainWindow::MainWindow()
   modeTabs->addTab(accountsTab, QIcon(QPixmap("graphics/account.png").scaled(data.iconSize, data.iconSize, Qt::IgnoreAspectRatio, Qt::SmoothTransformation)), tr("Accounts"));
   modeTabs->addTab(categoriesTab, QIcon(QPixmap("graphics/category.png").scaled(data.iconSize, data.iconSize, Qt::IgnoreAspectRatio, Qt::SmoothTransformation)), tr("Categories"));
   modeTabs->addTab(itemsTab, QIcon(QPixmap("graphics/item.png").scaled(data.iconSize, data.iconSize, Qt::IgnoreAspectRatio, Qt::SmoothTransformation)), tr("Items"));
+  modeTabs->addTab(soundboardTab, QIcon(QPixmap("graphics/sound.png").scaled(data.iconSize, data.iconSize, Qt::IgnoreAspectRatio, Qt::SmoothTransformation)), tr("Announcements"));
   /*
   modeTabs->addTab(checkoutTab, tr("Checkout"));
   */

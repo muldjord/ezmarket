@@ -197,37 +197,37 @@
 <context>
     <name>ItemsModel</name>
     <message>
-        <location filename="src/itemsmodel.cpp" line="151"/>
+        <location filename="src/itemsmodel.cpp" line="157"/>
         <source>Item</source>
         <translation>Vare</translation>
     </message>
     <message>
-        <location filename="src/itemsmodel.cpp" line="154"/>
+        <location filename="src/itemsmodel.cpp" line="160"/>
         <source>Category</source>
         <translation>Kategori</translation>
     </message>
     <message>
-        <location filename="src/itemsmodel.cpp" line="157"/>
+        <location filename="src/itemsmodel.cpp" line="163"/>
         <source>Price</source>
         <translation>Pris</translation>
     </message>
     <message>
-        <location filename="src/itemsmodel.cpp" line="160"/>
+        <location filename="src/itemsmodel.cpp" line="166"/>
         <source>Discount</source>
         <translation>Rabat</translation>
     </message>
     <message>
-        <location filename="src/itemsmodel.cpp" line="163"/>
+        <location filename="src/itemsmodel.cpp" line="169"/>
         <source>Stock</source>
         <translation>På lager</translation>
     </message>
     <message>
-        <location filename="src/itemsmodel.cpp" line="166"/>
+        <location filename="src/itemsmodel.cpp" line="172"/>
         <source>Age</source>
         <translation>Alder</translation>
     </message>
     <message>
-        <location filename="src/itemsmodel.cpp" line="174"/>
+        <location filename="src/itemsmodel.cpp" line="180"/>
         <source>Unknown</source>
         <translation>Ukendt</translation>
     </message>
@@ -235,42 +235,47 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="src/mainwindow.cpp" line="137"/>
+        <location filename="src/mainwindow.cpp" line="139"/>
         <source>Barcode</source>
         <translation>Stregkode</translation>
     </message>
     <message>
-        <location filename="src/mainwindow.cpp" line="111"/>
+        <location filename="src/mainwindow.cpp" line="113"/>
         <source>&amp;About...</source>
         <translation>&amp;Om...</translation>
     </message>
     <message>
-        <location filename="src/mainwindow.cpp" line="68"/>
+        <location filename="src/mainwindow.cpp" line="69"/>
         <source>Accounts</source>
         <translation>Kundekort</translation>
     </message>
     <message>
-        <location filename="src/mainwindow.cpp" line="69"/>
+        <location filename="src/mainwindow.cpp" line="70"/>
         <source>Categories</source>
         <translation>Kategorier</translation>
     </message>
     <message>
-        <location filename="src/mainwindow.cpp" line="70"/>
+        <location filename="src/mainwindow.cpp" line="71"/>
         <source>Items</source>
         <translation>Varer</translation>
     </message>
     <message>
-        <location filename="src/mainwindow.cpp" line="118"/>
+        <location filename="src/mainwindow.cpp" line="72"/>
+        <source>Announcements</source>
+        <translation>Annonceringer</translation>
+    </message>
+    <message>
+        <location filename="src/mainwindow.cpp" line="120"/>
         <source>&amp;File</source>
         <translation>&amp;Fil</translation>
     </message>
     <message>
-        <location filename="src/mainwindow.cpp" line="121"/>
+        <location filename="src/mainwindow.cpp" line="123"/>
         <source>&amp;Help</source>
         <translation>&amp;Hjælp</translation>
     </message>
     <message>
-        <location filename="src/mainwindow.cpp" line="147"/>
+        <location filename="src/mainwindow.cpp" line="149"/>
         <source>Main functions</source>
         <translation>Hovedfunktioner</translation>
     </message>

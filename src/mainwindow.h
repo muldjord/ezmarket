@@ -32,6 +32,7 @@
 #include "accountstab.h"
 #include "itemstab.h"
 #include "categoriestab.h"
+#include "soundboard.h"
 
 #include <QMainWindow>
 #include <QTimer>
@@ -89,6 +90,7 @@ private:
   AccountsTab *accountsTab = nullptr;
   ItemsTab *itemsTab = nullptr;
   CategoriesTab *categoriesTab = nullptr;
+  Soundboard *soundboardTab = nullptr;
   /*
   CheckoutTab *checkoutTab = nullptr;
   */
