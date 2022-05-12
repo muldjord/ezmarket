@@ -39,7 +39,8 @@ Soundboard::Soundboard(Data &data, QWidget *parent)
   setStyleSheet("QLabel {font-size: " + QString::number(data.fontSize) + "px; qproperty-alignment: AlignCenter;}"
                 "QLineEdit {font-size: " + QString::number(data.fontSize) + "px;}"
                 "QComboBox {qproperty-iconSize: " + QString::number(data.iconSizeSmall) + "px; font-size: " + QString::number(data.fontSize) + "px;}"
-                "QPushButton {qproperty-iconSize: " + QString::number(data.iconSizeSmall) + "px; font-size: " + QString::number(data.fontSize) + "px;}");
+                "QPushButton {border-image: url(graphics/soundbutton.png); qproperty-iconSize: " + QString::number(data.iconSizeSmall) + "px; font-size: " + QString::number(data.fontSize) + "px;}"
+                "QPushButton:pressed {border-image: url(graphics/soundbutton_pressed.png); qproperty-iconSize: " + QString::number(data.iconSizeSmall) + "px; font-size: " + QString::number(data.fontSize) + "px;}");
 
   QDir soundsDir("sounds/soundboard", "*.wav", QDir::Name, QDir::Files);
   QList<QFileInfo> soundInfos = soundsDir.entryInfoList();
@@ -54,7 +55,7 @@ Soundboard::Soundboard(Data &data, QWidget *parent)
   for(const auto &soundInfo: soundInfos) {
     QString title = soundInfo.baseName();
     title = title.left(1).toUpper() + title.mid(1);
-    title.replace("_", " ").replace("ae", "æ").replace("oe", "ø").replace("aa", "å");
+    title.replace("_", " ").replace("-", " ").replace("ae", "æ").replace("oe", "ø").replace("aa", "å");
     QList<QString> words = title.split(" ");
     title = "";
     QString line = "";
@@ -66,8 +67,8 @@ Soundboard::Soundboard(Data &data, QWidget *parent)
         line = "";
       }
     }
-    title += line + "\n";
-    QPushButton *soundButton = new QPushButton(title, this);
+    title += line;
+    QPushButton *soundButton = new QPushButton(QIcon(QPixmap("graphics/sound.png").scaled(data.iconSize, data.iconSize, Qt::IgnoreAspectRatio, Qt::SmoothTransformation)), title, this);
     soundButton->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Expanding);
     soundButton->setObjectName(soundInfo.absoluteFilePath());
     soundButtons->addButton(soundButton);
