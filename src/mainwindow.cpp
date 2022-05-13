@@ -61,6 +61,7 @@ MainWindow::MainWindow()
   connect(itemsTab->itemsModel, &ItemsModel::dataChanged, this, &MainWindow::focusBarcodeLineEdit);
   categoriesTab = new CategoriesTab(data, this);
   soundboardTab = new Soundboard(data, this);
+  checkoutTab = new Checkout(data, this);
  /*
   CheckoutTab *checkoutTab = new CheckoutTab(this);
   */
@@ -70,6 +71,7 @@ MainWindow::MainWindow()
   modeTabs->addTab(categoriesTab, QIcon(QPixmap("graphics/category.png").scaled(data.iconSize, data.iconSize, Qt::IgnoreAspectRatio, Qt::SmoothTransformation)), tr("Categories"));
   modeTabs->addTab(itemsTab, QIcon(QPixmap("graphics/item.png").scaled(data.iconSize, data.iconSize, Qt::IgnoreAspectRatio, Qt::SmoothTransformation)), tr("Items"));
   modeTabs->addTab(soundboardTab, QIcon(QPixmap("graphics/sound.png").scaled(data.iconSize, data.iconSize, Qt::IgnoreAspectRatio, Qt::SmoothTransformation)), tr("Announcements"));
+  modeTabs->addTab(checkoutTab, QIcon(QPixmap("graphics/checkout.png").scaled(data.iconSize, data.iconSize, Qt::IgnoreAspectRatio, Qt::SmoothTransformation)), tr("Checkout"));
   /*
   modeTabs->addTab(checkoutTab, tr("Checkout"));
   */
@@ -92,7 +94,7 @@ MainWindow::MainWindow()
   focusTimer.setInterval(500);
   focusTimer.setSingleShot(false);
   connect(&focusTimer, &QTimer::timeout, this, &MainWindow::focusBarcodeLineEdit);
-  //focusTimer.start();
+  focusTimer.start();
 
   installEventFilter(this);
 
@@ -430,12 +432,7 @@ void MainWindow::checkBarcode()
     if(type == "account") {
       modeTabs->setCurrentWidget(accountsTab);
     } else if(type == "item") {
-      for(int a = 0; a < data.items.length(); ++a) {
-        if(data.items.at(a).barcode == barcode) {
-          data.items[a].stock += 1;
-          itemsTab->itemsModel->refreshAll();
-        }
-      }
+      itemsTab->addStock(barcode);
     }
   } else if(modeTabs->currentWidget() == categoriesTab) {
     printf("CATEGORIES TAB ACTIVE!\n");

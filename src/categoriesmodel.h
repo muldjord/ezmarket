@@ -62,8 +62,6 @@ signals:
   void editingDone();
 
 private:
-  QPixmap getPreparedIcon(const QPixmap &icon) const;
-
   Data &allData;
 };
 

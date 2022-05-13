@@ -39,7 +39,7 @@ EntryEditor::EntryEditor(const QString &barcode,
   : QDialog(parent), barcode(barcode), data(data)
 {
   setWindowTitle(tr("Barcode: ") + barcode);
-  setFixedSize(650, 750);
+  setFixedSize(700, 750);
 
   setStyleSheet("QLabel {font-size: " + QString::number(data.fontSize) + "px; qproperty-alignment: AlignCenter;}"
                 "QLineEdit {font-size: " + QString::number(data.fontSize) + "px;}"
@@ -96,7 +96,7 @@ EntryEditor::EntryEditor(const QString &barcode,
   connect(dialogButtons, &QDialogButtonBox::rejected, this, &EntryEditor::reject);
 
   QVBoxLayout *layout = new QVBoxLayout;
-  layout->addWidget(typeLabel);
+  //layout->addWidget(typeLabel);
   layout->addLayout(buttonLayout);
   layout->addLayout(typeLayout);
   layout->addWidget(dialogButtons);

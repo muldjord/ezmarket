@@ -25,6 +25,7 @@
  */
 
 #include "categoriesmodel.h"
+#include "imgtools.h"
 
 #include <QIcon>
 #include <QPainter>
@@ -68,7 +69,7 @@ QVariant CategoriesModel::data(const QModelIndex &index, int role) const
     };
   } else if(role == Qt::DecorationRole) {
     if(index.column() == 0) {
-      return getPreparedIcon(allData.icons[allData.categories.at(index.row()).icon]);
+      return ImgTools::getPreparedIcon(allData.icons[allData.categories.at(index.row()).icon], allData.iconSize);
     }
     /*
   } else if(role == Qt::ForegroundRole) {
@@ -175,33 +176,4 @@ void CategoriesModel::refreshAll()
 {
   beginResetModel();
   endResetModel();
-}
-
-QPixmap CategoriesModel::getPreparedIcon(const QPixmap &icon) const
-{
-  QImage image(icon.width() + 2, icon.height() + 2, QImage::Format_ARGB32);
-  image.fill(Qt::transparent);
-  QPainter painter(&image);
-  QBrush brush(Qt::SolidPattern);
-  brush.setColor(Qt::black);
-  painter.setBrush(brush);
-  painter.drawRoundedRect(0, 0, icon.width() + 2, icon.height() + 2, 30, 30, Qt::RelativeSize);
-  painter.drawPixmap(1, 1, icon);
-  painter.end();
-  /*
-  QImage image(96, 96, QImage::Format_ARGB32);
-  image.fill(Qt::transparent);
-  QPainter painter(&image);
-  QBrush brush(Qt::SolidPattern);
-  brush.setColor(Qt::black);
-  painter.setBrush(brush);
-  painter.drawEllipse(0, 0, 95, 95);
-  painter.end();
-  image = image.scaled(data.iconSize8, data.iconSize, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
-  painter.begin(&image);
-  painter.drawPixmap(0, 0, icon.pixmap(data.iconSize, data.iconSize));
-  painter.end();
-  */
-
-  return QPixmap::fromImage(image);
 }

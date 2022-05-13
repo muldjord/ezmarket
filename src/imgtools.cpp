@@ -1,6 +1,6 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            datatypes.h
+ *            imgtools.cpp
  *
  *  Sat Apr 30 09:03:00 CEST 2022
  *  Copyright 2022 Lars Muldjord
@@ -24,34 +24,35 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
 
-#ifndef __DATATYPES_H__
-#define __DATATYPES_H__
+#include "imgtools.h"
 
-#include <QString>
+#include <QPainter>
 
-struct Account {
-  QString barcode = "";
-  QString id = "";
-  double balance = 0.0;
-  int bonus = 0;
-};
+QPixmap ImgTools::getPreparedIcon(const QPixmap &icon, const int &iconSize)
+{
+  QImage image(iconSize + 2, iconSize + 2, QImage::Format_ARGB32);
+  image.fill(Qt::transparent);
+  QPainter painter(&image);
+  QBrush brush(Qt::SolidPattern);
+  brush.setColor(Qt::black);
+  painter.setBrush(brush);
+  painter.drawRoundedRect(0, 0, iconSize + 2, iconSize + 2, 30, 30, Qt::RelativeSize);
+  painter.drawPixmap(1, 1, icon);
+  painter.end();
+  /*
+  QImage image(96, 96, QImage::Format_ARGB32);
+  image.fill(Qt::transparent);
+  QPainter painter(&image);
+  QBrush brush(Qt::SolidPattern);
+  brush.setColor(Qt::black);
+  painter.setBrush(brush);
+  painter.drawEllipse(0, 0, 95, 95);
+  painter.end();
+  image = image.scaled(data.iconSize8, data.iconSize, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+  painter.begin(&image);
+  painter.drawPixmap(0, 0, icon.pixmap(data.iconSize, data.iconSize));
+  painter.end();
+  */
 
-struct Item {
-  QString icon = ""; // PNG file basename
-  QString id = "";
-  QString category = ""; // Category barcode.
-  double price = 0.0;
-  double discount = 0.0; // Subtracted from price.
-  int stock = 0;
-  int age = 0; // Seconds. Reset whenever one or more is added to stock emulating renewal.
-  QString barcode = "";
-};
-
-struct Category {
-  QString barcode = "";
-  QString id = "";
-  QString icon = ""; // PNG file basename
-  int lifespan = -1;
-};
-
-#endif // __DATATYPES_H__
+  return QPixmap::fromImage(image);
+}

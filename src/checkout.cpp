@@ -1,6 +1,6 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            datatypes.h
+ *            checkout.cpp
  *
  *  Sat Apr 30 09:03:00 CEST 2022
  *  Copyright 2022 Lars Muldjord
@@ -24,34 +24,27 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
 
-#ifndef __DATATYPES_H__
-#define __DATATYPES_H__
+#include "checkout.h"
+#include "itemeditor.h"
 
-#include <QString>
+#include <QVBoxLayout>
+#include <QButtonGroup>
+#include <QPushButton>
+#include <QSound>
+#include <QDir>
 
-struct Account {
-  QString barcode = "";
-  QString id = "";
-  double balance = 0.0;
-  int bonus = 0;
-};
+Checkout::Checkout(Data &data, QWidget *parent)
+  : QWidget(parent)
+{
+  setStyleSheet("QLabel {font-size: " + QString::number(data.fontSize) + "px; qproperty-alignment: AlignCenter;}"
+                "QLineEdit {font-size: " + QString::number(data.fontSize) + "px;}"
+                "QComboBox {qproperty-iconSize: " + QString::number(data.iconSizeSmall) + "px; font-size: " + QString::number(data.fontSize) + "px;}"
+                "QPushButton {border-image: url(graphics/soundbutton.png); qproperty-iconSize: " + QString::number(data.iconSizeSmall) + "px; font-size: " + QString::number(data.fontSize) + "px;}"
+                "QPushButton:pressed {border-image: url(graphics/soundbutton_pressed.png); qproperty-iconSize: " + QString::number(data.iconSizeSmall) + "px; font-size: " + QString::number(data.fontSize) + "px;}");
 
-struct Item {
-  QString icon = ""; // PNG file basename
-  QString id = "";
-  QString category = ""; // Category barcode.
-  double price = 0.0;
-  double discount = 0.0; // Subtracted from price.
-  int stock = 0;
-  int age = 0; // Seconds. Reset whenever one or more is added to stock emulating renewal.
-  QString barcode = "";
-};
+  //setLayout(layout);
+}
 
-struct Category {
-  QString barcode = "";
-  QString id = "";
-  QString icon = ""; // PNG file basename
-  int lifespan = -1;
-};
-
-#endif // __DATATYPES_H__
+Checkout::~Checkout()
+{
+}

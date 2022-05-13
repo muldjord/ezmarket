@@ -135,7 +135,7 @@
     <message>
         <location filename="src/entryeditor.cpp" line="53"/>
         <source>Account</source>
-        <translation>Kundekort</translation>
+        <translation>Kunde</translation>
     </message>
     <message>
         <location filename="src/entryeditor.cpp" line="58"/>

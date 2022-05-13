@@ -15,6 +15,7 @@ DEFINES+=VERSION=\\\"$$VERSION\\\"
 HEADERS += src/mainwindow.h \
            src/data.h \
            src/datatypes.h \
+           src/imgtools.h \
            src/lineedit.h \
            src/entryeditor.h \
            src/accountstab.h \
@@ -30,10 +31,12 @@ HEADERS += src/mainwindow.h \
            src/itemeditor.h \
            src/itemwidget.h \
            src/soundboard.h \
+           src/checkout.h \
            src/aboutbox.h
 
 SOURCES += src/main.cpp \
            src/mainwindow.cpp \
+           src/imgtools.cpp \
            src/lineedit.cpp \
            src/entryeditor.cpp \
            src/accountstab.cpp \
@@ -49,4 +52,5 @@ SOURCES += src/main.cpp \
            src/itemeditor.cpp \
            src/itemwidget.cpp \
            src/soundboard.cpp \
+           src/checkout.cpp \
            src/aboutbox.cpp

@@ -44,12 +44,15 @@ public:
   ItemsTab(Data &data,
            QWidget *parent);
   ~ItemsTab();
+  void addStock(const QString &barcode);
   ItemsModel *itemsModel = nullptr;
   
 private slots:
   void editItem(const QModelIndex &index);
+  void ageItems();
 
 private:
+  QTimer agingTimer;
   QSortFilterProxyModel *proxyModel = nullptr;
   QTableView *itemsView = nullptr;
   Data &data;

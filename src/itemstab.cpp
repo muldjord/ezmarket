@@ -44,13 +44,11 @@ ItemsTab::ItemsTab(Data &data,
   proxyModel->setSourceModel(itemsModel);
 
   itemsView->setModel(proxyModel);
-  //itemsView->setItemDelegate();
   itemsView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
   itemsView->horizontalHeader()->setSectionResizeMode(2, QHeaderView::ResizeToContents);
   itemsView->horizontalHeader()->setSectionResizeMode(3, QHeaderView::ResizeToContents);
   itemsView->horizontalHeader()->setSectionResizeMode(4, QHeaderView::ResizeToContents);
   itemsView->horizontalHeader()->setSectionResizeMode(5, QHeaderView::ResizeToContents);
-  //itemsView->horizontalHeader()->setSectionResizeMode(6, QHeaderView::ResizeToContents);
   itemsView->verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
   itemsView->verticalHeader()->setMinimumSectionSize(data.iconSize + 6);
   itemsView->verticalHeader()->setMaximumSectionSize(data.iconSize + 6);
@@ -63,6 +61,11 @@ ItemsTab::ItemsTab(Data &data,
   QVBoxLayout *layout = new QVBoxLayout;
   layout->addWidget(itemsView);
   setLayout(layout);
+
+  agingTimer.setInterval(60000);
+  agingTimer.setSingleShot(false);
+  connect(&agingTimer, &QTimer::timeout, this, &ItemsTab::ageItems);
+  agingTimer.start();
 }
 
 ItemsTab::~ItemsTab()
@@ -73,5 +76,29 @@ void ItemsTab::editItem(const QModelIndex &index)
 {
   ItemEditor itemEditor(data.items.at(proxyModel->mapToSource(index).row()).barcode, data, this);
   itemEditor.exec();
-  itemsModel->emit dataChanged(proxyModel->mapToSource(index), proxyModel->mapToSource(index));
+  itemsModel->refreshAll();
+  //itemsModel->emit dataChanged(proxyModel->mapToSource(index), proxyModel->mapToSource(index));
+}
+
+void ItemsTab::ageItems()
+{
+  for(auto &item: data.items) {
+    if(item.stock > 0) {
+      item.age += 1;
+    } else {
+      item.age = 0;
+    }
+  }
+  itemsModel->refreshAll();
+}
+
+void ItemsTab::addStock(const QString &barcode)
+{
+  for(int a = 0; a < data.items.length(); ++a) {
+    if(data.items.at(a).barcode == barcode) {
+      data.items[a].stock += 1;
+      data.items[a].age = 0;
+      itemsModel->refreshAll();
+    }
+  }
 }

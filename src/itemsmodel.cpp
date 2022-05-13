@@ -25,6 +25,7 @@
  */
 
 #include "itemsmodel.h"
+#include "imgtools.h"
 
 #include <QIcon>
 #include <QPainter>
@@ -90,28 +91,54 @@ QVariant ItemsModel::data(const QModelIndex &index, int role) const
     };
   } else if(role == Qt::DecorationRole) {
     if(index.column() == 0) {
-      return getPreparedIcon(allData.icons[allData.items.at(index.row()).icon]);
+      return ImgTools::getPreparedIcon(allData.icons[allData.items.at(index.row()).icon], allData.iconSize);
     } else if(index.column() == 1) {
       for(const auto &category: allData.categories) {
         if(category.barcode == allData.items.at(index.row()).category) {
-          return getPreparedIcon(allData.icons[category.icon]);
+          return ImgTools::getPreparedIcon(allData.icons[category.icon], allData.iconSize);
         }
       }
     }
-    /*
   } else if(role == Qt::ForegroundRole) {
     switch(index.column()) {
-    case 0:
-      return QBrush(QColor(255, 255, 255));
+    case 5:
+      if(allData.items.at(index.row()).stock > 0) {
+        double lifespan = -1;
+        for(const auto &category: allData.categories) {
+          if(category.barcode == allData.items.at(index.row()).category) {
+            lifespan = category.lifespan;
+          }
+        }
+        if(allData.items.at(index.row()).age / lifespan >= 1.5) {
+          return QBrush(QColor(255, 255, 255));
+        }
+      }
       break;
     }
   } else if(role == Qt::BackgroundRole) {
     switch(index.column()) {
-    case 0:
-      return QBrush(QColor(0, 0, 0));
+    case 5:
+      if(allData.items.at(index.row()).stock > 0) {
+        double lifespan = -1;
+        for(const auto &category: allData.categories) {
+          if(category.barcode == allData.items.at(index.row()).category) {
+            lifespan = category.lifespan;
+          }
+        }
+        if(allData.items.at(index.row()).age / lifespan >= 1.5) {
+          return QBrush(QColor(0, 0, 0));
+        } else if(allData.items.at(index.row()).age / lifespan >= 1.0) {
+          return QBrush(QColor(242, 169, 169));
+        } else if(allData.items.at(index.row()).age / lifespan >= 0.75) {
+          return QBrush(QColor(242, 212, 169));
+        } else if(allData.items.at(index.row()).age / lifespan >= 0.5) {
+          return QBrush(QColor(224, 242, 169));
+        } else {
+          return QBrush(QColor(169, 242, 175));
+        }
+      }
       break;
     }
-    */
   }
   /*
   } else if(role == Qt::ForegroundRole) {
@@ -215,33 +242,4 @@ void ItemsModel::refreshAll()
 {
   beginResetModel();
   endResetModel();
-}
-
-QPixmap ItemsModel::getPreparedIcon(const QPixmap &icon) const
-{
-  QImage image(icon.width() + 2, icon.height() + 2, QImage::Format_ARGB32);
-  image.fill(Qt::transparent);
-  QPainter painter(&image);
-  QBrush brush(Qt::SolidPattern);
-  brush.setColor(Qt::black);
-  painter.setBrush(brush);
-  painter.drawRoundedRect(0, 0, icon.width() + 2, icon.height() + 2, 30, 30, Qt::RelativeSize);
-  painter.drawPixmap(1, 1, icon);
-  painter.end();
-  /*
-  QImage image(96, 96, QImage::Format_ARGB32);
-  image.fill(Qt::transparent);
-  QPainter painter(&image);
-  QBrush brush(Qt::SolidPattern);
-  brush.setColor(Qt::black);
-  painter.setBrush(brush);
-  painter.drawEllipse(0, 0, 95, 95);
-  painter.end();
-  image = image.scaled(data.iconSize8, data.iconSize, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
-  painter.begin(&image);
-  painter.drawPixmap(0, 0, icon.pixmap(data.iconSize, data.iconSize));
-  painter.end();
-  */
-
-  return QPixmap::fromImage(image);
 }
