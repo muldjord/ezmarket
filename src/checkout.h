@@ -44,9 +44,9 @@ public:
   void addItem(const QString &barcode);
   
 private slots:
+  void clearItems();
 
 private:
-  void clearItems();
   Data &data;
   QListWidget *checkoutList = nullptr;
   QList<Item> checkoutItems;

@@ -48,7 +48,7 @@ EntryEditor::EntryEditor(const QString &barcode,
   
   QSound::play("sounds/ny_stregkode.wav");
   
-  QLabel *typeLabel = new QLabel(tr("New account, category or item?"));
+  //QLabel *typeLabel = new QLabel(tr("New account, category or item?"));
 
   accountButton = new QPushButton(tr("Account"));
   accountButton->setIcon(QIcon("graphics/account.png"));

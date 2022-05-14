@@ -45,7 +45,7 @@ Soundboard::Soundboard(Data &data, QWidget *parent)
   QDir soundsDir("sounds/soundboard", "*.wav", QDir::Name, QDir::Files);
   QList<QFileInfo> soundInfos = soundsDir.entryInfoList();
   QButtonGroup *soundButtons = new QButtonGroup(this);
-  connect(soundButtons, qOverload<QAbstractButton *>(&QButtonGroup::buttonClicked), this, &Soundboard::playSound);
+  connect(soundButtons, qOverload<QAbstractButton *>(&QButtonGroup::buttonPressed), this, &Soundboard::playSound);
 
   int rowSounds = 0;
 
@@ -69,6 +69,7 @@ Soundboard::Soundboard(Data &data, QWidget *parent)
     }
     title += line;
     QPushButton *soundButton = new QPushButton(QIcon(QPixmap("graphics/sound.png").scaled(data.iconSize, data.iconSize, Qt::IgnoreAspectRatio, Qt::SmoothTransformation)), title, this);
+    soundButton->setFocusPolicy(Qt::NoFocus);
     soundButton->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Expanding);
     soundButton->setObjectName(soundInfo.absoluteFilePath());
     soundButtons->addButton(soundButton);

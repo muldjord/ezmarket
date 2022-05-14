@@ -122,26 +122,26 @@
 <context>
     <name>Checkout</name>
     <message>
-        <location filename="src/checkout.cpp" line="78"/>
-        <location filename="src/checkout.cpp" line="80"/>
+        <location filename="src/checkout.cpp" line="82"/>
         <location filename="src/checkout.cpp" line="84"/>
+        <location filename="src/checkout.cpp" line="88"/>
         <source>$</source>
         <translation> kr.</translation>
     </message>
     <message>
-        <location filename="src/checkout.cpp" line="80"/>
+        <location filename="src/checkout.cpp" line="84"/>
         <source> discount</source>
         <translation> rabat</translation>
     </message>
     <message>
-        <location filename="src/checkout.cpp" line="84"/>
+        <location filename="src/checkout.cpp" line="88"/>
         <source>Total: </source>
         <translation>Total: </translation>
     </message>
     <message>
-        <location filename="src/checkout.cpp" line="91"/>
-        <source>Please scan the first item...</source>
-        <translation>Scan venligst den første vare...</translation>
+        <location filename="src/checkout.cpp" line="95"/>
+        <source>Scan item...</source>
+        <translation>Scan vare...</translation>
     </message>
 </context>
 <context>
@@ -150,12 +150,6 @@
         <location filename="src/entryeditor.cpp" line="41"/>
         <source>Barcode: </source>
         <translation>Stregkode: </translation>
-    </message>
-    <message>
-        <location filename="src/entryeditor.cpp" line="51"/>
-        <source>New account, category or item?</source>
-        <oldsource>New account or item?</oldsource>
-        <translation>Ny konto, kategori eller vare?</translation>
     </message>
     <message>
         <location filename="src/entryeditor.cpp" line="53"/>
