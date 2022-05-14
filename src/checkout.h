@@ -31,6 +31,7 @@
 
 #include <QWidget>
 #include <QAbstractButton>
+#include <QListWidget>
 
 class Checkout : public QWidget
 {
@@ -39,10 +40,16 @@ class Checkout : public QWidget
 public:
   Checkout(Data &data, QWidget *parent);
   ~Checkout();
+  void payBy(const QString &barcode);
+  void addItem(const QString &barcode);
   
 private slots:
 
 private:
+  void clearItems();
+  Data &data;
+  QListWidget *checkoutList = nullptr;
+  QList<Item> checkoutItems;
 };
 
 #endif // __CHECKOUT_H__

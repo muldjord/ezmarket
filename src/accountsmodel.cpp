@@ -74,17 +74,19 @@ QVariant AccountsModel::data(const QModelIndex &index, int role) const
     if(index.column() == 0) {
       return ImgTools::getPreparedIcon(QPixmap("graphics/account.png").scaled(allData.iconSize, allData.iconSize, Qt::IgnoreAspectRatio, Qt::SmoothTransformation), allData.iconSize);
     }
+  } else if(role == Qt::BackgroundRole) {
+    switch(index.column()) {
+    case 1:
+      if(allData.accounts.at(index.row()).balance < 0.0) {
+        return QBrush(QColor(242, 169, 169));
+      }
+      break;
+    }
     /*
   } else if(role == Qt::ForegroundRole) {
     switch(index.column()) {
     case 0:
       return QBrush(QColor(255, 255, 255));
-      break;
-    }
-  } else if(role == Qt::BackgroundRole) {
-    switch(index.column()) {
-    case 0:
-      return QBrush(QColor(0, 0, 0));
       break;
     }
     */

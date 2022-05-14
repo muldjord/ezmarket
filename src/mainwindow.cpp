@@ -427,13 +427,6 @@ void MainWindow::checkBarcode()
     } else if(type == "item") {
       modeTabs->setCurrentWidget(itemsTab);
     }
-  } else if(modeTabs->currentWidget() == itemsTab) {
-    printf("ITEMS TAB ACTIVE!\n");
-    if(type == "account") {
-      modeTabs->setCurrentWidget(accountsTab);
-    } else if(type == "item") {
-      itemsTab->addStock(barcode);
-    }
   } else if(modeTabs->currentWidget() == categoriesTab) {
     printf("CATEGORIES TAB ACTIVE!\n");
     if(type == "account") {
@@ -446,6 +439,20 @@ void MainWindow::checkBarcode()
           categoriesTab->categoriesModel->refreshAll();
         }
       }
+    }
+  } else if(modeTabs->currentWidget() == itemsTab) {
+    printf("ITEMS TAB ACTIVE!\n");
+    if(type == "account") {
+      modeTabs->setCurrentWidget(accountsTab);
+    } else if(type == "item") {
+      itemsTab->addStock(barcode);
+    }
+  } else if(modeTabs->currentWidget() == checkoutTab) {
+    printf("CHECKOUT TAB ACTIVE!\n");
+    if(type == "account") {
+      checkoutTab->payBy(barcode);
+    } else if(type == "item") {
+      checkoutTab->addItem(barcode);
     }
   }
   

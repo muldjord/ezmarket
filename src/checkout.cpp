@@ -34,17 +34,59 @@
 #include <QDir>
 
 Checkout::Checkout(Data &data, QWidget *parent)
-  : QWidget(parent)
+  : QWidget(parent), data(data)
 {
-  setStyleSheet("QLabel {font-size: " + QString::number(data.fontSize) + "px; qproperty-alignment: AlignCenter;}"
-                "QLineEdit {font-size: " + QString::number(data.fontSize) + "px;}"
-                "QComboBox {qproperty-iconSize: " + QString::number(data.iconSizeSmall) + "px; font-size: " + QString::number(data.fontSize) + "px;}"
-                "QPushButton {border-image: url(graphics/soundbutton.png); qproperty-iconSize: " + QString::number(data.iconSizeSmall) + "px; font-size: " + QString::number(data.fontSize) + "px;}"
-                "QPushButton:pressed {border-image: url(graphics/soundbutton_pressed.png); qproperty-iconSize: " + QString::number(data.iconSizeSmall) + "px; font-size: " + QString::number(data.fontSize) + "px;}");
+  setStyleSheet("QListWidget {font-size: " + QString::number(data.fontSize) + "px; qproperty-iconSize: " + QString::number(data.iconSize) + "px;}");
 
-  //setLayout(layout);
+  checkoutList = new QListWidget(this);
+  QVBoxLayout *layout = new QVBoxLayout;
+  layout->addWidget(checkoutList);
+  setLayout(layout);
+  clearItems();
 }
 
 Checkout::~Checkout()
 {
+}
+
+void Checkout::payBy(const QString &barcode)
+{
+  double total = 0.0;
+  for(const auto &item: checkoutItems) {
+    total += item.price - item.discount;
+  }
+  for(auto &account: data.accounts) {
+    if(account.barcode == barcode) {
+      account.balance -= total;
+    }
+  }
+  QSound::play("sounds/betaling_modtaget-tak_fordi_du_handlede_i_butikken.wav");
+  clearItems();
+}
+
+void Checkout::addItem(const QString &barcode)
+{
+  checkoutList->clear();
+  for(const auto &item: data.items) {
+    if(item.barcode == barcode) {
+      checkoutItems.append(item);
+    }
+  }
+  double total = 0.0;
+  for(const auto &item: checkoutItems) {
+    total += item.price - item.discount;
+    checkoutList->addItem(new QListWidgetItem(QIcon(data.icons[item.icon]), item.id + ": " + QString::number(item.price) + tr("$")));
+    if(item.discount > 0.0) {
+      checkoutList->addItem(new QListWidgetItem("\t-" + QString::number(item.discount) + tr("$") + tr(" discount")));
+    }
+  }
+  checkoutList->addItem(new QListWidgetItem("-------------------"));
+  checkoutList->addItem(new QListWidgetItem(tr("Total: ") + QString::number(total) + tr("$")));
+}
+
+void Checkout::clearItems()
+{
+  checkoutItems.clear();
+  checkoutList->clear();
+  checkoutList->addItem(new QListWidgetItem(tr("Please scan the first item...")));
 }
