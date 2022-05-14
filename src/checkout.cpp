@@ -67,8 +67,13 @@ void Checkout::payBy(const QString &barcode)
   }
   for(auto &account: data.accounts) {
     if(account.barcode == barcode) {
-      account.balance -= total;
-      QSound::play("sounds/betaling_modtaget-tak_fordi_du_handlede_i_butikken.wav");
+      if(account.balance - total < 0) {
+        QSound::play("sounds/betaling_kunne_ikke_gennemfoeres-ikke_flere_penge_paa_kortet.wav");
+      } else {
+        account.balance -= total;
+        account.bonus += total / 100;
+        QSound::play("sounds/betaling_modtaget-tak_fordi_du_handlede_i_butikken.wav");
+      }
     }
   }
   QTimer::singleShot(10000, this, &Checkout::clearItems);
