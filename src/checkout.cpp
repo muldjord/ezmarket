@@ -37,7 +37,7 @@
 Checkout::Checkout(Data &data, QWidget *parent)
   : QWidget(parent), data(data)
 {
-  setStyleSheet("QListWidget {padding: 70px; border-image: url(graphics/checkout_background.png); font-size: " + QString::number(data.fontSize) + "px; qproperty-iconSize: " + QString::number(data.iconSize) + "px;}");
+  setStyleSheet("QListWidget {padding: 50px; border-image: url(graphics/checkout_background.png); font-size: " + QString::number(data.fontSizeSmall) + "px; qproperty-iconSize: " + QString::number(data.iconSize) + "px;}");
 
   setMinimumWidth(800);
   checkoutList = new QListWidget(this);
@@ -61,6 +61,9 @@ Checkout::~Checkout()
 
 void Checkout::payBy(const QString &barcode)
 {
+  if(checkoutItems.length() <= 0) {
+    return;
+  }
   double total = 0.0;
   for(const auto &item: checkoutItems) {
     total += item.price - item.discount;
@@ -69,7 +72,7 @@ void Checkout::payBy(const QString &barcode)
     if(account.barcode == barcode) {
       account.balance -= total;
       account.bonus += total / 100;
-      if(account.balance - total < 0) {
+      if(account.balance < 0) {
         QSound::play("sounds/betaling_modtaget-advarsel_konto_i_minus.wav");
       } else {
         QSound::play("sounds/betaling_modtaget-tak_fordi_du_handlede_i_butikken.wav");
