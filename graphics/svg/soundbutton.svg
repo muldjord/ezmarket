@@ -37,14 +37,14 @@
      inkscape:bbox-paths="true"
      inkscape:snap-global="false"
      inkscape:zoom="0.77771465"
-     inkscape:cx="-149.79787"
-     inkscape:cy="118.93823"
+     inkscape:cx="379.95941"
+     inkscape:cy="97.079308"
      inkscape:window-width="2486"
      inkscape:window-height="1376"
      inkscape:window-x="74"
      inkscape:window-y="27"
      inkscape:window-maximized="1"
-     inkscape:current-layer="layer3">
+     inkscape:current-layer="layer4">
     <inkscape:grid
        type="xygrid"
        id="grid927" />
@@ -120,6 +120,23 @@
          y="3.1838953"
          ry="11.105124" />
     </g>
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer4"
+     inkscape:label="Layer 4"
+     style="display:none">
+    <rect
+       style="opacity:0.76019;fill:#ffffff;fill-opacity:0.276306;stroke:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect12360"
+       width="185.42671"
+       height="138.94376"
+       x="-6.9967976"
+       y="-12.895339"
+       ry="5.2916665"
+       inkscape:export-filename="/home/muldjord/programming/ezmarket/graphics/soundbutton_pressed.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
   </g>
   <g
      inkscape:groupmode="layer"
@@ -274,17 +291,17 @@
        id="path11505"
        sodipodi:nodetypes="czc" />
     <path
-       style="display:inline;fill:none;stroke:#6fbff0;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;opacity:0.76018995"
+       style="display:inline;opacity:0.76019;fill:none;stroke:#6fbff0;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        d="m 49.144739,13.228969 c 0,0 2.490363,6.842351 -0.153869,12.954591 -2.644234,6.11224 -10.000537,7.783646 -10.000537,7.783646"
        id="path11505-2"
        sodipodi:nodetypes="czc" />
     <path
-       style="display:inline;fill:none;stroke:#6fbff0;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;opacity:0.48060616"
+       style="display:inline;opacity:0.480606;fill:none;stroke:#6fbff0;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        d="m 58.476126,14.749468 c 0,0 3.126015,8.588822 -0.193144,16.261176 -3.319159,7.672355 -12.553115,9.770377 -12.553115,9.770377"
        id="path11505-3"
        sodipodi:nodetypes="czc" />
     <path
-       style="display:inline;fill:none;stroke:#6fbff0;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;opacity:0.34143607"
+       style="display:inline;opacity:0.341436;fill:none;stroke:#6fbff0;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        d="m 70.322957,15.990109 c 0,0 3.962173,10.88619 -0.244807,20.610772 -4.206979,9.724582 -15.910865,12.383791 -15.910865,12.383791"
        id="path11505-3-7"
        sodipodi:nodetypes="czc" />
