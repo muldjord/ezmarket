@@ -137,7 +137,7 @@ void MainWindow::createToolBar()
   barcodeLineEdit = new QLineEdit(this);
   barcodeLineEdit->setStyleSheet("QLineEdit {background-image: url(graphics/barcode_background.png);}");
   barcodeLineEdit->setMaximumHeight(data.iconSize);
-  barcodeLineEdit->setMaximumWidth(300);
+  barcodeLineEdit->setMaximumWidth(400);
   barcodeLineEdit->setPlaceholderText(tr("Barcode"));
   connect(barcodeLineEdit, &QLineEdit::returnPressed, this, &MainWindow::checkBarcode);
 
@@ -149,7 +149,7 @@ void MainWindow::createToolBar()
   */
 
   QToolBar *toolBar = new QToolBar(tr("Main functions"));
-  toolBar->setMinimumHeight(data.iconSize);
+  toolBar->setMinimumHeight(data.iconSize + 20);
   toolBar->setStyleSheet("QToolBar {background-image: url(graphics/marquee.png); border: 0px;}");
 
   /*
@@ -162,8 +162,15 @@ void MainWindow::createToolBar()
   
   toolBar->addWidget(chooseWorkDirButton);
   */
+  auto spacerLeft = new QWidget(this);
+  spacerLeft->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+  auto spacerRight = new QWidget(this);
+  spacerRight->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+
+  toolBar->addWidget(spacerLeft);
   toolBar->addWidget(barcodeLineEdit);
-  toolBar->addSeparator();
+  toolBar->addWidget(spacerRight);
+  //toolBar->addSeparator();
 
   addToolBar(Qt::TopToolBarArea, toolBar);
 }
