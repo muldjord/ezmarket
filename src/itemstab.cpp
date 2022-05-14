@@ -62,7 +62,7 @@ ItemsTab::ItemsTab(Data &data,
   layout->addWidget(itemsView);
   setLayout(layout);
 
-  agingTimer.setInterval(20000);
+  agingTimer.setInterval(60000);
   agingTimer.setSingleShot(false);
   connect(&agingTimer, &QTimer::timeout, this, &ItemsTab::ageItems);
   agingTimer.start();
