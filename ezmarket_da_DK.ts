@@ -122,36 +122,36 @@
 <context>
     <name>Checkout</name>
     <message>
-        <location filename="src/checkout.cpp" line="113"/>
-        <location filename="src/checkout.cpp" line="115"/>
-        <location filename="src/checkout.cpp" line="119"/>
-        <location filename="src/checkout.cpp" line="120"/>
-        <location filename="src/checkout.cpp" line="121"/>
+        <location filename="src/checkout.cpp" line="116"/>
+        <location filename="src/checkout.cpp" line="118"/>
+        <location filename="src/checkout.cpp" line="122"/>
+        <location filename="src/checkout.cpp" line="123"/>
+        <location filename="src/checkout.cpp" line="124"/>
         <source>$</source>
         <translation> kr.</translation>
     </message>
     <message>
-        <location filename="src/checkout.cpp" line="115"/>
+        <location filename="src/checkout.cpp" line="118"/>
         <source> discount</source>
         <translation> rabat</translation>
     </message>
     <message>
-        <location filename="src/checkout.cpp" line="119"/>
+        <location filename="src/checkout.cpp" line="122"/>
         <source>Subtotal : </source>
         <translation>Subtotal : </translation>
     </message>
     <message>
-        <location filename="src/checkout.cpp" line="120"/>
+        <location filename="src/checkout.cpp" line="123"/>
         <source>Discount : </source>
         <translation>Rabat    : </translation>
     </message>
     <message>
-        <location filename="src/checkout.cpp" line="121"/>
+        <location filename="src/checkout.cpp" line="124"/>
         <source>To pay   : </source>
         <translation>At betale: </translation>
     </message>
     <message>
-        <location filename="src/checkout.cpp" line="128"/>
+        <location filename="src/checkout.cpp" line="132"/>
         <source>Scan item...</source>
         <translation>Scan vare...</translation>
     </message>
@@ -220,7 +220,12 @@
         <translation>Rabat:</translation>
     </message>
     <message>
-        <location filename="src/itemwidget.cpp" line="123"/>
+        <location filename="src/itemwidget.cpp" line="63"/>
+        <source>In stock:</source>
+        <translation>På lager:</translation>
+    </message>
+    <message>
+        <location filename="src/itemwidget.cpp" line="130"/>
         <source>None</source>
         <translation>Intet</translation>
     </message>

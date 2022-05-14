@@ -139,41 +139,11 @@ QVariant ItemsModel::data(const QModelIndex &index, int role) const
       }
       break;
     }
+  } else if(role == Qt::ToolTipRole && index.column() == 0) {
+    return tr("Barcode: ") + allData.items.at(index.row()).barcode;
   }
-  /*
-  } else if(role == Qt::ForegroundRole) {
-    if(allData.items[index.row()].values[index.column()].writeable) {
-      if(allData.items[index.row()].values[index.column()].eye == DB::E_OD) {
-        return QVariant(QBrush(QColor(0, 80, 0)));
-      } else if(allData.items[index.row()].values[index.column()].eye == DB::E_OS) {
-        return QVariant(QBrush(QColor(128, 0, 0)));
-      }
-    } else {
-      return QVariant(QBrush(QColor(128, 128, 128)));
-    }
-  } else if(role == Qt::BackgroundRole) {
-    if(allData.items[index.row()].values[index.column()].eye == DB::E_OD) {
-      return QVariant(QBrush(QColor(242, 255, 242)));
-    } else if(allData.items[index.row()].values[index.column()].eye == DB::E_OS) {
-      return QVariant(QBrush(QColor(255, 242, 242)));
-    }
-  } else if(role == Qt::ToolTipRole &&
-            allData.items[index.row()].values[index.column()].conclusionUid != DB::NONE) {
-    return QVariant(allData.items[index.row()].values[index.column()].conclusionExaminer);
-    */
   return QVariant();
 }
-
-/*
-bool ItemsModel::setData(const QModelIndex &index, const QVariant &value, int role)
-{
-  if(!index.isValid() ||
-     role != Qt::EditRole) {
-    return false;
-  }
-    return true;
-}
-*/
 
 QVariant ItemsModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
@@ -217,13 +187,6 @@ Qt::ItemFlags ItemsModel::flags(const QModelIndex &index) const
     return Qt::ItemIsEnabled;
   }
 
-  /*
-  if(index.column() == 2 ||
-     index.column() == 3) {
-    return Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable;
-  }
-  */
-  
   return Qt::ItemIsEnabled | Qt::ItemIsSelectable;
 }
 
