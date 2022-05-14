@@ -44,6 +44,7 @@ public:
   AccountsTab(Data &data,
            QWidget *parent);
   ~AccountsTab();
+  void focusRow(const QString &barcode);
   AccountsModel *accountsModel = nullptr;
   
 private slots:

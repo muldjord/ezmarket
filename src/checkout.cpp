@@ -37,9 +37,8 @@
 Checkout::Checkout(Data &data, QWidget *parent)
   : QWidget(parent), data(data)
 {
-  setStyleSheet("QListWidget {border-image: url(graphics/checkout.png); font-size: " + QString::number(data.fontSize) + "px; qproperty-iconSize: " + QString::number(data.iconSize) + "px;}");
+  setStyleSheet("QListWidget {padding: 70px; border-image: url(graphics/checkout_background.png); font-size: " + QString::number(data.fontSize) + "px; qproperty-iconSize: " + QString::number(data.iconSize) + "px;}");
 
-  //setMaximumWidth(600);
   setMinimumWidth(800);
   checkoutList = new QListWidget(this);
   QFont font = checkoutList->font();

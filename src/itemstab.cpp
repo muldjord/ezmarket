@@ -102,3 +102,13 @@ void ItemsTab::addStock(const QString &barcode)
     }
   }
 }
+
+void ItemsTab::focusRow(const QString &barcode)
+{
+  for(int a = 0; a < data.items.length(); ++a) {
+    if(data.items.at(a).barcode == barcode) {
+      itemsView->selectRow(proxyModel->mapFromSource(itemsModel->index(a, 0)).row());
+      break;
+    }
+  }
+}

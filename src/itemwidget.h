@@ -59,6 +59,7 @@ private:
   QComboBox *categoryComboBox = nullptr;
   LineEdit *priceLineEdit = nullptr;
   LineEdit *discountLineEdit = nullptr;
+  LineEdit *stockLineEdit = nullptr;
 };
 
 #endif // __ITEMWIDGET_H__

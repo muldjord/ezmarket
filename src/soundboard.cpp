@@ -40,7 +40,8 @@ Soundboard::Soundboard(Data &data, QWidget *parent)
                 "QLineEdit {font-size: " + QString::number(data.fontSize) + "px;}"
                 "QComboBox {qproperty-iconSize: " + QString::number(data.iconSizeSmall) + "px; font-size: " + QString::number(data.fontSize) + "px;}"
                 "QPushButton {border-image: url(graphics/soundbutton.png); qproperty-iconSize: " + QString::number(data.iconSizeSmall) + "px; font-size: " + QString::number(data.fontSize) + "px;}"
-                "QPushButton:pressed {border-image: url(graphics/soundbutton_pressed.png); qproperty-iconSize: " + QString::number(data.iconSizeSmall) + "px; font-size: " + QString::number(data.fontSize) + "px;}");
+                "QPushButton:hover {border-image: url(graphics/soundbutton_hover.png);}"
+                "QPushButton:pressed {border-image: url(graphics/soundbutton_pressed.png);}");
 
   QDir soundsDir("sounds/soundboard", "*.wav", QDir::Name, QDir::Files);
   QList<QFileInfo> soundInfos = soundsDir.entryInfoList();
@@ -68,7 +69,8 @@ Soundboard::Soundboard(Data &data, QWidget *parent)
       }
     }
     title += line;
-    QPushButton *soundButton = new QPushButton(QIcon(QPixmap("graphics/sound.png").scaled(data.iconSize, data.iconSize, Qt::IgnoreAspectRatio, Qt::SmoothTransformation)), title, this);
+    //QPushButton *soundButton = new QPushButton(QIcon(QPixmap("graphics/sound.png").scaled(data.iconSize, data.iconSize, Qt::IgnoreAspectRatio, Qt::SmoothTransformation)), title, this);
+    QPushButton *soundButton = new QPushButton(title, this);
     soundButton->setFocusPolicy(Qt::NoFocus);
     soundButton->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Expanding);
     soundButton->setObjectName(soundInfo.absoluteFilePath());
@@ -81,6 +83,10 @@ Soundboard::Soundboard(Data &data, QWidget *parent)
     } else {
       rowSounds++;
     }
+  }
+  while(rowSounds < 4) {
+    hLayout->addWidget(new QWidget(this));
+    rowSounds++;
   }
   layout->addLayout(hLayout);
   setLayout(layout);

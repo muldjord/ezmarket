@@ -428,148 +428,36 @@ void MainWindow::checkBarcode()
     }
   }
 
-  if(modeTabs->currentWidget() == accountsTab) {
-    printf("ACCOUNTS TAB ACTIVE!\n");
-    if(type == "account") {
-    } else if(type == "item") {
-      modeTabs->setCurrentWidget(itemsTab);
-    }
-  } else if(modeTabs->currentWidget() == categoriesTab) {
-    printf("CATEGORIES TAB ACTIVE!\n");
+  // Select relevant tab unless we are on checkout tab
+  if(modeTabs->currentWidget() != checkoutTab) {
     if(type == "account") {
       modeTabs->setCurrentWidget(accountsTab);
-    } else if(type == "item") {
-      modeTabs->setCurrentWidget(itemsTab);
     } else if(type == "category") {
-      for(int a = 0; a < data.categories.length(); ++a) {
-        if(data.categories.at(a).barcode == barcode) {
-          categoriesTab->categoriesModel->refreshAll();
-        }
-      }
+      modeTabs->setCurrentWidget(categoriesTab);
+    } else if(type == "item") {
+      modeTabs->setCurrentWidget(itemsTab);
     }
-  } else if(modeTabs->currentWidget() == itemsTab) {
-    printf("ITEMS TAB ACTIVE!\n");
     if(type == "account") {
-      modeTabs->setCurrentWidget(accountsTab);
+      accountsTab->focusRow(barcode);
+    } else if(type == "category") {
+      categoriesTab->focusRow(barcode);
     } else if(type == "item") {
       itemsTab->addStock(barcode);
+      itemsTab->focusRow(barcode);
     }
-  } else if(modeTabs->currentWidget() == checkoutTab) {
-    printf("CHECKOUT TAB ACTIVE!\n");
+  } else {
     if(type == "account") {
       checkoutTab->payBy(barcode);
     } else if(type == "item") {
       checkoutTab->addItem(barcode);
     }
   }
-  
-  /*  
-  for(const auto &account: data.accounts) {
-    if(barcode == account.barcode) {
-      printf("THIS IS A ACCOUNT!\n");
-      barcodeFound = true;
-      accountBarcodeLineEdit->setText(account.barcode);
-      accountNameLineEdit->setText(account.id);
-      accountOnLoanList->clear();
-      accountReservedList->clear();
-      clearItem();
-      for(const auto &item: data.items) {
-        if(item.loanedBy == account.barcode) {
-          accountOnLoanList->addItem(item.id);
-        } else if(item.reservedBy == account.barcode) {
-          accountReservedList->addItem(item.id);
-        }
-      }
-    }
+
+  /*
+  for(int a = 0; a < data.categories.length(); ++a) {
+  if(data.categories.at(a).barcode == barcode) {
+  categoriesTab->categoriesModel->refreshAll();
   }
-  for(auto &item: data.items) {
-    if(barcode == item.barcode) {
-      printf("THIS IS A ITEM!\n");
-      barcodeFound = true;
-      itemBarcodeLineEdit->setText(item.barcode);
-      itemIdLineEdit->setText(item.id);
-      itemLoanedByLineEdit->setText(getAccountFromBarcode(item.loanedBy)); 
-      itemReservedByLineEdit->setText(getAccountFromBarcode(item.reservedBy)); 
-      if(item.id.isEmpty()) {
-        printf("MISSING ID, NEW ITEM?\n");
-        break;
-      }
-      if(!accountBarcodeLineEdit->text().isEmpty()) {
-        for(const auto &account: data.accounts) {
-          if(accountBarcodeLineEdit->text() == account.barcode) {
-
-            if(item.reservedBy.isEmpty() && item.loanedBy.isEmpty()) {
-              QSound::play("sounds/laant.wav");
-              printf("ITEM LOANED!\n");
-              item.loanedBy = account.barcode;
-
-            } else if(!item.reservedBy.isEmpty() && item.loanedBy.isEmpty()) {
-              if(account.barcode == item.reservedBy) {
-                QSound::play("sounds/laant.wav");
-                printf("ITEM LOANED! HAD IT RESERVED!\n");
-                item.reservedBy.clear();
-                item.loanedBy = account.barcode;
-              } else {
-                QSound::play("sounds/reserveret_til_anden.wav");
-                printf("RESERVED BY OTHER!\n");
-              }
-
-            } else if(!item.reservedBy.isEmpty() && !item.loanedBy.isEmpty()) {
-              if(account.barcode == item.loanedBy) {
-                QSound::play("sounds/afleveret-reserveret_til_anden.wav");
-                printf("ITEM RETURNED! RESERVED BY OTHER!\n");
-                item.loanedBy.clear();
-              } else if(account.barcode == item.reservedBy) {
-                QSound::play("sounds/udlaant-allerede_reserveret_til_dig.wav");
-                printf("ON LOAN, ALREADY RESERVED!\n");
-              }
-
-            } else if(item.reservedBy.isEmpty() && !item.loanedBy.isEmpty()) {
-              if(item.loanedBy != account.barcode) {
-                QSound::play("sounds/udlaant-reserveret_til_dig.wav");
-                printf("ITEM RESERVED!\n");
-                item.reservedBy = account.barcode;
-              } else if(item.loanedBy == account.barcode) {
-                QSound::play("sounds/afleveret.wav");
-                printf("ITEM RETURNED!\n");
-                item.loanedBy.clear();
-              }
-            }
-
-          }
-        }
-      }
-    }
-  }
-  if(!barcodeFound) {
-    QSound::play("sounds/ny_account_eller_bog.wav");
-    printf("NEW BARCODE!\n");
-    EntryEditor entryEditor(barcode, this);
-    entryEditor.exec();
-    if(entryEditor.result() == QDialog::Accepted) {
-      if(entryEditor.getType() == "account") {
-        QSound::play("sounds/account_registreret.wav");
-        printf("ADDING NEW ACCOUNT!\n");
-        Account account;
-        account.barcode = barcode;
-        account.id = entryEditor.getNameTitle();
-        data.accounts.append(account);
-      } else if(entryEditor.getType() == "item") {
-        QSound::play("sounds/bog_registreret.wav");
-        printf("ADDING NEW ITEM!\n");
-        Item item;
-        item.barcode = barcode;
-        item.id = entryEditor.getNameTitle();
-        data.items.append(item);
-        std::sort(data.items.begin(), data.items.end(), [](const Item a, const Item b) -> bool { return a.id.toLower() < b.id.toLower(); });
-
-      }
-      clearAll();
-      barcodeLineEdit->setText(barcode);
-      checkBarcode();
-    }
-  } else {
-    clearTimer.start();
   }
   */
 }

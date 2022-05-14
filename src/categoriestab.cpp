@@ -77,6 +77,15 @@ void CategoriesTab::editCategory(const QModelIndex &index)
   categoryEditor.exec();
 }
 
+void CategoriesTab::focusRow(const QString &barcode)
+{
+  for(int a = 0; a < data.categories.length(); ++a) {
+    if(data.categories.at(a).barcode == barcode) {
+      categoriesView->selectRow(proxyModel->mapFromSource(categoriesModel->index(a, 0)).row());
+      break;
+    }
+  }
+}
 /*
 void CategoriesTab::addCategory()
 {

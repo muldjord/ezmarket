@@ -45,6 +45,7 @@ public:
            QWidget *parent);
   ~ItemsTab();
   void addStock(const QString &barcode);
+  void focusRow(const QString &barcode);
   ItemsModel *itemsModel = nullptr;
   
 private slots:

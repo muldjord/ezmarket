@@ -77,6 +77,16 @@ void AccountsTab::editAccount(const QModelIndex &index)
   accountEditor.exec();
 }
 
+void AccountsTab::focusRow(const QString &barcode)
+{
+  for(int a = 0; a < data.accounts.length(); ++a) {
+    if(data.accounts.at(a).barcode == barcode) {
+      accountsView->selectRow(proxyModel->mapFromSource(accountsModel->index(a, 0)).row());
+      break;
+    }
+  }
+}
+
 /*
 void AccountsTab::addAccount()
 {

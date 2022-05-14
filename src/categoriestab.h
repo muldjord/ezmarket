@@ -44,6 +44,7 @@ public:
   CategoriesTab(Data &data,
            QWidget *parent);
   ~CategoriesTab();
+  void focusRow(const QString &barcode);
   CategoriesModel *categoriesModel = nullptr;
   
 private slots:

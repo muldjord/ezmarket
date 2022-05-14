@@ -60,12 +60,17 @@ ItemWidget::ItemWidget(Data &data,
   discountLineEdit = new LineEdit(this);
   discountLineEdit->setText("0.0");
 
+  QLabel *stockLabel = new QLabel(tr("In stock:"));
+  stockLineEdit = new LineEdit(this);
+  stockLineEdit->setText("0");
+  
   idLineEdit->setText(item.id);
   printf("FOUND AT %d\n", categoryComboBox->findData(item.category));
   categoryComboBox->setCurrentIndex(categoryComboBox->findData(item.category));
   iconComboBox->setCurrentIndex(iconComboBox->findData(item.icon));
   priceLineEdit->setText(QLocale().toString(item.price));
   discountLineEdit->setText(QLocale().toString(item.discount));
+  stockLineEdit->setText(QLocale().toString(item.stock));
   //connect(idLineEdit, &LineEdit::textChanged, this, &ItemWidget::setIconSearchText);
 
   QVBoxLayout *layout = new QVBoxLayout(this);
@@ -80,6 +85,8 @@ ItemWidget::ItemWidget(Data &data,
   layout->addWidget(priceLineEdit);
   layout->addWidget(discountLabel);
   layout->addWidget(discountLineEdit);
+  layout->addWidget(stockLabel);
+  layout->addWidget(stockLineEdit);
   layout->addSpacerItem(new QSpacerItem(1, 1, QSizePolicy::Ignored, QSizePolicy::Expanding));
 
   setLayout(layout);
@@ -130,4 +137,8 @@ void ItemWidget::commitItem()
   item.icon = iconComboBox->currentData().toString();
   item.price = QLocale().toDouble(priceLineEdit->text());
   item.discount = QLocale().toDouble(discountLineEdit->text());
+  if(item.stock < QLocale().toInt(stockLineEdit->text())) {
+    item.age = 0;
+  }
+  item.stock = QLocale().toInt(stockLineEdit->text());
 }
