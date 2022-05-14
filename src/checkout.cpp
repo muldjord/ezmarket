@@ -41,6 +41,7 @@ Checkout::Checkout(Data &data, QWidget *parent)
 
   setMinimumWidth(800);
   checkoutList = new QListWidget(this);
+  checkoutList->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
   QFont font = checkoutList->font();
   font.setFamily("courier");
   checkoutList->setFont(font);
@@ -118,6 +119,7 @@ void Checkout::addItem(const QString &barcode)
   checkoutList->addItem(new QListWidgetItem(tr("Subtotal : ") + QString::number(subTotal) + tr("$")));
   checkoutList->addItem(new QListWidgetItem(tr("Discount : ") + QString::number(discount) + tr("$")));
   checkoutList->addItem(new QListWidgetItem(tr("To pay   : ") + QString::number(total) + tr("$")));
+  checkoutList->scrollToBottom();
 }
 
 void Checkout::clearItems()
