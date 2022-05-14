@@ -46,8 +46,6 @@ AccountEditor::AccountEditor(const QString &barcode,
                 "QComboBox {qproperty-iconSize: " + QString::number(data.iconSizeSmall) + "px; font-size: " + QString::number(data.fontSize) + "px;}"
                 "QPushButton {qproperty-iconSize: " + QString::number(data.iconSizeSmall) + "px; font-size: " + QString::number(data.fontSize) + "px;}");
   
-  //QSound::play("sounds/ny_konto_eller_vare.wav");
-
   QLabel *accountLabel = new QLabel(this);
   accountLabel->setPixmap(QPixmap("graphics/account.png").scaled(data.iconSize, data.iconSize));
 
