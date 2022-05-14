@@ -54,8 +54,8 @@ Soundboard::Soundboard(Data &data, QWidget *parent)
 
   for(const auto &soundInfo: soundInfos) {
     QString title = soundInfo.baseName();
-    title = title.left(1).toUpper() + title.mid(1);
     title.replace("_", " ").replace("-", " ").replace("ae", "æ").replace("oe", "ø").replace("aa", "å");
+    title = title.left(1).toUpper() + title.mid(1);
     QList<QString> words = title.split(" ");
     title = "";
     QString line = "";
