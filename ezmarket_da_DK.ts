@@ -122,24 +122,36 @@
 <context>
     <name>Checkout</name>
     <message>
-        <location filename="src/checkout.cpp" line="82"/>
-        <location filename="src/checkout.cpp" line="84"/>
-        <location filename="src/checkout.cpp" line="88"/>
+        <location filename="src/checkout.cpp" line="113"/>
+        <location filename="src/checkout.cpp" line="115"/>
+        <location filename="src/checkout.cpp" line="119"/>
+        <location filename="src/checkout.cpp" line="120"/>
+        <location filename="src/checkout.cpp" line="121"/>
         <source>$</source>
         <translation> kr.</translation>
     </message>
     <message>
-        <location filename="src/checkout.cpp" line="84"/>
+        <location filename="src/checkout.cpp" line="115"/>
         <source> discount</source>
         <translation> rabat</translation>
     </message>
     <message>
-        <location filename="src/checkout.cpp" line="88"/>
-        <source>Total: </source>
-        <translation>Total: </translation>
+        <location filename="src/checkout.cpp" line="119"/>
+        <source>Subtotal : </source>
+        <translation>Subtotal : </translation>
     </message>
     <message>
-        <location filename="src/checkout.cpp" line="95"/>
+        <location filename="src/checkout.cpp" line="120"/>
+        <source>Discount : </source>
+        <translation>Rabat    : </translation>
+    </message>
+    <message>
+        <location filename="src/checkout.cpp" line="121"/>
+        <source>To pay   : </source>
+        <translation>At betale: </translation>
+    </message>
+    <message>
+        <location filename="src/checkout.cpp" line="128"/>
         <source>Scan item...</source>
         <translation>Scan vare...</translation>
     </message>

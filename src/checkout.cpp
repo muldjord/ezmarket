@@ -67,11 +67,11 @@ void Checkout::payBy(const QString &barcode)
   }
   for(auto &account: data.accounts) {
     if(account.barcode == barcode) {
+      account.balance -= total;
+      account.bonus += total / 100;
       if(account.balance - total < 0) {
-        QSound::play("sounds/betaling_kunne_ikke_gennemfoeres-ikke_flere_penge_paa_kortet.wav");
+        QSound::play("sounds/betaling_modtaget-advarsel_konto_i_minus.wav");
       } else {
-        account.balance -= total;
-        account.bonus += total / 100;
         QSound::play("sounds/betaling_modtaget-tak_fordi_du_handlede_i_butikken.wav");
       }
     }
@@ -82,9 +82,25 @@ void Checkout::payBy(const QString &barcode)
 void Checkout::addItem(const QString &barcode)
 {
   checkoutList->clear();
-  for(const auto &item: data.items) {
+  for(auto &item: data.items) {
     if(item.barcode == barcode) {
-      checkoutItems.append(item);
+      int lifespan = -1;
+      for(const auto &category: data.categories) {
+        if(category.barcode == item.category) {
+          lifespan = category.lifespan;
+        }
+      }
+      if(item.stock <= 0) {
+        QSound::play("sounds/varen_er_udsolgt.wav");
+      } else if(item.age > lifespan) {
+        QSound::play("sounds/varen_er_for_gammel.wav");
+      } else {
+        checkoutItems.append(item);
+        item.stock -= 1;
+        if(item.stock <= 0) {
+          QSound::play("sounds/varen_er_nu_udsolgt.wav");
+        }
+      }
     }
   }
   double subTotal = 0.0;

@@ -109,7 +109,7 @@ QVariant ItemsModel::data(const QModelIndex &index, int role) const
             lifespan = category.lifespan;
           }
         }
-        if(allData.items.at(index.row()).age / lifespan >= 1.5) {
+        if(allData.items.at(index.row()).age / lifespan > 1.0) {
           return QBrush(QColor(255, 255, 255));
         }
       }
@@ -125,13 +125,13 @@ QVariant ItemsModel::data(const QModelIndex &index, int role) const
             lifespan = category.lifespan;
           }
         }
-        if(allData.items.at(index.row()).age / lifespan >= 1.5) {
+        if(allData.items.at(index.row()).age / lifespan > 1.0) {
           return QBrush(QColor(0, 0, 0));
-        } else if(allData.items.at(index.row()).age / lifespan >= 1.0) {
+        } else if(allData.items.at(index.row()).age / lifespan > 0.75) {
           return QBrush(QColor(242, 169, 169));
-        } else if(allData.items.at(index.row()).age / lifespan >= 0.75) {
+        } else if(allData.items.at(index.row()).age / lifespan > 0.5) {
           return QBrush(QColor(242, 212, 169));
-        } else if(allData.items.at(index.row()).age / lifespan >= 0.5) {
+        } else if(allData.items.at(index.row()).age / lifespan > 0.25) {
           return QBrush(QColor(224, 242, 169));
         } else {
           return QBrush(QColor(169, 242, 175));
