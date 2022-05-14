@@ -52,7 +52,7 @@ Checkout::Checkout(Data &data, QWidget *parent)
   QVBoxLayout *layout = new QVBoxLayout;
   layout->addLayout(hLayout);
   setLayout(layout);
-  clearItems();
+  clearItemList();
 }
 
 Checkout::~Checkout()
@@ -71,7 +71,14 @@ void Checkout::payBy(const QString &barcode)
   for(auto &account: data.accounts) {
     if(account.barcode == barcode) {
       account.balance -= total;
-      account.bonus += total / 100;
+      int bonus = total / 100;
+      account.bonus += bonus;
+      checkoutList->addItem(new QListWidgetItem("-------------------"));
+      checkoutList->addItem(new QListWidgetItem(tr("Paid by '") + account.id + "'"));
+      if(bonus > 0) {
+        checkoutList->addItem(new QListWidgetItem(tr("Bonus for this purchase: ") + QLocale().toString(bonus)));
+      }
+      checkoutList->addItem(new QListWidgetItem(tr("New balance: ") + QLocale().toString(account.balance, 'f', 2)));
       if(account.balance < 0) {
         QSound::play("sounds/betaling_modtaget-advarsel_konto_i_minus.wav");
       } else {
@@ -79,12 +86,13 @@ void Checkout::payBy(const QString &barcode)
       }
     }
   }
-  QTimer::singleShot(10000, this, &Checkout::clearItems);
+  checkoutItems.clear();
+  checkoutList->scrollToBottom();
+  QTimer::singleShot(10000, this, &Checkout::clearItemList);
 }
 
 void Checkout::addItem(const QString &barcode)
 {
-  checkoutList->clear();
   for(auto &item: data.items) {
     if(item.barcode == barcode) {
       int lifespan = -1;
@@ -106,6 +114,12 @@ void Checkout::addItem(const QString &barcode)
       }
     }
   }
+
+  if(checkoutItems.length() <= 0) {
+    return;
+  }
+  checkoutList->clear();
+
   double subTotal = 0.0;
   double discount = 0.0;
   double total = 0.0;
@@ -113,21 +127,20 @@ void Checkout::addItem(const QString &barcode)
     subTotal += item.price;
     discount -= item.discount;
     total += item.price - item.discount;
-    checkoutList->addItem(new QListWidgetItem(QIcon(data.icons[item.icon]), item.id + ": " + QString::number(item.price) + tr("$")));
+    checkoutList->addItem(new QListWidgetItem(QIcon(data.icons[item.icon]), item.id + ": " + QLocale().toString(item.price, 'f', 2) + tr("$")));
     if(item.discount > 0.0) {
-      checkoutList->addItem(new QListWidgetItem("\t-" + QString::number(item.discount) + tr("$") + tr(" discount")));
+      checkoutList->addItem(new QListWidgetItem("\t-" + QLocale().toString(item.discount, 'f', 2) + tr("$") + tr(" discount")));
     }
   }
   checkoutList->addItem(new QListWidgetItem("-------------------"));
-  checkoutList->addItem(new QListWidgetItem(tr("Subtotal : ") + QString::number(subTotal) + tr("$")));
-  checkoutList->addItem(new QListWidgetItem(tr("Discount : ") + QString::number(discount) + tr("$")));
-  checkoutList->addItem(new QListWidgetItem(tr("To pay   : ") + QString::number(total) + tr("$")));
+  checkoutList->addItem(new QListWidgetItem(tr("Subtotal : ") + QLocale().toString(subTotal, 'f', 2) + tr("$")));
+  checkoutList->addItem(new QListWidgetItem(tr("Discount : ") + QLocale().toString(discount, 'f', 2) + tr("$")));
+  checkoutList->addItem(new QListWidgetItem(tr("To pay   : ") + QLocale().toString(total, 'f', 2) + tr("$")));
   checkoutList->scrollToBottom();
 }
 
-void Checkout::clearItems()
+void Checkout::clearItemList()
 {
-  checkoutItems.clear();
   checkoutList->clear();
   checkoutList->addItem(new QListWidgetItem(tr("Scan item...")));
 }

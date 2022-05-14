@@ -44,7 +44,7 @@ public:
   void addItem(const QString &barcode);
   
 private slots:
-  void clearItems();
+  void clearItemList();
 
 private:
   Data &data;

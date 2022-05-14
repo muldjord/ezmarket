@@ -28,6 +28,7 @@
 
 #include <QLabel>
 #include <QVBoxLayout>
+#include <QGridLayout>
 #include <QLocale>
 
 ItemWidget::ItemWidget(Data &data,
@@ -54,24 +55,31 @@ ItemWidget::ItemWidget(Data &data,
   
   QLabel *priceLabel = new QLabel(tr("Price:"));
   priceLineEdit = new LineEdit(this);
-  priceLineEdit->setText("0.0");
 
   QLabel *discountLabel = new QLabel(tr("Discount:"));
   discountLineEdit = new LineEdit(this);
-  discountLineEdit->setText("0.0");
 
   QLabel *stockLabel = new QLabel(tr("In stock:"));
-  stockLineEdit = new LineEdit(this);
-  stockLineEdit->setText("0");
+  stockSpinBox = new SpinBox(this);
   
   idLineEdit->setText(item.id);
-  printf("FOUND AT %d\n", categoryComboBox->findData(item.category));
   categoryComboBox->setCurrentIndex(categoryComboBox->findData(item.category));
   iconComboBox->setCurrentIndex(iconComboBox->findData(item.icon));
-  priceLineEdit->setText(QLocale().toString(item.price));
-  discountLineEdit->setText(QLocale().toString(item.discount));
-  stockLineEdit->setText(QLocale().toString(item.stock));
+  priceLineEdit->setText(QLocale().toString(item.price, 'f', 2));
+  discountLineEdit->setText(QLocale().toString(item.discount, 'f', 2));
+  stockSpinBox->setValue(item.stock);
   //connect(idLineEdit, &LineEdit::textChanged, this, &ItemWidget::setIconSearchText);
+
+  QGridLayout *hLayout = new QGridLayout;
+  hLayout->addWidget(priceLabel, 0, 0);
+  hLayout->addWidget(priceLineEdit, 1, 0);
+  hLayout->addWidget(discountLabel, 0, 1);
+  hLayout->addWidget(discountLineEdit, 1, 1);
+  hLayout->addWidget(stockLabel, 0, 2);
+  hLayout->addWidget(stockSpinBox, 1, 2);
+  hLayout->setColumnStretch(0, 1);
+  hLayout->setColumnStretch(1, 1);
+  hLayout->setColumnStretch(2, 1);
 
   QVBoxLayout *layout = new QVBoxLayout(this);
   layout->addWidget(idLabel);
@@ -81,12 +89,7 @@ ItemWidget::ItemWidget(Data &data,
   layout->addWidget(iconLabel);
   layout->addWidget(searchLineEdit);
   layout->addWidget(iconComboBox);
-  layout->addWidget(priceLabel);
-  layout->addWidget(priceLineEdit);
-  layout->addWidget(discountLabel);
-  layout->addWidget(discountLineEdit);
-  layout->addWidget(stockLabel);
-  layout->addWidget(stockLineEdit);
+  layout->addLayout(hLayout);
   layout->addSpacerItem(new QSpacerItem(1, 1, QSizePolicy::Ignored, QSizePolicy::Expanding));
 
   setLayout(layout);
@@ -100,7 +103,8 @@ bool ItemWidget::isSane()
 {
   if(!idLineEdit->text().isEmpty() &&
      !categoryComboBox->currentData().toString().isEmpty() &&
-     !priceLineEdit->text().isEmpty()) {
+     !priceLineEdit->text().isEmpty() &&
+     stockSpinBox->value() >= 0) {
     return true;
   }
   return false;
@@ -137,8 +141,8 @@ void ItemWidget::commitItem()
   item.icon = iconComboBox->currentData().toString();
   item.price = QLocale().toDouble(priceLineEdit->text());
   item.discount = QLocale().toDouble(discountLineEdit->text());
-  if(item.stock < QLocale().toInt(stockLineEdit->text())) {
+  if(item.stock < stockSpinBox->value()) {
     item.age = 0;
   }
-  item.stock = QLocale().toInt(stockLineEdit->text());
+  item.stock = stockSpinBox->value();
 }

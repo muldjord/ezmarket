@@ -47,12 +47,12 @@ CategoryWidget::CategoryWidget(Data &data,
   searchIcons();
   
   QLabel *lifespanLabel = new QLabel(tr("Lifespan:"));
-  lifespanLineEdit = new LineEdit(this);
-  lifespanLineEdit->setText("0");
+  lifespanSpinBox = new SpinBox(this);
 
   idLineEdit->setText(category.id);
   iconComboBox->setCurrentIndex(iconComboBox->findData(category.icon));
-  lifespanLineEdit->setText(QLocale().toString(category.lifespan));
+
+  lifespanSpinBox->setValue(category.lifespan);
 
   QVBoxLayout *layout = new QVBoxLayout(this);
   layout->addWidget(idLabel);
@@ -61,7 +61,7 @@ CategoryWidget::CategoryWidget(Data &data,
   layout->addWidget(searchLineEdit);
   layout->addWidget(iconComboBox);
   layout->addWidget(lifespanLabel);
-  layout->addWidget(lifespanLineEdit);
+  layout->addWidget(lifespanSpinBox);
   layout->addSpacerItem(new QSpacerItem(1, 1, QSizePolicy::Ignored, QSizePolicy::Expanding));
 
   setLayout(layout);
@@ -74,7 +74,7 @@ CategoryWidget::~CategoryWidget()
 bool CategoryWidget::isSane()
 {
   if(!idLineEdit->text().isEmpty() &&
-     !lifespanLineEdit->text().isEmpty()) {
+     lifespanSpinBox->value() > 0) {
     return true;
   }
   return false;
@@ -108,5 +108,5 @@ void CategoryWidget::commitCategory()
 {
   category.id = idLineEdit->text();
   category.icon = iconComboBox->currentData().toString();
-  category.lifespan = QLocale().toInt(lifespanLineEdit->text());
+  category.lifespan = lifespanSpinBox->value();
 }

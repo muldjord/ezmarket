@@ -35,7 +35,7 @@
 AboutBox::AboutBox(QWidget *parent): QDialog(parent)
 {
   setWindowTitle(tr("About EZMarket"));
-  setFixedSize(750,500);
+  setFixedSize(750,750);
 
   // Read AUTHORS data from file
   QFile file(":AUTHORS");

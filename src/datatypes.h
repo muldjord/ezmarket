@@ -51,7 +51,7 @@ struct Category {
   QString barcode = "";
   QString id = "";
   QString icon = ""; // PNG file basename
-  int lifespan = -1;
+  int lifespan = 20;
 };
 
 #endif // __DATATYPES_H__

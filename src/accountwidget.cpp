@@ -28,6 +28,7 @@
 
 #include <QLabel>
 #include <QVBoxLayout>
+#include <QGridLayout>
 #include <QLocale>
 
 AccountWidget::AccountWidget(Data &data,
@@ -41,23 +42,26 @@ AccountWidget::AccountWidget(Data &data,
 
   QLabel *balanceLabel = new QLabel(tr("Balance:"));
   balanceLineEdit = new LineEdit(this);
-  balanceLineEdit->setText("100");
 
   QLabel *bonusLabel = new QLabel(tr("Bonus points:"));
-  bonusLineEdit = new LineEdit(this);
-  bonusLineEdit->setText("0");
+  bonusSpinBox = new SpinBox(this);
 
   idLineEdit->setText(account.id);
-  balanceLineEdit->setText(QLocale().toString(account.balance));
-  bonusLineEdit->setText(QLocale().toString(account.bonus));
+  balanceLineEdit->setText(QLocale().toString(account.balance, 'f', 2));
+  bonusSpinBox->setValue(account.bonus);
 
+  QGridLayout *hLayout = new QGridLayout;
+  hLayout->addWidget(balanceLabel, 0, 0);
+  hLayout->addWidget(balanceLineEdit, 1, 0);
+  hLayout->addWidget(bonusLabel, 0, 1);
+  hLayout->addWidget(bonusSpinBox, 1, 1);
+  hLayout->setColumnStretch(0, 1);
+  hLayout->setColumnStretch(1, 1);
+  
   QVBoxLayout *layout = new QVBoxLayout(this);
   layout->addWidget(idLabel);
   layout->addWidget(idLineEdit);
-  layout->addWidget(balanceLabel);
-  layout->addWidget(balanceLineEdit);
-  layout->addWidget(bonusLabel);
-  layout->addWidget(bonusLineEdit);
+  layout->addLayout(hLayout);
   layout->addSpacerItem(new QSpacerItem(1, 1, QSizePolicy::Ignored, QSizePolicy::Expanding));
 
   setLayout(layout);
@@ -80,5 +84,5 @@ void AccountWidget::commitAccount()
 {
   account.id = idLineEdit->text();
   account.balance = QLocale().toDouble(balanceLineEdit->text());
-  account.bonus = QLocale().toInt(bonusLineEdit->text());
+  account.bonus = bonusSpinBox->value();
 }

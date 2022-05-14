@@ -39,6 +39,8 @@ struct Data {
   int iconSizeSmall = 35;
   int fontSize = 35;
   int fontSizeSmall = 30;
+  int editorWidth = 700;
+  int editorHeight = 450;
   QList<Account> accounts;
   QList<Item> items;
   QList<Category> categories;

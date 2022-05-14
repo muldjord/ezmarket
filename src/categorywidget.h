@@ -30,6 +30,7 @@
 #include "datatypes.h"
 #include "data.h"
 #include "lineedit.h"
+#include "spinbox.h"
 
 #include <QWidget>
 #include <QComboBox>
@@ -56,7 +57,7 @@ private:
   LineEdit *idLineEdit = nullptr;
   LineEdit *searchLineEdit = nullptr;
   QComboBox *iconComboBox = nullptr;
-  LineEdit *lifespanLineEdit = nullptr;
+  SpinBox *lifespanSpinBox = nullptr;
 };
 
 #endif // __CATEGORYWIDGET_H__

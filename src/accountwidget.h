@@ -30,6 +30,7 @@
 #include "datatypes.h"
 #include "data.h"
 #include "lineedit.h"
+#include "spinbox.h"
 
 #include <QWidget>
 
@@ -50,7 +51,7 @@ private:
   Account &account;
   LineEdit *idLineEdit = nullptr;
   LineEdit *balanceLineEdit = nullptr;
-  LineEdit *bonusLineEdit = nullptr;
+  SpinBox *bonusSpinBox = nullptr;
 };
 
 #endif // __ACCOUNTWIDGET_H__

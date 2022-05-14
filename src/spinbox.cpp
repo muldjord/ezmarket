@@ -1,6 +1,6 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            itemwidget.h
+ *            spinbox.cpp
  *
  *  Sat Apr 30 09:03:00 CEST 2022
  *  Copyright 2022 Lars Muldjord
@@ -24,43 +24,14 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
 
-#ifndef __ITEMWIDGET_H__
-#define __ITEMWIDGET_H__
-
-#include "datatypes.h"
-#include "data.h"
-#include "lineedit.h"
 #include "spinbox.h"
 
-#include <QWidget>
-#include <QComboBox>
-
-class ItemWidget : public QWidget
+SpinBox::SpinBox(QWidget *parent)
+  : QSpinBox(parent)
 {
-  Q_OBJECT
-    
-public:
-  ItemWidget(Data &data,
-             Item &item,
-             QWidget *parent);
-  ~ItemWidget();
-  bool isSane();
-  void commitItem();
+  setMaximum(999999);
+}
 
-private slots:
-  void setIconSearchText();
-  void searchIcons();
-  
-private:
-  Data &data;
-  Item &item;
-  LineEdit *idLineEdit = nullptr;
-  LineEdit *searchLineEdit = nullptr;
-  QComboBox *iconComboBox = nullptr;
-  QComboBox *categoryComboBox = nullptr;
-  LineEdit *priceLineEdit = nullptr;
-  LineEdit *discountLineEdit = nullptr;
-  SpinBox *stockSpinBox = nullptr;
-};
-
-#endif // __ITEMWIDGET_H__
+SpinBox::~SpinBox()
+{
+}

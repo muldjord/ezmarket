@@ -46,6 +46,7 @@ MainWindow::MainWindow()
 
   setStyleSheet("QLabel {font-size: " + QString::number(data.fontSizeSmall) + "px;}"
                 "QLineEdit {font-size: " + QString::number(data.fontSizeSmall) + "px;}"
+                "QSpinBox {font-size: " + QString::number(data.fontSize) + "px;}"
                 "QTabWidget {qproperty-iconSize: " + QString::number(data.iconSizeSmall) + "px; font-size: " + QString::number(data.fontSizeSmall) + "px;}"
                 "QListWidget {font-size: " + QString::number(data.fontSizeSmall) + "px;}"
                 "QGroupBox{font-size: " + QString::number(data.fontSize) + "px; padding-left: 20px; padding-top: 40px; padding-bottom: 20px; padding-right: 20px;}");
