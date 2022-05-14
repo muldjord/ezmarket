@@ -1,0 +1,27 @@
+Betaling kunne ikke gennemføres. Ikke flere penge på kortet.
+Betaling modtaget. Tak fordi du handlede i butikken.
+En lagervare er blevet for gammel.
+En lagervare er ved at være for gammel.
+Feltet må ikke indeholde semikolon eller ligmedstegn.
+Ikke flere penge på kortet.
+Kategori registreret.
+Kundekort registreret.
+Ny stregkode.
+Penge tilføjet til kundekort.
+Rabat fratrukket.
+Sidste vare på lager af denne type.
+Varen er nu udsolgt.
+Vare registreret.
+
+Butikken er nu åben.
+Butikken lukker om kort tid.
+Hjælp os med at bekæmpe madspild. Se køledisken ved indgangen.
+Hør om vores gode tilbud i informationen.
+Hovsa, undskyld.
+Medarbejder til kasseåbning.
+Medarbejder til lagerbestillingen.
+Meddelelse til alle ansatte.
+Meddelelse til alle kunder.
+Ny konkurrence. Meld dig i informationen for at høre mere.
+Øv bøv bussemand, sure tæer i saftevand.
+Vi minder om at det ikke er tilladt at prutte i butikken.
