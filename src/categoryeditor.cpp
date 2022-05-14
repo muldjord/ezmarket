@@ -39,14 +39,15 @@ CategoryEditor::CategoryEditor(const QString &barcode,
   : QDialog(parent), barcode(barcode), data(data)
 {
   setWindowTitle(tr("Barcode: ") + barcode);
-  setFixedSize(450, 700);
+  setFixedSize(700, 800);
 
   setStyleSheet("QLabel {font-size: " + QString::number(data.fontSize) + "px; qproperty-alignment: AlignCenter;}"
                 "QLineEdit {font-size: " + QString::number(data.fontSize) + "px;}"
                 "QComboBox {qproperty-iconSize: " + QString::number(data.iconSizeSmall) + "px; font-size: " + QString::number(data.fontSize) + "px;}"
                 "QPushButton {qproperty-iconSize: " + QString::number(data.iconSizeSmall) + "px; font-size: " + QString::number(data.fontSize) + "px;}");
   
-  //QSound::play("sounds/ny_konto_eller_vare.wav");
+  QLabel *categoryLabel = new QLabel(this);
+  categoryLabel->setPixmap(QPixmap("graphics/category.png").scaled(data.iconSize, data.iconSize));
 
   for(auto &category: data.categories) {
     if(barcode == category.barcode) {
@@ -61,6 +62,7 @@ CategoryEditor::CategoryEditor(const QString &barcode,
   connect(dialogButtons, &QDialogButtonBox::rejected, this, &CategoryEditor::reject);
 
   QVBoxLayout *layout = new QVBoxLayout;
+  layout->addWidget(categoryLabel);
   layout->addWidget(categoryWidget);
   layout->addWidget(dialogButtons);
   

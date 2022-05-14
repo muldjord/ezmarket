@@ -39,7 +39,7 @@ ItemEditor::ItemEditor(const QString &barcode,
   : QDialog(parent), barcode(barcode), data(data)
 {
   setWindowTitle(tr("Barcode: ") + barcode);
-  setFixedSize(550, 700);
+  setFixedSize(700, 800);
 
   setStyleSheet("QLabel {font-size: " + QString::number(data.fontSize) + "px; qproperty-alignment: AlignCenter;}"
                 "QLineEdit {font-size: " + QString::number(data.fontSize) + "px;}"
@@ -47,6 +47,9 @@ ItemEditor::ItemEditor(const QString &barcode,
                 "QPushButton {qproperty-iconSize: " + QString::number(data.iconSizeSmall) + "px; font-size: " + QString::number(data.fontSize) + "px;}");
   
   //QSound::play("sounds/ny_konto_eller_vare.wav");
+
+  QLabel *itemLabel = new QLabel(this);
+  itemLabel->setPixmap(QPixmap("graphics/item.png").scaled(data.iconSize, data.iconSize));
 
   for(auto &item: data.items) {
     if(barcode == item.barcode) {
@@ -61,6 +64,7 @@ ItemEditor::ItemEditor(const QString &barcode,
   connect(dialogButtons, &QDialogButtonBox::rejected, this, &ItemEditor::reject);
 
   QVBoxLayout *layout = new QVBoxLayout;
+  layout->addWidget(itemLabel);
   layout->addWidget(itemWidget);
   layout->addWidget(dialogButtons);
   

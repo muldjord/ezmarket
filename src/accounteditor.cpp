@@ -39,7 +39,7 @@ AccountEditor::AccountEditor(const QString &barcode,
   : QDialog(parent), barcode(barcode), data(data)
 {
   setWindowTitle(tr("Barcode: ") + barcode);
-  setFixedSize(450, 700);
+  setFixedSize(700, 800);
 
   setStyleSheet("QLabel {font-size: " + QString::number(data.fontSize) + "px; qproperty-alignment: AlignCenter;}"
                 "QLineEdit {font-size: " + QString::number(data.fontSize) + "px;}"
@@ -47,6 +47,9 @@ AccountEditor::AccountEditor(const QString &barcode,
                 "QPushButton {qproperty-iconSize: " + QString::number(data.iconSizeSmall) + "px; font-size: " + QString::number(data.fontSize) + "px;}");
   
   //QSound::play("sounds/ny_konto_eller_vare.wav");
+
+  QLabel *accountLabel = new QLabel(this);
+  accountLabel->setPixmap(QPixmap("graphics/account.png").scaled(data.iconSize, data.iconSize));
 
   for(auto &account: data.accounts) {
     if(barcode == account.barcode) {
@@ -61,6 +64,7 @@ AccountEditor::AccountEditor(const QString &barcode,
   connect(dialogButtons, &QDialogButtonBox::rejected, this, &AccountEditor::reject);
 
   QVBoxLayout *layout = new QVBoxLayout;
+  layout->addWidget(accountLabel);
   layout->addWidget(accountWidget);
   layout->addWidget(dialogButtons);
   
