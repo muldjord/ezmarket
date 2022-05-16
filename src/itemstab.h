@@ -46,14 +46,14 @@ public:
   ~ItemsTab();
   void addStock(const QString &barcode);
   void focusRow(const QString &barcode);
+  bool ageItems();
   ItemsModel *itemsModel = nullptr;
   
 private slots:
   void editItem(const QModelIndex &index);
-  void ageItems();
 
 private:
-  QTimer agingTimer;
+  //QTimer agingTimer;
   QSortFilterProxyModel *proxyModel = nullptr;
   QTableView *itemsView = nullptr;
   Data &data;

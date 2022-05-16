@@ -39,7 +39,7 @@ Soundboard::Soundboard(Data &data, QWidget *parent)
   setStyleSheet("QLabel {font-size: " + QString::number(data.fontSize) + "px; qproperty-alignment: AlignCenter;}"
                 "QLineEdit {font-size: " + QString::number(data.fontSize) + "px;}"
                 "QComboBox {qproperty-iconSize: " + QString::number(data.iconSizeSmall) + "px; font-size: " + QString::number(data.fontSize) + "px;}"
-                "QPushButton {border-image: url(graphics/soundbutton.png); qproperty-iconSize: " + QString::number(data.iconSizeSmall) + "px; font-size: " + QString::number(data.fontSize) + "px;}"
+                "QPushButton {border-image: url(graphics/soundbutton.png); qproperty-iconSize: " + QString::number(data.iconSizeSmall) + "px; font-size: " + QString::number(data.fontSizeSmall) + "px;}"
                 "QPushButton:hover {border-image: url(graphics/soundbutton_hover.png);}"
                 "QPushButton:pressed {border-image: url(graphics/soundbutton_pressed.png);}");
 

@@ -44,6 +44,7 @@
 #include <QMenu>
 #include <QMenuBar>
 #include <QTabWidget>
+#include <QPushButton>
 
 class MainWindow : public QMainWindow
 {
@@ -53,11 +54,16 @@ class MainWindow : public QMainWindow
   MainWindow();
   ~MainWindow();
   
+protected:
+  //bool eventFilter(QObject *, QEvent *event) override;
+
+
 private slots:
   void showAbout();
   void checkBarcode();
   void focusBarcodeLineEdit();
   void initRandomSound();
+  void openCloseStore();
   
 private:
   void loadIcons();
@@ -77,6 +83,8 @@ private:
   QString getCategoryFromBarcode(const QString &barcode);
 
   void playRandomSound();
+
+  QPushButton *openCloseButton = nullptr;
 
   QAction *quitAct;
   QAction *aboutAct;

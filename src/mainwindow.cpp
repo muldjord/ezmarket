@@ -60,13 +60,9 @@ MainWindow::MainWindow()
   
   accountsTab = new AccountsTab(data, this);
   itemsTab = new ItemsTab(data, this);
-  connect(itemsTab->itemsModel, &ItemsModel::dataChanged, this, &MainWindow::focusBarcodeLineEdit);
   categoriesTab = new CategoriesTab(data, this);
   soundboardTab = new Soundboard(data, this);
   checkoutTab = new Checkout(data, this);
- /*
-  CheckoutTab *checkoutTab = new CheckoutTab(this);
-  */
   
   modeTabs = new QTabWidget(this);
   modeTabs->addTab(accountsTab, QIcon(QPixmap("graphics/account.png").scaled(data.iconSize, data.iconSize, Qt::IgnoreAspectRatio, Qt::SmoothTransformation)), tr("Accounts"));
@@ -74,10 +70,7 @@ MainWindow::MainWindow()
   modeTabs->addTab(itemsTab, QIcon(QPixmap("graphics/item.png").scaled(data.iconSize, data.iconSize, Qt::IgnoreAspectRatio, Qt::SmoothTransformation)), tr("Items"));
   modeTabs->addTab(soundboardTab, QIcon(QPixmap("graphics/sound.png").scaled(data.iconSize, data.iconSize, Qt::IgnoreAspectRatio, Qt::SmoothTransformation)), tr("Announcements"));
   modeTabs->addTab(checkoutTab, QIcon(QPixmap("graphics/checkout.png").scaled(data.iconSize, data.iconSize, Qt::IgnoreAspectRatio, Qt::SmoothTransformation)), tr("Checkout"));
-  /*
-  modeTabs->addTab(checkoutTab, tr("Checkout"));
-  */
-  
+
   QVBoxLayout *layout = new QVBoxLayout();
   layout->addWidget(modeTabs);
 
@@ -88,12 +81,7 @@ MainWindow::MainWindow()
   connect(&randomTimer, &QTimer::timeout, this, &MainWindow::initRandomSound);
   initRandomSound();
 
-  /*
-  clearTimer.setInterval(5000);
-  clearTimer.setSingleShot(true);
-  connect(&clearTimer, &QTimer::timeout, this, &MainWindow::clearAll);
-  */
-  focusTimer.setInterval(500);
+  focusTimer.setInterval(1000);
   focusTimer.setSingleShot(false);
   connect(&focusTimer, &QTimer::timeout, this, &MainWindow::focusBarcodeLineEdit);
   focusTimer.start();
@@ -143,12 +131,12 @@ void MainWindow::createToolBar()
   barcodeLineEdit->setPlaceholderText(tr("Barcode"));
   connect(barcodeLineEdit, &QLineEdit::returnPressed, this, &MainWindow::checkBarcode);
 
-  /*
-  QPushButton *chooseWorkDirButton = new QPushButton();
-  chooseWorkDirButton->setIcon(QIcon("graphics/choose_workdir.png"));
-  chooseWorkDirButton->setIconSize(QSize(64, 64));
-  chooseWorkDirButton->setToolTip(tr("Choose working directory"));
-  */
+  openCloseButton = new QPushButton(tr("The store is closed"), this);
+  openCloseButton->setIcon(QIcon("graphics/quit.png"));
+  openCloseButton->setFocusPolicy(Qt::NoFocus);
+  openCloseButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+  openCloseButton->setCheckable(true);
+  connect(openCloseButton, &QPushButton::pressed, this, &MainWindow::openCloseStore);
 
   QToolBar *toolBar = new QToolBar(tr("Main functions"));
   toolBar->setMinimumHeight(data.iconSize + 20);
@@ -171,6 +159,7 @@ void MainWindow::createToolBar()
 
   toolBar->addWidget(spacerLeft);
   toolBar->addWidget(barcodeLineEdit);
+  toolBar->addWidget(openCloseButton);
   toolBar->addWidget(spacerRight);
   //toolBar->addSeparator();
 
@@ -352,7 +341,8 @@ void MainWindow::saveDatabase()
       baseName.append(serialString);
     } while(QFile::exists(baseName + ".dat"));
     */
-    QFile::rename("database.dat", "backup/database" + QDateTime::currentDateTime().toString("yyyyddMM-HHmmss") + ".dat");
+    QDir::current().mkpath("backup");
+    QFile::rename("database.dat", "backup/database" + QDateTime::currentDateTime().toString("yyyyMMdd-HHmmss") + ".dat");
   }
   QFile database("database.dat");
   if(database.open(QIODevice::WriteOnly)) {
@@ -538,7 +528,28 @@ void MainWindow::focusBarcodeLineEdit()
   barcodeLineEdit->setFocus();
 }
 
-/*
+void MainWindow::openCloseStore()
+{
+  // Checked state is opposite since we check it on 'pressed' to make barcode focus work
+  if(openCloseButton->isChecked()) {
+    openCloseButton->setText(tr("The store is closed"));
+    openCloseButton->setToolTip(tr("Click to open the store"));
+    if(!itemsTab->ageItems()) {
+      QSound::play("sounds/butikken_er_nu_lukket.wav");
+    } else {
+      QSound::play("sounds/en_vare_er_for_gammel.wav");
+    }
+    printf("The store is now closed!\n");
+  } else {
+    openCloseButton->setText(tr("The store is open"));
+    openCloseButton->setToolTip(tr("Click to close the store"));
+    QSound::play("sounds/butikken_er_nu_aaben.wav");
+    printf("The store is now open!\n");
+  }
+  focusTimer.start();
+}
+
+/* This DOES NOT work. The tabs get focus and eats the events even if I disable focus for them
 bool MainWindow::eventFilter(QObject *, QEvent *event)
 {
   if(event->type() == QEvent::KeyPress) {
@@ -546,12 +557,10 @@ bool MainWindow::eventFilter(QObject *, QEvent *event)
     if(keyEvent->modifiers() != 0) {
       return false;
     }
-    // Reset hibernation inactivity timer
     barcodeLineEdit->setText(keyEvent->text());
     barcodeLineEdit->setFocus();    
     return true;
   }
-
   return false;
 }
 */

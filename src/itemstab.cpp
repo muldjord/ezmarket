@@ -30,6 +30,7 @@
 #include <QVBoxLayout>
 #include <QLabel>
 #include <QHeaderView>
+#include <QSound>
 
 ItemsTab::ItemsTab(Data &data,
                    QWidget *parent)
@@ -62,10 +63,12 @@ ItemsTab::ItemsTab(Data &data,
   layout->addWidget(itemsView);
   setLayout(layout);
 
+  /*
   agingTimer.setInterval(2 * 60 * 1000);
   agingTimer.setSingleShot(false);
   connect(&agingTimer, &QTimer::timeout, this, &ItemsTab::ageItems);
   agingTimer.start();
+  */
 }
 
 ItemsTab::~ItemsTab()
@@ -80,16 +83,26 @@ void ItemsTab::editItem(const QModelIndex &index)
   //itemsModel->emit dataChanged(proxyModel->mapToSource(index), proxyModel->mapToSource(index));
 }
 
-void ItemsTab::ageItems()
+bool ItemsTab::ageItems()
 {
+  bool itemExpired = false;
   for(auto &item: data.items) {
     if(item.stock > 0) {
       item.age += 1;
+      for(const auto &category: data.categories) {
+        if(item.category == category.barcode) {
+          if(!itemExpired && item.age > category.lifespan) {
+            itemExpired = true;
+          }
+        }
+      }
     } else {
       item.age = 0;
     }
   }
   itemsModel->refreshAll();
+
+  return itemExpired;
 }
 
 void ItemsTab::addStock(const QString &barcode)
