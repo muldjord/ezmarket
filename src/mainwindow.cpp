@@ -155,12 +155,14 @@ void MainWindow::createToolBar()
   */
   auto spacerLeft = new QWidget(this);
   spacerLeft->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+  auto spacerMid = new QWidget(this);
+  spacerMid->setFixedSize(75, data.iconSize);
   auto spacerRight = new QWidget(this);
   spacerRight->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
   toolBar->addWidget(spacerLeft);
   toolBar->addWidget(barcodeLineEdit);
-  toolBar->addSeparator();
+  toolBar->addWidget(spacerMid);
   toolBar->addWidget(openCloseButton);
   toolBar->addWidget(spacerRight);
 
