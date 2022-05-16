@@ -1,0 +1,21 @@
+accounts:
+
+items:
+
+categories:
+barcode=100;id=Grøntsager;icon=bladgroent;lifespan=10
+barcode=101;id=Frugt;icon=banan;lifespan=8
+barcode=110;id=Pakket kød;icon=udskaering_af_koed;lifespan=15
+barcode=111;id=Slagtervarer;icon=bacon;lifespan=20
+barcode=112;id=Fisk & skaldyr;icon=fisk;lifespan=8
+barcode=120;id=Oste;icon=ostebaad;lifespan=25
+barcode=121;id=Mejeriprodukter;icon=glas_med_maelk;lifespan=10
+barcode=130;id=Drikkevarer;icon=drikkevareboks;lifespan=60
+barcode=140;id=Brød;icon=broed;lifespan=12
+barcode=141;id=Kager;icon=foedselsdagskage;lifespan=8
+barcode=150;id=Slik & snacks;icon=slikkepind;lifespan=30
+barcode=160;id=Frostvarer;icon=snefnug;lifespan=60
+barcode=170;id=Elektronik;icon=stationaer_computer;lifespan=700
+barcode=200;id=Sport & fritid;icon=basketball;lifespan=20
+barcode=210;id=Bøger;icon=boeger;lifespan=5000
+barcode=220;id=Kontorartikler;icon=papirklip;lifespan=20
