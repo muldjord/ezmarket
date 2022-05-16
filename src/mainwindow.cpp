@@ -126,15 +126,16 @@ void MainWindow::createToolBar()
 {
   barcodeLineEdit = new QLineEdit(this);
   barcodeLineEdit->setStyleSheet("QLineEdit {background-image: url(graphics/barcode_background.png);}");
-  barcodeLineEdit->setMaximumHeight(data.iconSize);
-  barcodeLineEdit->setMaximumWidth(400);
+  barcodeLineEdit->setFixedSize(400, data.iconSize);
   barcodeLineEdit->setPlaceholderText(tr("Barcode"));
   connect(barcodeLineEdit, &QLineEdit::returnPressed, this, &MainWindow::checkBarcode);
 
-  openCloseButton = new QPushButton(tr("The store is closed"), this);
-  openCloseButton->setIcon(QIcon("graphics/quit.png"));
+  openCloseButton = new QPushButton("", this);
+  openCloseButton->setStyleSheet("QPushButton {border-image: url(graphics/store_closed.png); qproperty-iconSize: " + QString::number(data.iconSizeSmall) + "px; font-size: " + QString::number(data.fontSizeSmall) + "px;}"
+                                 "QPushButton:checked {border-image: url(graphics/store_open.png); qproperty-iconSize: " + QString::number(data.iconSizeSmall) + "px; font-size: " + QString::number(data.fontSizeSmall) + "px;}");
+  //openCloseButton->setIcon(QIcon("graphics/quit.png"));
   openCloseButton->setFocusPolicy(Qt::NoFocus);
-  openCloseButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+  openCloseButton->setFixedSize(300, data.iconSize);
   openCloseButton->setCheckable(true);
   connect(openCloseButton, &QPushButton::pressed, this, &MainWindow::openCloseStore);
 
@@ -159,9 +160,9 @@ void MainWindow::createToolBar()
 
   toolBar->addWidget(spacerLeft);
   toolBar->addWidget(barcodeLineEdit);
+  toolBar->addSeparator();
   toolBar->addWidget(openCloseButton);
   toolBar->addWidget(spacerRight);
-  //toolBar->addSeparator();
 
   addToolBar(Qt::TopToolBarArea, toolBar);
 }
@@ -532,16 +533,14 @@ void MainWindow::openCloseStore()
 {
   // Checked state is opposite since we check it on 'pressed' to make barcode focus work
   if(openCloseButton->isChecked()) {
-    openCloseButton->setText(tr("The store is closed"));
     openCloseButton->setToolTip(tr("Click to open the store"));
     if(!itemsTab->ageItems()) {
       QSound::play("sounds/butikken_er_nu_lukket.wav");
     } else {
-      QSound::play("sounds/en_vare_er_for_gammel.wav");
+      QSound::play("sounds/butikken_er_nu_lukket-lagervare_for_gammel.wav");
     }
     printf("The store is now closed!\n");
   } else {
-    openCloseButton->setText(tr("The store is open"));
     openCloseButton->setToolTip(tr("Click to close the store"));
     QSound::play("sounds/butikken_er_nu_aaben.wav");
     printf("The store is now open!\n");
