@@ -135,7 +135,7 @@ void MainWindow::createToolBar()
                                  "QPushButton:checked {border-image: url(graphics/store_open.png); qproperty-iconSize: " + QString::number(data.iconSizeSmall) + "px; font-size: " + QString::number(data.fontSizeSmall) + "px;}");
   //openCloseButton->setIcon(QIcon("graphics/quit.png"));
   openCloseButton->setFocusPolicy(Qt::NoFocus);
-  openCloseButton->setFixedSize(300, data.iconSize);
+  openCloseButton->setFixedSize(200, data.iconSize);
   openCloseButton->setCheckable(true);
   connect(openCloseButton, &QPushButton::pressed, this, &MainWindow::openCloseStore);
 
