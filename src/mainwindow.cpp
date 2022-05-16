@@ -38,6 +38,7 @@
 #include <QToolBar>
 #include <QLocale>
 #include <QKeyEvent>
+#include <QDateTime>
 
 MainWindow::MainWindow()
 {
@@ -187,6 +188,10 @@ void MainWindow::loadIcons()
 
 void MainWindow::loadDatabase()
 {
+  if(!QFile::exists("database.dat") && QFile::exists("database.dat.example")) {
+    printf("No database found, copying 'database.dat.example' to 'database.dat'\n");
+    QFile::copy("database.dat.example", "database.dat");
+  }
   QFile database("database.dat");
   int state = -1;
   if(database.open(QIODevice::ReadOnly)) {
@@ -327,12 +332,15 @@ void MainWindow::parseCategory(const QString &string)
 
 void MainWindow::saveDatabase()
 {
-  if(data.accounts.isEmpty() && data.items.isEmpty()) {
+  if(data.accounts.isEmpty() &&
+     data.categories.isEmpty() &&
+     data.items.isEmpty()) {
     return;
   }
 
   if(QFile::exists("database.dat")) {
-    QString baseName = "database0000";
+    /*
+    QString baseName = "backup/database0000";
     int serial = -1;
     do {
       serial++;
@@ -343,7 +351,8 @@ void MainWindow::saveDatabase()
       }
       baseName.append(serialString);
     } while(QFile::exists(baseName + ".dat"));
-    QFile::rename("database.dat", baseName + ".dat");
+    */
+    QFile::rename("database.dat", "backup/database" + QDateTime::currentDateTime().toString("yyyyddMM-HHmmss") + ".dat");
   }
   QFile database("database.dat");
   if(database.open(QIODevice::WriteOnly)) {
