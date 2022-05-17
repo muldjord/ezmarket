@@ -36,6 +36,7 @@ AboutBox::AboutBox(QWidget *parent): QDialog(parent)
 {
   setWindowTitle(tr("About EZMarket"));
   setFixedSize(750,750);
+  setStyleSheet("QLabel {font-size: 20px;}");
 
   // Read AUTHORS data from file
   QFile file(":AUTHORS");
@@ -78,15 +79,14 @@ AboutBox::AboutBox(QWidget *parent): QDialog(parent)
   topLayout->setStretch(2, 2);
 
   QLabel *releaseInfo = new QLabel(authorsText);
-  releaseInfo->setStyleSheet("QLabel { background-color : white; }");
+  releaseInfo->setStyleSheet("QLabel {font-size: 20px; background-color: white;}");
 
   QScrollArea *releaseInfoScroll = new QScrollArea();
   releaseInfoScroll->setWidget(releaseInfo);
   releaseInfoScroll->setStyleSheet("QScrollArea { background-color : white; }");
 
   QLabel *license = new QLabel(gplText);
-  license->setStyleSheet("QLabel { font-family : monospace; "
-                     "background-color : white; }");
+  license->setStyleSheet("QLabel {font-size: 20px; font-family: monospace; background-color: white;}");
   licenseScroll = new QScrollArea();
   licenseScroll->setStyleSheet("QScrollArea { background-color : white; }");
   licenseScroll->setWidget(license);
