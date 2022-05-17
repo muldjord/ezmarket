@@ -36,6 +36,7 @@
 #include "checkout.h"
 
 #include <QMainWindow>
+#include <QLabel>
 #include <QTimer>
 #include <QLineEdit>
 #include <QGroupBox>
@@ -84,7 +85,10 @@ private:
 
   void playRandomSound();
 
+  int openTime = 0;
+
   QPushButton *openCloseButton = nullptr;
+  QLabel *openTimerLabel = nullptr;
 
   QAction *quitAct;
   QAction *aboutAct;

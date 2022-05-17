@@ -28,7 +28,6 @@
 #include "aboutbox.h"
 #include "entryeditor.h"
 
-#include <QLabel>
 #include <QVBoxLayout>
 #include <QApplication>
 #include <QFile>
@@ -81,6 +80,7 @@ MainWindow::MainWindow()
   connect(&randomTimer, &QTimer::timeout, this, &MainWindow::initRandomSound);
   initRandomSound();
 
+  // This timer is also used to adjust open timer seconds, so keep that in mind
   focusTimer.setInterval(1000);
   focusTimer.setSingleShot(false);
   connect(&focusTimer, &QTimer::timeout, this, &MainWindow::focusBarcodeLineEdit);
@@ -139,6 +139,10 @@ void MainWindow::createToolBar()
   openCloseButton->setCheckable(true);
   connect(openCloseButton, &QPushButton::pressed, this, &MainWindow::openCloseStore);
 
+  openTimerLabel = new QLabel("00:00");
+  openTimerLabel->setEnabled(false);
+  openTimerLabel->setStyleSheet("QLabel {font-size: " + QString::number(data.fontSize) + "px;}");
+
   QToolBar *toolBar = new QToolBar(tr("Main functions"));
   toolBar->setMinimumHeight(data.iconSize + 20);
   toolBar->setStyleSheet("QToolBar {background-image: url(graphics/marquee.png); border: 0px;}");
@@ -157,6 +161,8 @@ void MainWindow::createToolBar()
   spacerLeft->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
   auto spacerMid = new QWidget(this);
   spacerMid->setFixedSize(75, data.iconSize);
+  auto spacerTimer = new QWidget(this);
+  spacerTimer->setFixedSize(15, data.iconSize);
   auto spacerRight = new QWidget(this);
   spacerRight->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
@@ -164,6 +170,8 @@ void MainWindow::createToolBar()
   toolBar->addWidget(barcodeLineEdit);
   toolBar->addWidget(spacerMid);
   toolBar->addWidget(openCloseButton);
+  toolBar->addWidget(spacerTimer);
+  toolBar->addWidget(openTimerLabel);
   toolBar->addWidget(spacerRight);
 
   addToolBar(Qt::TopToolBarArea, toolBar);
@@ -529,6 +537,18 @@ void MainWindow::focusItem(const QString &barcode)
 void MainWindow::focusBarcodeLineEdit()
 {
   barcodeLineEdit->setFocus();
+  if(openCloseButton->isChecked()) {
+    openTime++;
+    QString minutes = QString::number(openTime / 60);
+    while(minutes.length() <= 1) {
+      minutes.prepend("0");
+    }
+    QString seconds = QString::number(openTime % 60);
+    while(seconds.length() <= 1) {
+      seconds.prepend("0");
+    }
+    openTimerLabel->setText(minutes + ":" + seconds);
+  }
 }
 
 void MainWindow::openCloseStore()
@@ -542,10 +562,16 @@ void MainWindow::openCloseStore()
       QSound::play("sounds/butikken_er_nu_lukket-lagervare_for_gammel.wav");
     }
     printf("The store is now closed!\n");
+    openTimerLabel->setText("00:00");
+    openTime = 0;
+    openTimerLabel->setEnabled(false);
   } else {
     openCloseButton->setToolTip(tr("Click to close the store"));
     QSound::play("sounds/butikken_er_nu_aaben.wav");
     printf("The store is now open!\n");
+    openTimerLabel->setText("00:00");
+    openTime = 0;
+    openTimerLabel->setEnabled(true);
   }
   focusTimer.start();
 }
