@@ -86,3 +86,13 @@ void AccountWidget::commitAccount()
   account.balance = QLocale().toDouble(balanceLineEdit->text());
   account.bonus = bonusSpinBox->value();
 }
+
+void AccountWidget::removeAccount()
+{
+  for(int a = 0; a < data.accounts.count(); ++a) {
+    if(account.barcode == data.accounts.at(a).barcode) {
+      data.accounts.removeAt(a);
+      break;
+    }
+  }
+}

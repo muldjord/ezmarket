@@ -30,9 +30,10 @@
 #include "datatypes.h"
 #include "data.h"
 #include "accountwidget.h"
+#include "buttongroup.h"
 
 #include <QDialog>
-#include <QAbstractButton>
+#include <QPushButton>
 
 class AccountEditor : public QDialog
 {
@@ -48,9 +49,13 @@ public slots:
 signals:
 
 private slots:
-  void checkSanity();
+  void checkButton();
 
 private:
+  ButtonGroup *buttonGroup = nullptr;
+  QPushButton *deleteButton = nullptr;
+  QPushButton *saveButton = nullptr;
+  QPushButton *cancelButton = nullptr;
   AccountWidget *accountWidget = nullptr;
   const QString &barcode;
   Data &data;

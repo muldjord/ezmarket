@@ -75,6 +75,7 @@ void AccountsTab::editAccount(const QModelIndex &index)
 {
   AccountEditor accountEditor(data.accounts.at(proxyModel->mapToSource(index).row()).barcode, data, this);
   accountEditor.exec();
+  accountsModel->refreshAll();
 }
 
 void AccountsTab::focusRow(const QString &barcode)

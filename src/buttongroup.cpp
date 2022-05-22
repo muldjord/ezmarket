@@ -1,6 +1,6 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            itemwidget.h
+ *            buttongroup.cpp
  *
  *  Sat Apr 30 09:03:00 CEST 2022
  *  Copyright 2022 Lars Muldjord
@@ -24,44 +24,43 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
 
-#ifndef __ITEMWIDGET_H__
-#define __ITEMWIDGET_H__
+#include "buttongroup.h"
 
-#include "datatypes.h"
-#include "data.h"
-#include "lineedit.h"
-#include "spinbox.h"
+#include <QButtonGroup>
 
-#include <QWidget>
-#include <QComboBox>
-
-class ItemWidget : public QWidget
+ButtonGroup::ButtonGroup(QWidget *parent)
+  : QHBoxLayout(parent)
 {
-  Q_OBJECT
-    
-public:
-  ItemWidget(Data &data,
-             Item &item,
-             QWidget *parent);
-  ~ItemWidget();
-  bool isSane();
-  void commitItem();
-  void removeItem();
+  deleteButton = new QPushButton(tr("Delete"));
 
-private slots:
-  void setIconSearchText();
-  void searchIcons();
+  saveButton = new QPushButton(tr("Save changes"));
+  cancelButton = new QPushButton(tr("Cancel"));
+
+  QButtonGroup *buttonGroup = new QButtonGroup;
+  buttonGroup->addButton(deleteButton);
+  buttonGroup->addButton(saveButton);
+  buttonGroup->addButton(cancelButton);
+  connect(buttonGroup, qOverload<QAbstractButton *>(&QButtonGroup::buttonClicked), this, &ButtonGroup::buttonClicked);
   
-private:
-  Data &data;
-  Item &item;
-  LineEdit *idLineEdit = nullptr;
-  LineEdit *searchLineEdit = nullptr;
-  QComboBox *iconComboBox = nullptr;
-  QComboBox *categoryComboBox = nullptr;
-  LineEdit *priceLineEdit = nullptr;
-  LineEdit *discountLineEdit = nullptr;
-  SpinBox *stockSpinBox = nullptr;
-};
+  addWidget(deleteButton);
+  addStretch(1);
+  addWidget(saveButton);
+  addWidget(cancelButton);
+}
 
-#endif // __ITEMWIDGET_H__
+void ButtonGroup::buttonClicked(QAbstractButton *button)
+{
+  if(button == deleteButton) {
+    result = QMessageBox::ActionRole;
+  } else if(button == saveButton) {
+    result = QMessageBox::AcceptRole;
+  } else if(button == cancelButton) {
+    result = QMessageBox::RejectRole;
+  }
+  emit clicked();
+}
+
+QMessageBox::ButtonRole ButtonGroup::getResult()
+{
+  return result;
+}

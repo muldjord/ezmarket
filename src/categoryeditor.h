@@ -30,9 +30,10 @@
 #include "datatypes.h"
 #include "data.h"
 #include "categorywidget.h"
+#include "buttongroup.h"
 
 #include <QDialog>
-#include <QAbstractButton>
+#include <QPushButton>
 
 class CategoryEditor : public QDialog
 {
@@ -40,21 +41,23 @@ Q_OBJECT
 
 public:
   CategoryEditor(const QString &barcode,
-             Data &data,
-             QWidget *parent);
+                 Data &data,
+                 QWidget *parent);
 
 public slots:
 
 signals:
 
 private slots:
-  void checkSanity();
+  void checkButton();
 
 private:
+  ButtonGroup *buttonGroup = nullptr;
+  QPushButton *deleteButton = nullptr;
+  QPushButton *saveButton = nullptr;
+  QPushButton *cancelButton = nullptr;
   CategoryWidget *categoryWidget = nullptr;
   const QString &barcode;
   Data &data;
 };
-
-
 #endif // __CATEGORYEDITOR_H__

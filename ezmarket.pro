@@ -18,6 +18,7 @@ HEADERS += src/mainwindow.h \
            src/imgtools.h \
            src/lineedit.h \
            src/spinbox.h \
+           src/buttongroup.h \
            src/entryeditor.h \
            src/accountstab.h \
            src/accountsmodel.h \
@@ -40,6 +41,7 @@ SOURCES += src/main.cpp \
            src/imgtools.cpp \
            src/lineedit.cpp \
            src/spinbox.cpp \
+           src/buttongroup.cpp \
            src/entryeditor.cpp \
            src/accountstab.cpp \
            src/accountsmodel.cpp \

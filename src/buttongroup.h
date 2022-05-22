@@ -1,6 +1,6 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
- *            itemwidget.h
+ *            buttongroup.cpp
  *
  *  Sat Apr 30 09:03:00 CEST 2022
  *  Copyright 2022 Lars Muldjord
@@ -24,44 +24,39 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
 
-#ifndef __ITEMWIDGET_H__
-#define __ITEMWIDGET_H__
+#ifndef __BUTTONGROUP_H__
+#define __BUTTONGROUP_H__
 
 #include "datatypes.h"
 #include "data.h"
-#include "lineedit.h"
-#include "spinbox.h"
+#include "itemwidget.h"
 
-#include <QWidget>
-#include <QComboBox>
+#include <QHBoxLayout>
+#include <QPushButton>
+#include <QMessageBox>
 
-class ItemWidget : public QWidget
+class ButtonGroup : public QHBoxLayout
 {
-  Q_OBJECT
-    
-public:
-  ItemWidget(Data &data,
-             Item &item,
-             QWidget *parent);
-  ~ItemWidget();
-  bool isSane();
-  void commitItem();
-  void removeItem();
+Q_OBJECT
 
+public:
+  ButtonGroup(QWidget *parent = nullptr);
+  QMessageBox::ButtonRole getResult();                              
+                              
+public slots:
+
+signals:
+  void clicked();
+    
 private slots:
-  void setIconSearchText();
-  void searchIcons();
-  
+  void buttonClicked(QAbstractButton *button);
+
 private:
-  Data &data;
-  Item &item;
-  LineEdit *idLineEdit = nullptr;
-  LineEdit *searchLineEdit = nullptr;
-  QComboBox *iconComboBox = nullptr;
-  QComboBox *categoryComboBox = nullptr;
-  LineEdit *priceLineEdit = nullptr;
-  LineEdit *discountLineEdit = nullptr;
-  SpinBox *stockSpinBox = nullptr;
+  QMessageBox::ButtonRole result;
+  QPushButton *deleteButton = nullptr;
+  QPushButton *saveButton = nullptr;
+  QPushButton *cancelButton = nullptr;
 };
 
-#endif // __ITEMWIDGET_H__
+
+#endif // __BUTTONGROUP_H__

@@ -45,6 +45,7 @@ public:
   ~AccountWidget();
   bool isSane();
   void commitAccount();
+  void removeAccount();
 
 private:
   Data &data;

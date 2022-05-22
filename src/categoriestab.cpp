@@ -75,6 +75,7 @@ void CategoriesTab::editCategory(const QModelIndex &index)
 {
   CategoryEditor categoryEditor(data.categories.at(proxyModel->mapToSource(index).row()).barcode, data, this);
   categoryEditor.exec();
+  categoriesModel->refreshAll();
 }
 
 void CategoriesTab::focusRow(const QString &barcode)

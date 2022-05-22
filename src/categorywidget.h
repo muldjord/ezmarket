@@ -46,6 +46,8 @@ public:
   ~CategoryWidget();
   bool isSane();
   void commitCategory();
+  void removeCategory();
+  bool inUse();
 
 private slots:
   void setIconSearchText();

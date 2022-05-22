@@ -56,23 +56,30 @@ AccountEditor::AccountEditor(const QString &barcode,
     }
   }
 
-  QDialogButtonBox *dialogButtons = new QDialogButtonBox(QDialogButtonBox::Save |
-                                                         QDialogButtonBox::Cancel);
-  connect(dialogButtons, &QDialogButtonBox::accepted, this, &AccountEditor::checkSanity);
-  connect(dialogButtons, &QDialogButtonBox::rejected, this, &AccountEditor::reject);
+  buttonGroup = new ButtonGroup;
+  connect(buttonGroup, &ButtonGroup::clicked, this, &AccountEditor::checkButton);
 
   QVBoxLayout *layout = new QVBoxLayout;
   layout->addWidget(accountLabel);
   layout->addWidget(accountWidget);
-  layout->addWidget(dialogButtons);
+  layout->addLayout(buttonGroup);
   
   setLayout(layout);
 }
 
-void AccountEditor::checkSanity()
+void AccountEditor::checkButton()
 {
-  if(accountWidget->isSane()) {
-    accountWidget->commitAccount();
-    accept();
+  if(buttonGroup->getResult() == QMessageBox::ActionRole) {
+    if(QMessageBox::question(this, tr("Delete account?"), tr("Are you sure you want to delete this account?"), QMessageBox::Yes | QMessageBox::No, QMessageBox::No) == QMessageBox::Yes) {;
+      accountWidget->removeAccount();
+      accept();
+    }
+  } else if(buttonGroup->getResult() == QMessageBox::AcceptRole) {
+    if(accountWidget->isSane()) {
+      accountWidget->commitAccount();
+      accept();
+    }
+  } else if(buttonGroup->getResult() == QMessageBox::RejectRole) {
+    reject();
   }
 }

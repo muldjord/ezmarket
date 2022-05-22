@@ -56,23 +56,32 @@ CategoryEditor::CategoryEditor(const QString &barcode,
     }
   }
 
-  QDialogButtonBox *dialogButtons = new QDialogButtonBox(QDialogButtonBox::Save |
-                                                         QDialogButtonBox::Cancel);
-  connect(dialogButtons, &QDialogButtonBox::accepted, this, &CategoryEditor::checkSanity);
-  connect(dialogButtons, &QDialogButtonBox::rejected, this, &CategoryEditor::reject);
+  buttonGroup = new ButtonGroup;
+  connect(buttonGroup, &ButtonGroup::clicked, this, &CategoryEditor::checkButton);
 
   QVBoxLayout *layout = new QVBoxLayout;
   layout->addWidget(categoryLabel);
   layout->addWidget(categoryWidget);
-  layout->addWidget(dialogButtons);
+  layout->addLayout(buttonGroup);
   
   setLayout(layout);
 }
 
-void CategoryEditor::checkSanity()
+void CategoryEditor::checkButton()
 {
-  if(categoryWidget->isSane()) {
-    categoryWidget->commitCategory();
-    accept();
+  if(buttonGroup->getResult() == QMessageBox::ActionRole) {
+    if(categoryWidget->inUse()) {
+      QSound::play("sounds/kategorien_er_i_brug.wav");
+    } else if(QMessageBox::question(this, tr("Delete category?"), tr("Are you sure you want to delete this category?"), QMessageBox::Yes | QMessageBox::No, QMessageBox::No) == QMessageBox::Yes) {;
+      categoryWidget->removeCategory();
+      accept();
+    }
+  } else if(buttonGroup->getResult() == QMessageBox::AcceptRole) {
+    if(categoryWidget->isSane()) {
+      categoryWidget->commitCategory();
+      accept();
+    }
+  } else if(buttonGroup->getResult() == QMessageBox::RejectRole) {
+    reject();
   }
 }

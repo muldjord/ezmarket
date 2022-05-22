@@ -27,11 +27,10 @@
 #include "itemeditor.h"
 
 #include <QPushButton>
-#include <QButtonGroup>
 #include <QHBoxLayout>
-#include <QDialogButtonBox>
 #include <QLabel>
 #include <QSound>
+#include <QMessageBox>
 
 ItemEditor::ItemEditor(const QString &barcode,
                        Data &data,
@@ -45,8 +44,6 @@ ItemEditor::ItemEditor(const QString &barcode,
                 "QLineEdit {font-size: " + QString::number(data.fontSize) + "px;}"
                 "QComboBox {qproperty-iconSize: " + QString::number(data.iconSizeSmall) + "px; font-size: " + QString::number(data.fontSize) + "px;}"
                 "QPushButton {qproperty-iconSize: " + QString::number(data.iconSizeSmall) + "px; font-size: " + QString::number(data.fontSize) + "px;}");
-  
-  //QSound::play("sounds/ny_konto_eller_vare.wav");
 
   QLabel *itemLabel = new QLabel(this);
   itemLabel->setPixmap(QPixmap("graphics/item.png").scaled(data.iconSize, data.iconSize));
@@ -58,23 +55,30 @@ ItemEditor::ItemEditor(const QString &barcode,
     }
   }
 
-  QDialogButtonBox *dialogButtons = new QDialogButtonBox(QDialogButtonBox::Save |
-                                                         QDialogButtonBox::Cancel);
-  connect(dialogButtons, &QDialogButtonBox::accepted, this, &ItemEditor::checkSanity);
-  connect(dialogButtons, &QDialogButtonBox::rejected, this, &ItemEditor::reject);
+  buttonGroup = new ButtonGroup;
+  connect(buttonGroup, &ButtonGroup::clicked, this, &ItemEditor::checkButton);
 
   QVBoxLayout *layout = new QVBoxLayout;
   layout->addWidget(itemLabel);
   layout->addWidget(itemWidget);
-  layout->addWidget(dialogButtons);
+  layout->addLayout(buttonGroup);
   
   setLayout(layout);
 }
 
-void ItemEditor::checkSanity()
+void ItemEditor::checkButton()
 {
-  if(itemWidget->isSane()) {
-    itemWidget->commitItem();
-    accept();
+  if(buttonGroup->getResult() == QMessageBox::ActionRole) {
+    if(QMessageBox::question(this, tr("Delete item?"), tr("Are you sure you want to delete this item?"), QMessageBox::Yes | QMessageBox::No, QMessageBox::No) == QMessageBox::Yes) {;
+      itemWidget->removeItem();
+      accept();
+    }
+  } else if(buttonGroup->getResult() == QMessageBox::AcceptRole) {
+    if(itemWidget->isSane()) {
+      itemWidget->commitItem();
+      accept();
+    }
+  } else if(buttonGroup->getResult() == QMessageBox::RejectRole) {
+    reject();
   }
 }

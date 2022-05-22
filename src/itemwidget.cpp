@@ -146,3 +146,13 @@ void ItemWidget::commitItem()
   }
   item.stock = stockSpinBox->value();
 }
+
+void ItemWidget::removeItem()
+{
+  for(int a = 0; a < data.items.count(); ++a) {
+    if(item.barcode == data.items.at(a).barcode) {
+      data.items.removeAt(a);
+      break;
+    }
+  }
+}

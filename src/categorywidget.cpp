@@ -110,3 +110,23 @@ void CategoryWidget::commitCategory()
   category.icon = iconComboBox->currentData().toString();
   category.lifespan = lifespanSpinBox->value();
 }
+
+void CategoryWidget::removeCategory()
+{
+  for(int a = 0; a < data.categories.count(); ++a) {
+    if(category.barcode == data.categories.at(a).barcode) {
+      data.categories.removeAt(a);
+      break;
+    }
+  }
+}
+
+bool CategoryWidget::inUse()
+{
+  for(const auto &item: data.items) {
+    if(item.category == category.barcode) {
+      return true;
+    }
+  }
+  return false;
+}
