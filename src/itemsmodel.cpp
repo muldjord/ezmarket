@@ -91,11 +91,11 @@ QVariant ItemsModel::data(const QModelIndex &index, int role) const
     };
   } else if(role == Qt::DecorationRole) {
     if(index.column() == 0) {
-      return ImgTools::getPreparedIcon(allData.icons[allData.items.at(index.row()).icon], allData.iconSize);
+      return ImgTools::getPreparedIcon(allData.icons[allData.items.at(index.row()).icon], allData.iconSize, allData.iconBack);
     } else if(index.column() == 1) {
       for(const auto &category: allData.categories) {
         if(category.barcode == allData.items.at(index.row()).category) {
-          return ImgTools::getPreparedIcon(allData.icons[category.icon], allData.iconSize);
+          return ImgTools::getPreparedIcon(allData.icons[category.icon], allData.iconSize, allData.iconBack);
         }
       }
     }

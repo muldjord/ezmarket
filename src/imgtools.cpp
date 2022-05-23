@@ -28,15 +28,15 @@
 
 #include <QPainter>
 
-QPixmap ImgTools::getPreparedIcon(const QPixmap &icon, const int &iconSize)
+QPixmap ImgTools::getPreparedIcon(const QPixmap &icon, const int &iconSize,
+                                  const QPixmap &iconBack)
 {
   QImage image(iconSize + 2, iconSize + 2, QImage::Format_ARGB32);
   image.fill(Qt::transparent);
   QPainter painter(&image);
-  QBrush brush(Qt::SolidPattern);
-  brush.setColor(Qt::black);
-  painter.setBrush(brush);
-  painter.drawRoundedRect(0, 0, iconSize + 2, iconSize + 2, 30, 30, Qt::RelativeSize);
+  if(!iconBack.isNull()) {
+    painter.drawPixmap(0, 0, iconBack);
+  }
   painter.drawPixmap(1, 1, icon);
   painter.end();
   /*

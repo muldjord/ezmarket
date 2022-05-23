@@ -33,8 +33,8 @@
 class ImgTools : public QObject
 {
 public:
-  static QPixmap getPreparedIcon(const QPixmap &icon, const int &iconSize);
-
+  static QPixmap getPreparedIcon(const QPixmap &icon, const int &iconSize,
+                                 const QPixmap &iconBack);
 };
 
 #endif // __IMGTOOLS_H

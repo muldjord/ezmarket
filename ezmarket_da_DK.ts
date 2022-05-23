@@ -10,7 +10,7 @@
         <translation>Om EZMarket</translation>
     </message>
     <message>
-        <location filename="src/aboutbox.cpp" line="69"/>
+        <location filename="src/aboutbox.cpp" line="70"/>
         <source>&lt;h1&gt;EZMarket&lt;/h1&gt;&lt;h2&gt;Version </source>
         <oldsource>&lt;h1&gt;EZLibrary&lt;/h1&gt;&lt;h2&gt;Version </oldsource>
         <translation>&lt;h1&gt;EZMarket&lt;/h1&gt;&lt;h2&gt;Version </translation>
@@ -22,6 +22,16 @@
         <location filename="src/accounteditor.cpp" line="41"/>
         <source>Barcode: </source>
         <translation>Stregkode: </translation>
+    </message>
+    <message>
+        <location filename="src/accounteditor.cpp" line="73"/>
+        <source>Delete account?</source>
+        <translation>Slet kunde?</translation>
+    </message>
+    <message>
+        <location filename="src/accounteditor.cpp" line="73"/>
+        <source>Are you sure you want to delete this account?</source>
+        <translation>Er du sikker på, at du vil slette denne kunde?</translation>
     </message>
 </context>
 <context>
@@ -71,6 +81,24 @@
     </message>
 </context>
 <context>
+    <name>ButtonGroup</name>
+    <message>
+        <location filename="src/buttongroup.cpp" line="34"/>
+        <source>Delete</source>
+        <translation>Slet</translation>
+    </message>
+    <message>
+        <location filename="src/buttongroup.cpp" line="36"/>
+        <source>Save changes</source>
+        <translation>Gem ændringer</translation>
+    </message>
+    <message>
+        <location filename="src/buttongroup.cpp" line="37"/>
+        <source>Cancel</source>
+        <translation>Annullér</translation>
+    </message>
+</context>
+<context>
     <name>CategoriesModel</name>
     <message>
         <location filename="src/categoriesmodel.cpp" line="75"/>
@@ -99,6 +127,16 @@
         <location filename="src/categoryeditor.cpp" line="41"/>
         <source>Barcode: </source>
         <translation>Stregkode: </translation>
+    </message>
+    <message>
+        <location filename="src/categoryeditor.cpp" line="75"/>
+        <source>Delete category?</source>
+        <translation>Slet kategori?</translation>
+    </message>
+    <message>
+        <location filename="src/categoryeditor.cpp" line="75"/>
+        <source>Are you sure you want to delete this category?</source>
+        <translation>Er du sikker på, at du vil slette denne kategori?</translation>
     </message>
 </context>
 <context>
@@ -207,9 +245,19 @@
 <context>
     <name>ItemEditor</name>
     <message>
-        <location filename="src/itemeditor.cpp" line="41"/>
+        <location filename="src/itemeditor.cpp" line="40"/>
         <source>Barcode: </source>
         <translation>Stregkode: </translation>
+    </message>
+    <message>
+        <location filename="src/itemeditor.cpp" line="72"/>
+        <source>Delete item?</source>
+        <translation>Slet vare?</translation>
+    </message>
+    <message>
+        <location filename="src/itemeditor.cpp" line="72"/>
+        <source>Are you sure you want to delete this item?</source>
+        <translation>Er du sikker på, at du vil slette denne vare?</translation>
     </message>
 </context>
 <context>
@@ -311,27 +359,27 @@
         <translation>&amp;Om...</translation>
     </message>
     <message>
-        <location filename="src/mainwindow.cpp" line="68"/>
+        <location filename="src/mainwindow.cpp" line="67"/>
         <source>Accounts</source>
         <translation>Kundekort</translation>
     </message>
     <message>
-        <location filename="src/mainwindow.cpp" line="69"/>
+        <location filename="src/mainwindow.cpp" line="68"/>
         <source>Categories</source>
         <translation>Kategorier</translation>
     </message>
     <message>
-        <location filename="src/mainwindow.cpp" line="70"/>
+        <location filename="src/mainwindow.cpp" line="69"/>
         <source>Items</source>
         <translation>Varer</translation>
     </message>
     <message>
-        <location filename="src/mainwindow.cpp" line="71"/>
+        <location filename="src/mainwindow.cpp" line="70"/>
         <source>Announcements</source>
         <translation>Annonceringer</translation>
     </message>
     <message>
-        <location filename="src/mainwindow.cpp" line="72"/>
+        <location filename="src/mainwindow.cpp" line="71"/>
         <source>Checkout</source>
         <translation>Kasse</translation>
     </message>
@@ -346,17 +394,17 @@
         <translation>&amp;Hjælp</translation>
     </message>
     <message>
-        <location filename="src/mainwindow.cpp" line="142"/>
+        <location filename="src/mainwindow.cpp" line="146"/>
         <source>Main functions</source>
         <translation>Hovedfunktioner</translation>
     </message>
     <message>
-        <location filename="src/mainwindow.cpp" line="538"/>
+        <location filename="src/mainwindow.cpp" line="558"/>
         <source>Click to open the store</source>
         <translation>Klik for at åbne butikken</translation>
     </message>
     <message>
-        <location filename="src/mainwindow.cpp" line="546"/>
+        <location filename="src/mainwindow.cpp" line="569"/>
         <source>Click to close the store</source>
         <translation>Klik for at lukke butikken</translation>
     </message>

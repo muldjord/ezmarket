@@ -69,7 +69,7 @@ QVariant CategoriesModel::data(const QModelIndex &index, int role) const
     };
   } else if(role == Qt::DecorationRole) {
     if(index.column() == 0) {
-      return ImgTools::getPreparedIcon(allData.icons[allData.categories.at(index.row()).icon], allData.iconSize);
+      return ImgTools::getPreparedIcon(allData.icons[allData.categories.at(index.row()).icon], allData.iconSize, allData.iconBack);
     }
   } else if(role == Qt::ToolTipRole && index.column() == 0) {
     return tr("Barcode: ") + allData.categories.at(index.row()).barcode;

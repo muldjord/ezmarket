@@ -72,7 +72,7 @@ QVariant AccountsModel::data(const QModelIndex &index, int role) const
     };
   } else if(role == Qt::DecorationRole) {
     if(index.column() == 0) {
-      return ImgTools::getPreparedIcon(QPixmap("graphics/account.png").scaled(allData.iconSize, allData.iconSize, Qt::IgnoreAspectRatio, Qt::SmoothTransformation), allData.iconSize);
+      return ImgTools::getPreparedIcon(QPixmap("graphics/account.png").scaled(allData.iconSize, allData.iconSize, Qt::IgnoreAspectRatio, Qt::SmoothTransformation), allData.iconSize, allData.iconBack);
     }
   } else if(role == Qt::BackgroundRole) {
     switch(index.column()) {

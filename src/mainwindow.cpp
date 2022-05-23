@@ -184,6 +184,7 @@ void MainWindow::loadIcons()
   for(const auto &iconInfo: iconInfos) {
     data.icons[iconInfo.baseName()] = QPixmap(iconInfo.absoluteFilePath()).scaled(data.iconSize, data.iconSize, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
   }
+  data.iconBack = QPixmap("graphics/icon_background.png").scaled(data.iconSize + 2, data.iconSize + 2, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
 }
 
 void MainWindow::loadDatabase()

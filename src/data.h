@@ -45,6 +45,7 @@ struct Data {
   QList<Item> items;
   QList<Category> categories;
   QMap<QString, QPixmap> icons;
+  QPixmap iconBack = QPixmap();
 };
 
 #endif // __MAINSETTINGS_H__
