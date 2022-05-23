@@ -37,6 +37,9 @@ ButtonGroup::ButtonGroup(QWidget *parent)
   cancelButton = new QPushButton(tr("Cancel"));
 
   QButtonGroup *buttonGroup = new QButtonGroup;
+  deleteButton->setIcon(QIcon("graphics/delete.png"));
+  saveButton->setIcon(QIcon("graphics/save.png"));
+  cancelButton->setIcon(QIcon("graphics/cancel.png"));
   buttonGroup->addButton(deleteButton);
   buttonGroup->addButton(saveButton);
   buttonGroup->addButton(cancelButton);
