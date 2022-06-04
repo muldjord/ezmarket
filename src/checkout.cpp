@@ -39,8 +39,8 @@ Checkout::Checkout(Data &data, QWidget *parent)
 {
   setStyleSheet("QListWidget {padding: 50px; border-image: url(graphics/checkout_background.png); font-size: " + QString::number(data.fontSizeSmall) + "px; qproperty-iconSize: " + QString::number(data.iconSize) + "px;}");
 
-  setMinimumWidth(800);
   checkoutList = new QListWidget(this);
+  checkoutList->setMinimumWidth(800);
   checkoutList->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
   QFont font = checkoutList->font();
   font.setFamily("courier");
