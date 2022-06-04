@@ -29,12 +29,20 @@
 #include <QTranslator>
 #include <QStyleFactory>
 #include <QLibraryInfo>
+#include <QSharedMemory>
 
 #include "mainwindow.h"
 
 int main(int argc, char *argv[])
 {
   QApplication app(argc, argv);
+
+  // Only allow one instance
+  QSharedMemory shared("62d60669-bb94-4a94-88bb-b964890a7e04");
+  if(!shared.create(512, QSharedMemory::ReadWrite)) {
+    exit(0);
+  }
+
   app.setStyle(QStyleFactory::create("Fusion"));
   
   QDir::setCurrent(QApplication::applicationDirPath());
