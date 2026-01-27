@@ -31,7 +31,6 @@
 #include <QHBoxLayout>
 #include <QDialogButtonBox>
 #include <QLabel>
-#include <QSound>
 
 EntryEditor::EntryEditor(const QString &barcode,
                          Data &data,
@@ -46,7 +45,7 @@ EntryEditor::EntryEditor(const QString &barcode,
                 "QComboBox {qproperty-iconSize: " + QString::number(data.iconSizeSmall) + "px; font-size: " + QString::number(data.fontSize) + "px;}"
                 "QPushButton {qproperty-iconSize: " + QString::number(data.iconSizeSmall) + "px; font-size: " + QString::number(data.fontSize) + "px;}");
   
-  QSound::play("sounds/ny_stregkode.wav");
+  if(data.uiSounds["ny_stregkode"] != nullptr) data.uiSounds["ny_stregkode"]->play();
   
   //QLabel *typeLabel = new QLabel(tr("New account, category or item?"));
 

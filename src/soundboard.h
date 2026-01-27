@@ -37,13 +37,14 @@ class Soundboard : public QWidget
   Q_OBJECT
     
 public:
-  Soundboard(Data &data, QWidget *parent);
+  Soundboard(const Data &data, QWidget *parent);
   ~Soundboard();
   
 private slots:
 
 private:
   void playSound(QAbstractButton *button);
+  const Data &data;
 };
 
 #endif // __SOUNDBOARD_H__

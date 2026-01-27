@@ -37,27 +37,20 @@ int main(int argc, char *argv[])
 {
   QApplication app(argc, argv);
 
-  // Only allow one instance
-  QSharedMemory shared("62d60669-bb94-4a94-88bb-b964890a7e04");
-  if(!shared.create(512, QSharedMemory::ReadWrite)) {
-    exit(0);
-  }
-
-  app.setStyle(QStyleFactory::create("Fusion"));
-  
   QDir::setCurrent(QApplication::applicationDirPath());
 
   //QLocale::setDefault(QLocale::system().name());
-  QLocale::setDefault(QString("da_DK"));
+  //QLocale::setDefault(QString("da_DK"));
 
   QTranslator translator;
-  translator.load("ezmarket_" + QLocale().name());
-  app.installTranslator(&translator);
+  if(translator.load("ezmarket_" + QLocale().name())) {
+    app.installTranslator(&translator);
+  }
 
   QTranslator qtBaseTranslator;
-  qtBaseTranslator.load("qtbase_" + QLocale().name(),
-                        QLibraryInfo::location(QLibraryInfo::TranslationsPath));
-  app.installTranslator(&qtBaseTranslator);
+  if(qtBaseTranslator.load("qtbase_" + QLocale().name(), QLibraryInfo::path(QLibraryInfo::TranslationsPath))) {
+    app.installTranslator(&qtBaseTranslator);
+  }
 
   MainWindow window;
   window.show();

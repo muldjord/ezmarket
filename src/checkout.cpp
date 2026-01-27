@@ -31,7 +31,6 @@
 #include <QVBoxLayout>
 #include <QButtonGroup>
 #include <QPushButton>
-#include <QSound>
 #include <QTimer>
 
 Checkout::Checkout(Data &data, QWidget *parent)
@@ -80,9 +79,9 @@ void Checkout::payBy(const QString &barcode)
       }
       checkoutList->addItem(new QListWidgetItem(tr("New balance: ") + QLocale().toString(account.balance, 'f', 2)));
       if(account.balance < 0) {
-        QSound::play("sounds/betaling_modtaget-advarsel_konto_i_minus.wav");
+        if(data.uiSounds["betaling_modtaget-advarsel_konto_i_minus"] != nullptr) data.uiSounds["betaling_modtaget-advarsel_konto_i_minus"]->play();
       } else {
-        QSound::play("sounds/betaling_modtaget-tak_fordi_du_handlede_i_butikken.wav");
+        if(data.uiSounds["betaling_modtaget-tak_fordi_du_handlede_i_butikken"] != nullptr) data.uiSounds["betaling_modtaget-tak_fordi_du_handlede_i_butikken"]->play();
       }
     }
   }
@@ -102,14 +101,14 @@ void Checkout::addItem(const QString &barcode)
         }
       }
       if(item.stock <= 0) {
-        QSound::play("sounds/varen_er_udsolgt.wav");
+        if(data.uiSounds["varen_er_udsolgt"] != nullptr) data.uiSounds["varen_er_udsolgt"]->play();
       } else if(item.age > lifespan) {
-        QSound::play("sounds/varen_er_for_gammel.wav");
+        if(data.uiSounds["varen_er_for_gammel"] != nullptr) data.uiSounds["varen_er_for_gammel"]->play();
       } else {
         checkoutItems.append(item);
         item.stock -= 1;
         if(item.stock <= 0) {
-          QSound::play("sounds/varen_er_nu_udsolgt.wav");
+          if(data.uiSounds["varen_er_nu_udsolgt"] != nullptr) data.uiSounds["varen_er_nu_udsolgt"]->play();
         }
       }
     }

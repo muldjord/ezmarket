@@ -24,8 +24,7 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
 
-#ifndef __CHECKOUT_H__
-#define __CHECKOUT_H__
+#pragma once
 
 #include "data.h"
 
@@ -51,5 +50,3 @@ private:
   QListWidget *checkoutList = nullptr;
   QList<Item> checkoutItems;
 };
-
-#endif // __CHECKOUT_H__

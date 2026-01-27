@@ -24,8 +24,9 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
 
-#ifndef __LINEEDIT_H__
-#define __LINEEDIT_H__
+#pragma once
+
+#include "data.h"
 
 #include <QLineEdit>
 
@@ -34,11 +35,12 @@ class LineEdit : public QLineEdit
   Q_OBJECT
     
 public:
-  LineEdit(QWidget *parent);
+  LineEdit(const Data &data, QWidget *parent);
   ~LineEdit();
   
 private slots:
   void checkSanity();
-};
 
-#endif // __LINEEDIT_H__
+private:
+  const Data &data;
+};

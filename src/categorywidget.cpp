@@ -36,11 +36,11 @@ CategoryWidget::CategoryWidget(Data &data,
   : QWidget(parent), data(data), category(category)
 {
   QLabel *idLabel = new QLabel(tr("Category name:"));
-  idLineEdit = new LineEdit(this);
+  idLineEdit = new LineEdit(data, this);
   setFocusProxy(idLineEdit);
 
   QLabel *iconLabel = new QLabel(tr("Icon:"));
-  searchLineEdit = new LineEdit(this);
+  searchLineEdit = new LineEdit(data, this);
   searchLineEdit->setPlaceholderText(tr("Icon search"));
   connect(searchLineEdit, &LineEdit::textChanged, this, &CategoryWidget::searchIcons);
   iconComboBox = new QComboBox(this);

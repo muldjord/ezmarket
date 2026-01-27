@@ -37,7 +37,7 @@ ItemWidget::ItemWidget(Data &data,
   : QWidget(parent), data(data), item(item)
 {
   QLabel *idLabel = new QLabel(tr("Item name:"));
-  idLineEdit = new LineEdit(this);
+  idLineEdit = new LineEdit(data, this);
   setFocusProxy(idLineEdit);
 
   QLabel *categoryLabel = new QLabel(tr("Category:"));
@@ -47,17 +47,17 @@ ItemWidget::ItemWidget(Data &data,
   }
   
   QLabel *iconLabel = new QLabel(tr("Icon:"));
-  searchLineEdit = new LineEdit(this);
+  searchLineEdit = new LineEdit(data, this);
   searchLineEdit->setPlaceholderText(tr("Icon search"));
   connect(searchLineEdit, &LineEdit::textChanged, this, &ItemWidget::searchIcons);
   iconComboBox = new QComboBox(this);
   searchIcons();
   
   QLabel *priceLabel = new QLabel(tr("Price:"));
-  priceLineEdit = new LineEdit(this);
+  priceLineEdit = new LineEdit(data, this);
 
   QLabel *discountLabel = new QLabel(tr("Discount:"));
-  discountLineEdit = new LineEdit(this);
+  discountLineEdit = new LineEdit(data, this);
 
   QLabel *stockLabel = new QLabel(tr("In stock:"));
   stockSpinBox = new SpinBox(this);

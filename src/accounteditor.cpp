@@ -31,7 +31,6 @@
 #include <QHBoxLayout>
 #include <QDialogButtonBox>
 #include <QLabel>
-#include <QSound>
 
 AccountEditor::AccountEditor(const QString &barcode,
                              Data &data,

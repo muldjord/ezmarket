@@ -26,10 +26,8 @@
 
 #include "lineedit.h"
 
-#include <QSound>
-
-LineEdit::LineEdit(QWidget *parent)
-  : QLineEdit(parent)
+LineEdit::LineEdit(const Data &data, QWidget *parent)
+  : QLineEdit(parent), data(data)
 {
   connect(this, &LineEdit::textChanged, this, &LineEdit::checkSanity);
 }
@@ -42,7 +40,8 @@ void LineEdit::checkSanity()
 {
   if(text().contains(";") ||     
      text().contains("=")) {
-    QSound::play("sounds/feltet_maa_ikke_indeholde_semikolon_eller_ligmedstegn.wav");
+    if(data.uiSounds["feltet_maa_ikke_indeholde_semikolon_eller_ligmedstegn"] != nullptr)
+      data.uiSounds["feltet_maa_ikke_indeholde_semikolon_eller_ligmedstegn"]->play();
     setText(text().replace(";", "").replace("=", ""));
     setFocus();
   }

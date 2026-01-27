@@ -30,11 +30,10 @@
 #include <QVBoxLayout>
 #include <QButtonGroup>
 #include <QPushButton>
-#include <QSound>
 #include <QDir>
 
-Soundboard::Soundboard(Data &data, QWidget *parent)
-  : QWidget(parent)
+Soundboard::Soundboard(const Data &data, QWidget *parent)
+  : QWidget(parent), data(data)
 {
   setStyleSheet("QLabel {font-size: " + QString::number(data.fontSize) + "px; qproperty-alignment: AlignCenter;}"
                 "QLineEdit {font-size: " + QString::number(data.fontSize) + "px;}"
@@ -43,6 +42,7 @@ Soundboard::Soundboard(Data &data, QWidget *parent)
                 "QPushButton:hover {border-image: url(graphics/soundbutton_hover.png);}"
                 "QPushButton:pressed {border-image: url(graphics/soundbutton_pressed.png);}");
 
+  /*
   QDir soundsDir("sounds/soundboard", "*.wav", QDir::Name, QDir::Files);
   QList<QFileInfo> soundInfos = soundsDir.entryInfoList();
   QButtonGroup *soundButtons = new QButtonGroup(this);
@@ -68,12 +68,37 @@ Soundboard::Soundboard(Data &data, QWidget *parent)
         line = "";
       }
     }
+  */
+  QButtonGroup *soundButtons = new QButtonGroup(this);
+  connect(soundButtons, qOverload<QAbstractButton *>(&QButtonGroup::buttonPressed), this, &Soundboard::playSound);
+
+  int rowSounds = 0;
+
+  QVBoxLayout *layout = new QVBoxLayout;
+  QHBoxLayout *hLayout = new QHBoxLayout;
+
+  for(const auto &key: data.soundboardSounds.keys()) {
+    QString title = key;
+    title.replace("_", " ").replace("-", " ").replace("ae", "æ").replace("oe", "ø").replace("aa", "å");
+    title = title.left(1).toUpper() + title.mid(1);
+    QList<QString> words = title.split(" ");
+    title = "";
+    QString line = "";
+    while(words.length()) {
+      if(line.length() < 15) {
+        line += words.takeAt(0) + " ";
+      } else {
+        title += line + "\n";
+        line = "";
+      }
+    }
+
     title += line;
     //QPushButton *soundButton = new QPushButton(QIcon(QPixmap("graphics/sound.png").scaled(data.iconSize, data.iconSize, Qt::IgnoreAspectRatio, Qt::SmoothTransformation)), title, this);
     QPushButton *soundButton = new QPushButton(title, this);
     soundButton->setFocusPolicy(Qt::NoFocus);
     soundButton->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Expanding);
-    soundButton->setObjectName(soundInfo.absoluteFilePath());
+    soundButton->setObjectName(key);
     soundButtons->addButton(soundButton);
     hLayout->addWidget(soundButton);
     if(rowSounds >= 3) {
@@ -98,5 +123,5 @@ Soundboard::~Soundboard()
 
 void Soundboard::playSound(QAbstractButton *button)
 {
-  QSound::play(button->objectName());
+  if(data.soundboardSounds[button->objectName()] != nullptr) data.soundboardSounds[button->objectName()]->play();
 }

@@ -25,12 +25,14 @@
  */
 
 #include "aboutbox.h"
+#include "version.h"
 
 #include <QVBoxLayout>
 #include <QLabel>
 #include <QScrollBar>
 #include <QTimer>
 #include <QFile>
+#include <QDate>
 
 AboutBox::AboutBox(QWidget *parent): QDialog(parent)
 {
@@ -67,12 +69,15 @@ AboutBox::AboutBox(QWidget *parent): QDialog(parent)
   logo->setPixmap(QPixmap(":icon.png"));
   QLabel *title = new QLabel;
   title->setWordWrap(true);
-  title->setText(tr("<h1>EZMarket</h1>"
-                    "<h2>Version " VERSION "</h2>"
-                    "Copyright (C) 2022 Lars Muldjord<br />"
-                    "EZMarket is free software released under the terms "
-                    "of the GNU General Public License. Click the license "
-                    "tab for full license information."));
+  title->setText("<h1>EZMarket</h1>"
+                 "<h2>Version " + QString("%1.%2.%3")
+                 .arg(PROJECT_VERSION_MAJOR)
+                 .arg(PROJECT_VERSION_MINOR)
+                 .arg(PROJECT_VERSION_PATCH) + "</h2>"
+                 "Copyright (C) " + QDate::currentDate().toString("yyyy") + " Lars Muldjord<br />"
+                 "EZMarket is free software released under the terms "
+                 "of the GNU General Public License. Click the license "
+                 "tab for full license information.");
   topLayout->addWidget(logo);
   topLayout->addWidget(title);
   topLayout->setStretch(1, 1);

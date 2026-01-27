@@ -37,11 +37,11 @@ AccountWidget::AccountWidget(Data &data,
   : QWidget(parent), data(data), account(account)
 {
   QLabel *idLabel = new QLabel(tr("Account holder:"));
-  idLineEdit = new LineEdit(this);
+  idLineEdit = new LineEdit(data, this);
   setFocusProxy(idLineEdit);
 
   QLabel *balanceLabel = new QLabel(tr("Balance:"));
-  balanceLineEdit = new LineEdit(this);
+  balanceLineEdit = new LineEdit(data, this);
 
   QLabel *bonusLabel = new QLabel(tr("Bonus points:"));
   bonusSpinBox = new SpinBox(this);

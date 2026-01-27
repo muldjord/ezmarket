@@ -30,7 +30,6 @@
 #include <QVBoxLayout>
 #include <QLabel>
 #include <QHeaderView>
-#include <QSound>
 
 ItemsTab::ItemsTab(Data &data,
                    QWidget *parent)

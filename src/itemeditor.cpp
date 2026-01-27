@@ -29,7 +29,6 @@
 #include <QPushButton>
 #include <QHBoxLayout>
 #include <QLabel>
-#include <QSound>
 #include <QMessageBox>
 
 ItemEditor::ItemEditor(const QString &barcode,

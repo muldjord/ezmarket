@@ -1,4 +1,3 @@
-/* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /***************************************************************************
  *            mainwindow.h
  *
@@ -58,16 +57,16 @@ class MainWindow : public QMainWindow
 protected:
   //bool eventFilter(QObject *, QEvent *event) override;
 
-
 private slots:
   void showAbout();
   void checkBarcode();
   void focusBarcodeLineEdit();
-  void initRandomSound();
+  void initAmbienceSound();
   void openCloseStore();
   
 private:
   void loadIcons();
+  void loadSounds();
   void loadDatabase();
   void saveDatabase();
 
@@ -83,7 +82,7 @@ private:
   QString getItemFromBarcode(const QString &barcode);
   QString getCategoryFromBarcode(const QString &barcode);
 
-  void playRandomSound();
+  void playAmbienceSound();
 
   int openTime = 0;
 
@@ -109,7 +108,7 @@ private:
   CheckoutTab *checkoutTab = nullptr;
   */
 
-  QTimer randomTimer;
+  QTimer ambienceTimer;
   QTimer focusTimer;
 
   Data data;
