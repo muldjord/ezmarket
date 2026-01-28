@@ -27,7 +27,7 @@
 
 #pragma once
 
-#include "SFML/Audio.hpp"
+#include <SFML/Audio/Sound.hpp>
 
 #include <QObject>
 #include <QMap>
@@ -38,17 +38,10 @@ class SoundMixer : public QObject
 
 public:
   explicit SoundMixer();
-  void setChannels(const int &channels);
   void playSound(const QString &baseName, const int &type = 0);
-  void playBuffer(const sf::SoundBuffer *buffer,
-                  const float &panning = 0.0f,
-                  const float &pitch = 1.0f);
 
   // Sound effects
-  QMap<QString, sf::SoundBuffer> generalSounds;
-  QMap<QString, sf::SoundBuffer> ambienceSounds;
-  QMap<QString, sf::SoundBuffer> soundboardSounds;
-
-private:
-  QList<sf::Sound> soundChannels;
+  QMap<QString, sf::Sound *> generalSounds;
+  QMap<QString, sf::Sound *> ambienceSounds;
+  QMap<QString, sf::Sound *> soundboardSounds;
 };

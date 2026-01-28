@@ -31,47 +31,23 @@ SoundMixer::SoundMixer()
 {
 }
 
-void SoundMixer::setChannels(const int &channels)
-{
-  for(int a = 0; a < channels; ++a) {
-    sf::Sound soundChannel;
-    soundChannel.setAttenuation(0.f);
-    soundChannels.append(soundChannel);
-  }
-}
-
 void SoundMixer::playSound(const QString &baseName, const int &type)
 {
   switch(type) {
   case 0:
     if(generalSounds.contains(baseName)) {
-      playBuffer(&generalSounds[baseName]);
+      generalSounds[baseName]->play();
     }
     break;
   case 1:
     if(ambienceSounds.contains(baseName)) {
-      playBuffer(&ambienceSounds[baseName]);
+      ambienceSounds[baseName]->play();
     }
     break;
   case 2:
     if(soundboardSounds.contains(baseName)) {
-      playBuffer(&soundboardSounds[baseName]);
+      soundboardSounds[baseName]->play();
     }
     break;
-  }
-}
-
-void SoundMixer::playBuffer(const sf::SoundBuffer *buffer,
-                            const float &panning,
-                            const float &pitch)
-{
-  for(auto &channel: soundChannels) {
-    if(channel.getStatus() == sf::SoundSource::Status::Stopped) {
-      channel.setBuffer(*buffer);
-      channel.setPosition(panning, 0.f, 2.f);
-      channel.setPitch(pitch);
-      channel.play();
-      break;
-    }
   }
 }

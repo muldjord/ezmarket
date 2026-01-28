@@ -27,6 +27,7 @@
 #include "aboutbox.h"
 #include "entryeditor.h"
 
+#include <SFML/Audio/SoundBuffer.hpp>
 #include <QVBoxLayout>
 #include <QApplication>
 #include <QFile>
@@ -188,14 +189,13 @@ void MainWindow::loadIcons()
 
 void MainWindow::loadSounds()
 {
-  data.soundMixer.setChannels(16);
   {
     QDir soundsDir("sounds/general", "*.wav", QDir::Name, QDir::Files | QDir::NoDotAndDotDot | QDir::Readable);
     QFileInfoList soundInfos = soundsDir.entryInfoList();
     for(const auto &soundInfo: soundInfos) {
-      sf::SoundBuffer soundFx;
-      if(soundFx.loadFromFile(soundInfo.absoluteFilePath().toStdString())) {
-        data.soundMixer.generalSounds[soundInfo.baseName()] = soundFx;
+      sf::SoundBuffer *soundBuffer = new sf::SoundBuffer;
+      if(soundBuffer->loadFromFile(soundInfo.absoluteFilePath().toStdString())) {
+        data.soundMixer.generalSounds[soundInfo.baseName()] = new sf::Sound(*soundBuffer);
         printf("  Added general sound: %s\n", qPrintable(soundInfo.baseName()));
       } else {
         printf("  Error when loading sound: %s\n", qPrintable(soundInfo.fileName()));
@@ -206,9 +206,9 @@ void MainWindow::loadSounds()
     QDir soundsDir("sounds/ambience", "*.wav", QDir::Name, QDir::Files | QDir::NoDotAndDotDot | QDir::Readable);
     QFileInfoList soundInfos = soundsDir.entryInfoList();
     for(const auto &soundInfo: soundInfos) {
-      sf::SoundBuffer soundFx;
-      if(soundFx.loadFromFile(soundInfo.absoluteFilePath().toStdString())) {
-        data.soundMixer.ambienceSounds[soundInfo.baseName()] = soundFx;
+      sf::SoundBuffer *soundBuffer = new sf::SoundBuffer;
+      if(soundBuffer->loadFromFile(soundInfo.absoluteFilePath().toStdString())) {
+        data.soundMixer.ambienceSounds[soundInfo.baseName()] = new sf::Sound(*soundBuffer);
         printf("  Added ambience sound: %s\n", qPrintable(soundInfo.baseName()));
       } else {
         printf("  Error when loading sound: %s\n", qPrintable(soundInfo.fileName()));
@@ -219,9 +219,9 @@ void MainWindow::loadSounds()
     QDir soundsDir("sounds/soundboard", "*.wav", QDir::Name, QDir::Files | QDir::NoDotAndDotDot | QDir::Readable);
     QFileInfoList soundInfos = soundsDir.entryInfoList();
     for(const auto &soundInfo: soundInfos) {
-      sf::SoundBuffer soundFx;
-      if(soundFx.loadFromFile(soundInfo.absoluteFilePath().toStdString())) {
-        data.soundMixer.soundboardSounds[soundInfo.baseName()] = soundFx;
+      sf::SoundBuffer *soundBuffer = new sf::SoundBuffer;
+      if(soundBuffer->loadFromFile(soundInfo.absoluteFilePath().toStdString())) {
+        data.soundMixer.soundboardSounds[soundInfo.baseName()] = new sf::Sound(*soundBuffer);
         printf("  Added soundboard sound: %s\n", qPrintable(soundInfo.baseName()));
       } else {
         printf("  Error when loading sound: %s\n", qPrintable(soundInfo.fileName()));
