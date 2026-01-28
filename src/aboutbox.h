@@ -24,8 +24,7 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
 
-#ifndef __ABOUTBOX_H__
-#define __ABOUTBOX_H__
+#pragma once
 
 #include <QDialog>
 #include <QScrollArea>
@@ -52,6 +51,3 @@ private:
   int scrollState;
   QTabWidget *tabs;
 };
-
-
-#endif // __ABOUTBOX_H__
