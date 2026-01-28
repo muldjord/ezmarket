@@ -79,9 +79,9 @@ void Checkout::payBy(const QString &barcode)
       }
       checkoutList->addItem(new QListWidgetItem(tr("New balance: ") + QLocale().toString(account.balance, 'f', 2)));
       if(account.balance < 0) {
-        if(data.uiSounds["betaling_modtaget-advarsel_konto_i_minus"] != nullptr) data.uiSounds["betaling_modtaget-advarsel_konto_i_minus"]->play();
+        data.soundMixer.playSound("betaling_modtaget-advarsel_konto_i_minus");
       } else {
-        if(data.uiSounds["betaling_modtaget-tak_fordi_du_handlede_i_butikken"] != nullptr) data.uiSounds["betaling_modtaget-tak_fordi_du_handlede_i_butikken"]->play();
+        data.soundMixer.playSound("betaling_modtaget-tak_fordi_du_handlede_i_butikken");
       }
     }
   }
@@ -101,14 +101,14 @@ void Checkout::addItem(const QString &barcode)
         }
       }
       if(item.stock <= 0) {
-        if(data.uiSounds["varen_er_udsolgt"] != nullptr) data.uiSounds["varen_er_udsolgt"]->play();
+        data.soundMixer.playSound("varen_er_udsolgt");
       } else if(item.age > lifespan) {
-        if(data.uiSounds["varen_er_for_gammel"] != nullptr) data.uiSounds["varen_er_for_gammel"]->play();
+        data.soundMixer.playSound("varen_er_for_gammel");
       } else {
         checkoutItems.append(item);
         item.stock -= 1;
         if(item.stock <= 0) {
-          if(data.uiSounds["varen_er_nu_udsolgt"] != nullptr) data.uiSounds["varen_er_nu_udsolgt"]->play();
+          data.soundMixer.playSound("varen_er_nu_udsolgt");
         }
       }
     }

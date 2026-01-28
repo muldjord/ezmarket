@@ -27,12 +27,12 @@
 #pragma once
 
 #include "datatypes.h"
+#include "soundmixer.h"
 
 #include <QString>
 #include <QList>
 #include <QMap>
 #include <QPixmap>
-#include <QSoundEffect>
 
 struct Data {
   int iconSize = 48;
@@ -45,8 +45,6 @@ struct Data {
   QList<Item> items;
   QList<Category> categories;
   QMap<QString, QPixmap> icons;
-  QMap<QString, QSoundEffect *> uiSounds;
-  QMap<QString, QSoundEffect *> soundboardSounds;
-  QMap<QString, QSoundEffect *> ambienceSounds;
+  SoundMixer soundMixer;
   QPixmap iconBack = QPixmap();
 };

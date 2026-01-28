@@ -35,12 +35,12 @@ class LineEdit : public QLineEdit
   Q_OBJECT
     
 public:
-  LineEdit(const Data &data, QWidget *parent);
+  LineEdit(Data &data, QWidget *parent);
   ~LineEdit();
   
 private slots:
   void checkSanity();
 
 private:
-  const Data &data;
+  Data &data;
 };

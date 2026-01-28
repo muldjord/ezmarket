@@ -30,7 +30,6 @@
 #include <QVBoxLayout>
 #include <QApplication>
 #include <QFile>
-#include <QSoundEffect>
 #include <QRandomGenerator>
 #include <QDir>
 #include <QToolBar>
@@ -94,15 +93,6 @@ MainWindow::MainWindow()
 MainWindow::~MainWindow()
 {
   saveDatabase();
-  for(const auto &key: data.uiSounds.keys()) {
-    delete data.uiSounds[key];
-  }
-  for(const auto &key: data.soundboardSounds.keys()) {
-    delete data.soundboardSounds[key];
-  }
-  for(const auto &key: data.ambienceSounds.keys()) {
-    delete data.ambienceSounds[key];
-  }
 }
 
 void MainWindow::createActions()
@@ -198,34 +188,44 @@ void MainWindow::loadIcons()
 
 void MainWindow::loadSounds()
 {
+  data.soundMixer.setChannels(16);
   {
-    QDir soundsDir("sounds/hardcoded", "*.wav", QDir::Name, QDir::Files);
-    QList<QFileInfo> soundInfos = soundsDir.entryInfoList();
+    QDir soundsDir("sounds/general", "*.wav", QDir::Name, QDir::Files | QDir::NoDotAndDotDot | QDir::Readable);
+    QFileInfoList soundInfos = soundsDir.entryInfoList();
     for(const auto &soundInfo: soundInfos) {
-      data.uiSounds[soundInfo.baseName()] = new QSoundEffect;
-      data.uiSounds[soundInfo.baseName()]->setSource(QUrl::fromLocalFile(soundInfo.absoluteFilePath()));
-      data.uiSounds[soundInfo.baseName()]->setLoopCount(0);
-      data.uiSounds[soundInfo.baseName()]->setVolume(1.0f);
+      sf::SoundBuffer soundFx;
+      if(soundFx.loadFromFile(soundInfo.absoluteFilePath().toStdString())) {
+        data.soundMixer.generalSounds[soundInfo.baseName()] = soundFx;
+        printf("  Added general sound: %s\n", qPrintable(soundInfo.baseName()));
+      } else {
+        printf("  Error when loading sound: %s\n", qPrintable(soundInfo.fileName()));
+      }
     }
   }
   {
-    QDir soundsDir("sounds/soundboard", "*.wav", QDir::Name, QDir::Files);
-    QList<QFileInfo> soundInfos = soundsDir.entryInfoList();
+    QDir soundsDir("sounds/ambience", "*.wav", QDir::Name, QDir::Files | QDir::NoDotAndDotDot | QDir::Readable);
+    QFileInfoList soundInfos = soundsDir.entryInfoList();
     for(const auto &soundInfo: soundInfos) {
-      data.soundboardSounds[soundInfo.baseName()] = new QSoundEffect;
-      data.soundboardSounds[soundInfo.baseName()]->setSource(QUrl::fromLocalFile(soundInfo.absoluteFilePath()));
-      data.soundboardSounds[soundInfo.baseName()]->setLoopCount(0);
-      data.soundboardSounds[soundInfo.baseName()]->setVolume(1.0f);
+      sf::SoundBuffer soundFx;
+      if(soundFx.loadFromFile(soundInfo.absoluteFilePath().toStdString())) {
+        data.soundMixer.ambienceSounds[soundInfo.baseName()] = soundFx;
+        printf("  Added ambience sound: %s\n", qPrintable(soundInfo.baseName()));
+      } else {
+        printf("  Error when loading sound: %s\n", qPrintable(soundInfo.fileName()));
+      }
     }
   }
   {
-    QDir soundsDir("sounds/ambience", "*.wav", QDir::Name, QDir::Files);
-    QList<QFileInfo> soundInfos = soundsDir.entryInfoList();
+    QDir soundsDir("sounds/soundboard", "*.wav", QDir::Name, QDir::Files | QDir::NoDotAndDotDot | QDir::Readable);
+    QFileInfoList soundInfos = soundsDir.entryInfoList();
     for(const auto &soundInfo: soundInfos) {
-      data.ambienceSounds[soundInfo.baseName()] = new QSoundEffect;
-      data.ambienceSounds[soundInfo.baseName()]->setSource(QUrl::fromLocalFile(soundInfo.absoluteFilePath()));
-      data.ambienceSounds[soundInfo.baseName()]->setLoopCount(0);
-      data.ambienceSounds[soundInfo.baseName()]->setVolume(1.0f);
+      sf::SoundBuffer soundFx;
+      if(soundFx.loadFromFile(soundInfo.absoluteFilePath().toStdString())) {
+        data.soundMixer.soundboardSounds[soundInfo.baseName()] = soundFx;
+        printf("  Added soundboard sound: %s\n", qPrintable(soundInfo.baseName()));
+      } else {
+        printf("  Error when loading sound: %s\n", qPrintable(soundInfo.fileName()));
+      }
     }
   }
 }
@@ -467,17 +467,17 @@ void MainWindow::checkBarcode()
       if(entryEditor.getType() == "account") {
         accountsTab->accountsModel->beginInsertRow(data.accounts.length());
         entryEditor.addAccount();
-        if(data.uiSounds["kundekort_registreret"] != nullptr) data.uiSounds["kundekort_registreret"]->play();
+        data.soundMixer.playSound("kundekort_registreret");
         accountsTab->accountsModel->insertRows(data.accounts.length(), 1);
       } else if(entryEditor.getType() == "category") {
         categoriesTab->categoriesModel->beginInsertRow(data.categories.length());
         entryEditor.addCategory();
-        if(data.uiSounds["kategori_registreret"] != nullptr) data.uiSounds["kategori_registreret"]->play();
+        data.soundMixer.playSound("kategori_registreret");
         categoriesTab->categoriesModel->insertRows(data.categories.length(), 1);
       } else if(entryEditor.getType() == "item") {
         itemsTab->itemsModel->beginInsertRow(data.items.length());
         entryEditor.addItem();
-        if(data.uiSounds["vare_registreret"] != nullptr) data.uiSounds["vare_registreret"]->play();
+        data.soundMixer.playSound("vare_registreret");
         itemsTab->itemsModel->insertRows(data.items.length(), 1);
       }
     }
@@ -561,7 +561,9 @@ void MainWindow::initAmbienceSound()
 
 void MainWindow::playAmbienceSound()
 {
-  data.ambienceSounds[data.ambienceSounds.keys().at(QRandomGenerator::global()->generate() % data.ambienceSounds.keys().length())]->play();
+  int ambienceSounds = data.soundMixer.ambienceSounds.keys().length();
+  int randomSound = QRandomGenerator::global()->generate() % ambienceSounds;
+  data.soundMixer.playSound(data.soundMixer.ambienceSounds.keys().at(randomSound), 1);
 }
 
 /*
@@ -596,9 +598,9 @@ void MainWindow::openCloseStore()
   if(openCloseButton->isChecked()) {
     openCloseButton->setToolTip(tr("Click to open the store"));
     if(!itemsTab->ageItems()) {
-      if(data.uiSounds["butikken_er_nu_lukket"] != nullptr) data.uiSounds["butikken_er_nu_lukket"]->play();
+      data.soundMixer.playSound("butikken_er_nu_lukket");
     } else {
-      if(data.uiSounds["butikken_er_nu_lukket-lagervare_for_gammel"] != nullptr) data.uiSounds["butikken_er_nu_lukket-lagervare_for_gammel"]->play();
+      data.soundMixer.playSound("butikken_er_nu_lukket-lagervare_for_gammel");
     }
     printf("The store is now closed!\n");
     openTimerLabel->setText("00:00");
@@ -606,7 +608,7 @@ void MainWindow::openCloseStore()
     openTimerLabel->setEnabled(false);
   } else {
     openCloseButton->setToolTip(tr("Click to close the store"));
-    if(data.uiSounds["butikken_er_nu_aaben"] != nullptr) data.uiSounds["butikken_er_nu_aaben"]->play();
+    data.soundMixer.playSound("butikken_er_nu_aaben");
     printf("The store is now open!\n");
     openTimerLabel->setText("00:00");
     openTime = 0;

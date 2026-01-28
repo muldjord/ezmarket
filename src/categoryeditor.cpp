@@ -70,7 +70,7 @@ void CategoryEditor::checkButton()
 {
   if(buttonGroup->getResult() == QMessageBox::ActionRole) {
     if(categoryWidget->inUse()) {
-      if(data.uiSounds["kategorien_er_i_brug"] != nullptr) data.uiSounds["kategorien_er_i_brug"]->play();
+      data.soundMixer.playSound("kategorien_er_i_brug");
     } else if(QMessageBox::question(this, tr("Delete category?"), tr("Are you sure you want to delete this category?"), QMessageBox::Yes | QMessageBox::No, QMessageBox::No) == QMessageBox::Yes) {;
       categoryWidget->removeCategory();
       accept();

@@ -32,7 +32,7 @@
 #include <QPushButton>
 #include <QDir>
 
-Soundboard::Soundboard(const Data &data, QWidget *parent)
+Soundboard::Soundboard(Data &data, QWidget *parent)
   : QWidget(parent), data(data)
 {
   setStyleSheet("QLabel {font-size: " + QString::number(data.fontSize) + "px; qproperty-alignment: AlignCenter;}"
@@ -77,7 +77,7 @@ Soundboard::Soundboard(const Data &data, QWidget *parent)
   QVBoxLayout *layout = new QVBoxLayout;
   QHBoxLayout *hLayout = new QHBoxLayout;
 
-  for(const auto &key: data.soundboardSounds.keys()) {
+  for(const auto &key: data.soundMixer.soundboardSounds.keys()) {
     QString title = key;
     title.replace("_", " ").replace("-", " ").replace("ae", "æ").replace("oe", "ø").replace("aa", "å");
     title = title.left(1).toUpper() + title.mid(1);
@@ -123,5 +123,5 @@ Soundboard::~Soundboard()
 
 void Soundboard::playSound(QAbstractButton *button)
 {
-  if(data.soundboardSounds[button->objectName()] != nullptr) data.soundboardSounds[button->objectName()]->play();
+  data.soundMixer.playSound(button->objectName(), 2);
 }
