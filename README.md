@@ -11,7 +11,7 @@ EZMarket is a kid friendly market management system. It is purely meant for fun.
 ## EZMarket prerequisites
 On a Ubuntu system you need to install the following packages before compiling EZMarket:
 ```
-$ sudo apt install build-essentials cmake qt6-base-dev qt6-multimedia-dev qt6-tools-dev
+$ sudo apt install build-essential cmake qt6-base-dev qt6-tools-dev libsfml-dev
 ```
 
 ## Compiling EZMarket
