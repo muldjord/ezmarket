@@ -467,17 +467,17 @@ void MainWindow::checkBarcode()
       if(entryEditor.getType() == "account") {
         accountsTab->accountsModel->beginInsertRow(data.accounts.length());
         entryEditor.addAccount();
-        data.soundMixer.playSound("kundekort_registreret");
+        data.soundMixer.playSound("customer_card_registered");
         accountsTab->accountsModel->insertRows(data.accounts.length(), 1);
       } else if(entryEditor.getType() == "category") {
         categoriesTab->categoriesModel->beginInsertRow(data.categories.length());
         entryEditor.addCategory();
-        data.soundMixer.playSound("kategori_registreret");
+        data.soundMixer.playSound("category_registered");
         categoriesTab->categoriesModel->insertRows(data.categories.length(), 1);
       } else if(entryEditor.getType() == "item") {
         itemsTab->itemsModel->beginInsertRow(data.items.length());
         entryEditor.addItem();
-        data.soundMixer.playSound("vare_registreret");
+        data.soundMixer.playSound("item_registered");
         itemsTab->itemsModel->insertRows(data.items.length(), 1);
       }
     }
@@ -598,9 +598,9 @@ void MainWindow::openCloseStore()
   if(openCloseButton->isChecked()) {
     openCloseButton->setToolTip(tr("Click to open the store"));
     if(!itemsTab->ageItems()) {
-      data.soundMixer.playSound("butikken_er_nu_lukket");
+      data.soundMixer.playSound("the_store_is_now_closed");
     } else {
-      data.soundMixer.playSound("butikken_er_nu_lukket-lagervare_for_gammel");
+      data.soundMixer.playSound("the_store_is_now_closed-stock_item_expired");
     }
     printf("The store is now closed!\n");
     openTimerLabel->setText("00:00");
@@ -608,7 +608,7 @@ void MainWindow::openCloseStore()
     openTimerLabel->setEnabled(false);
   } else {
     openCloseButton->setToolTip(tr("Click to close the store"));
-    data.soundMixer.playSound("butikken_er_nu_aaben");
+    data.soundMixer.playSound("the_store_is_now_open");
     printf("The store is now open!\n");
     openTimerLabel->setText("00:00");
     openTime = 0;

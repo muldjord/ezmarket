@@ -79,9 +79,9 @@ void Checkout::payBy(const QString &barcode)
       }
       checkoutList->addItem(new QListWidgetItem(tr("New balance: ") + QLocale().toString(account.balance, 'f', 2)));
       if(account.balance < 0) {
-        data.soundMixer.playSound("betaling_modtaget-advarsel_konto_i_minus");
+        data.soundMixer.playSound("payment_received-warning_account_deficit");
       } else {
-        data.soundMixer.playSound("betaling_modtaget-tak_fordi_du_handlede_i_butikken");
+        data.soundMixer.playSound("payment_received-thank_you_for_shopping_with_us");
       }
     }
   }
@@ -101,14 +101,14 @@ void Checkout::addItem(const QString &barcode)
         }
       }
       if(item.stock <= 0) {
-        data.soundMixer.playSound("varen_er_udsolgt");
+        data.soundMixer.playSound("item_sold_out");
       } else if(item.age > lifespan) {
-        data.soundMixer.playSound("varen_er_for_gammel");
+        data.soundMixer.playSound("item_expired");
       } else {
         checkoutItems.append(item);
         item.stock -= 1;
         if(item.stock <= 0) {
-          data.soundMixer.playSound("varen_er_nu_udsolgt");
+          data.soundMixer.playSound("item_is_now_sold_out");
         }
       }
     }

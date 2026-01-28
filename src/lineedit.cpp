@@ -40,7 +40,7 @@ void LineEdit::checkSanity()
 {
   if(text().contains(";") ||     
      text().contains("=")) {
-    data.soundMixer.playSound("feltet_maa_ikke_indeholde_semikolon_eller_ligmedstegn");
+    data.soundMixer.playSound("entry_must_not_contain_semicolon_or_equal_sign");
     setText(text().replace(";", "").replace("=", ""));
     setFocus();
   }

@@ -45,7 +45,7 @@ EntryEditor::EntryEditor(const QString &barcode,
                 "QComboBox {qproperty-iconSize: " + QString::number(data.iconSizeSmall) + "px; font-size: " + QString::number(data.fontSize) + "px;}"
                 "QPushButton {qproperty-iconSize: " + QString::number(data.iconSizeSmall) + "px; font-size: " + QString::number(data.fontSize) + "px;}");
   
-  data.soundMixer.playSound("ny_stregkode");
+  data.soundMixer.playSound("new_barcode");
   
   //QLabel *typeLabel = new QLabel(tr("New account, category or item?"));
 
