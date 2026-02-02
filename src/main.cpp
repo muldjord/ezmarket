@@ -30,6 +30,7 @@
 #include <QStyleFactory>
 #include <QLibraryInfo>
 #include <QSharedMemory>
+#include <QSettings>
 
 #include "mainwindow.h"
 
@@ -39,20 +40,25 @@ int main(int argc, char *argv[])
 
   QDir::setCurrent(QApplication::applicationDirPath());
 
-  //QLocale::setDefault(QLocale::system().name());
-  //QLocale::setDefault(QString("da_DK"));
+  QString locale = "en";
+  QSettings settings("config.ini", QSettings::IniFormat);
+  if(!settings.contains("main/locale")) {
+    settings.setValue("main/locale", QLocale::system().name().split("_").first());
+  } else {
+    locale = settings.value("main/locale", "en").toString();
+  }
 
   QTranslator translator;
-  if(translator.load("ezmarket_" + QLocale().name())) {
+  if(translator.load("ezmarket_" + locale)) {
     app.installTranslator(&translator);
   }
 
   QTranslator qtBaseTranslator;
-  if(qtBaseTranslator.load("qtbase_" + QLocale().name(), QLibraryInfo::path(QLibraryInfo::TranslationsPath))) {
+  if(qtBaseTranslator.load("qtbase_" + locale, QLibraryInfo::path(QLibraryInfo::TranslationsPath))) {
     app.installTranslator(&qtBaseTranslator);
   }
 
-  MainWindow window;
+  MainWindow window(settings);
   window.show();
   return app.exec();
 }

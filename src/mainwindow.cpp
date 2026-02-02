@@ -40,7 +40,7 @@
 #include <QDateTime>
 #include <QDomDocument>
 
-MainWindow::MainWindow()
+MainWindow::MainWindow(const QSettings &settings)
 {
   setWindowTitle("EZMarket v" VERSION);
   showFullScreen();
@@ -51,10 +51,14 @@ MainWindow::MainWindow()
                 "QTabWidget {qproperty-iconSize: " + QString::number(data.iconSizeSmall) + "px; font-size: " + QString::number(data.fontSizeSmall) + "px;}"
                 "QListWidget {font-size: " + QString::number(data.fontSizeSmall) + "px;}"
                 "QGroupBox{font-size: " + QString::number(data.fontSize) + "px; padding-left: 20px; padding-top: 40px; padding-bottom: 20px; padding-right: 20px;}");
+
+  loadConfig(settings);
+
   createActions();
   createMenus();
   createToolBar();
   
+
   loadIcons();
   loadSounds();
   loadDatabase();
@@ -133,13 +137,14 @@ void MainWindow::createToolBar()
   connect(barcodeLineEdit, &QLineEdit::returnPressed, this, &MainWindow::checkBarcode);
 
   openCloseButton = new QPushButton("", this);
-  openCloseButton->setStyleSheet("QPushButton {border-image: url(graphics/store_closed.png); qproperty-iconSize: " + QString::number(data.iconSizeSmall) + "px; font-size: " + QString::number(data.fontSizeSmall) + "px;}"
-                                 "QPushButton:checked {border-image: url(graphics/store_open.png); qproperty-iconSize: " + QString::number(data.iconSizeSmall) + "px; font-size: " + QString::number(data.fontSizeSmall) + "px;}");
+  printf("locale: %s\n", qPrintable(data.locale));
+  openCloseButton->setStyleSheet("QPushButton {border-image: url(" + (QFile::exists("graphics/store_closed-" + data.locale + ".png")?"graphics/store_closed-" + data.locale + ".png":"graphics/store_closed.png") + "); qproperty-iconSize: " + QString::number(data.iconSizeSmall) + "px; font-size: " + QString::number(data.fontSizeSmall) + "px;}"
+                                 "QPushButton:checked {border-image: url(" + (QFile::exists("graphics/store_open-" + data.locale + ".png")?"graphics/store_open-" + data.locale + ".png":"graphics/store_open.png") + "); qproperty-iconSize: " + QString::number(data.iconSizeSmall) + "px; font-size: " + QString::number(data.fontSizeSmall) + "px;}");
   //openCloseButton->setIcon(QIcon("graphics/quit.png"));
   openCloseButton->setFocusPolicy(Qt::NoFocus);
   openCloseButton->setFixedSize(200, data.iconSize);
   openCloseButton->setCheckable(true);
-  connect(openCloseButton, &QPushButton::pressed, this, &MainWindow::openCloseStore);
+  connect(openCloseButton, &QPushButton::released, this, &MainWindow::openCloseStore);
 
   openTimerLabel = new QLabel("00:00");
   openTimerLabel->setEnabled(false);
@@ -191,17 +196,21 @@ QString MainWindow::stringToUnicodeHexSequence(const QString &input)
   return QStringLiteral("u") + parts.join('_');
 }
 
+void MainWindow::loadConfig(const QSettings &settings)
+{
+  data.locale = settings.value("main/locale", "en").toString();
+}
+
 void MainWindow::loadIcons()
 {
   QDomDocument xmlDoc;
-  QString locale = QLocale::system().name().split("_").first();
-  QFile tFile("graphics/noto-emoji/translations/" + locale + ".xml");
+  QFile tFile("graphics/noto-emoji/translations/" + data.locale + ".xml");
   //QFile tFile("graphics/noto-emoji/translations/da.xml");
   if(tFile.open(QIODevice::ReadOnly)) {
     xmlDoc.setContent(tFile.readAll());
     tFile.close();
   } else {
-    printf("Couldn't locate Emoji translation XML for locale '%s', can't load Emoji icons!\n", qPrintable(locale));
+    printf("Couldn't locate Emoji translation XML for locale '%s', can't load Emoji icons!\n", qPrintable(data.locale));
     return;
   }
   QMap<QString, QString> emojiTags;
@@ -639,7 +648,7 @@ void MainWindow::focusBarcodeLineEdit()
 void MainWindow::openCloseStore()
 {
   // Checked state is opposite since we check it on 'pressed' to make barcode focus work
-  if(openCloseButton->isChecked()) {
+  if(!openCloseButton->isChecked()) {
     openCloseButton->setToolTip(tr("Click to open the store"));
     if(!itemsTab->ageItems()) {
       data.soundMixer.playSound("the_store_is_now_closed");

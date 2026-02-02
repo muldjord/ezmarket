@@ -45,13 +45,14 @@
 #include <QMenuBar>
 #include <QTabWidget>
 #include <QPushButton>
+#include <QSettings>
 
 class MainWindow : public QMainWindow
 {
   Q_OBJECT
     
  public:
-  MainWindow();
+  MainWindow(const QSettings &settings);
   ~MainWindow();
   
 protected:
@@ -66,8 +67,11 @@ private slots:
   
 private:
   QString stringToUnicodeHexSequence(const QString &input);
+
+  void loadConfig(const QSettings &settings);
   void loadIcons();
   void loadSounds();
+
   void loadDatabase();
   void saveDatabase();
 

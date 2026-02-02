@@ -35,6 +35,7 @@
 #include <QPixmap>
 
 struct Data {
+  QString locale = "en";
   int iconSize = 48;
   int iconSizeSmall = 35;
   int fontSize = 35;
