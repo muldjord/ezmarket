@@ -24,8 +24,7 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
 
-#ifndef __CATEGORYWIDGET_H__
-#define __CATEGORYWIDGET_H__
+#pragma once
 
 #include "datatypes.h"
 #include "data.h"
@@ -61,5 +60,3 @@ private:
   QComboBox *iconComboBox = nullptr;
   SpinBox *lifespanSpinBox = nullptr;
 };
-
-#endif // __CATEGORYWIDGET_H__

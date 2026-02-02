@@ -24,8 +24,7 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
 
-#ifndef __IMGTOOLS_H
-#define __IMGTOOLS_H
+#pragma once
 
 #include <QObject>
 #include <QPixmap>
@@ -36,5 +35,3 @@ public:
   static QPixmap getPreparedIcon(const QPixmap &icon, const int &iconSize,
                                  const QPixmap &iconBack);
 };
-
-#endif // __IMGTOOLS_H

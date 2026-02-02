@@ -24,8 +24,7 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
 
-#ifndef __ACCOUNTWIDGET_H__
-#define __ACCOUNTWIDGET_H__
+#pragma once
 
 #include "datatypes.h"
 #include "data.h"
@@ -54,5 +53,3 @@ private:
   LineEdit *balanceLineEdit = nullptr;
   SpinBox *bonusSpinBox = nullptr;
 };
-
-#endif // __ACCOUNTWIDGET_H__

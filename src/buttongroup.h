@@ -24,8 +24,7 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
 
-#ifndef __BUTTONGROUP_H__
-#define __BUTTONGROUP_H__
+#pragma once
 
 #include "datatypes.h"
 #include "data.h"
@@ -57,6 +56,3 @@ private:
   QPushButton *saveButton = nullptr;
   QPushButton *cancelButton = nullptr;
 };
-
-
-#endif // __BUTTONGROUP_H__

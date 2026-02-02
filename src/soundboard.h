@@ -24,8 +24,7 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
 
-#ifndef __SOUNDBOARD_H__
-#define __SOUNDBOARD_H__
+#pragma once
 
 #include "data.h"
 
@@ -46,5 +45,3 @@ private:
   void playSound(QAbstractButton *button);
   Data &data;
 };
-
-#endif // __SOUNDBOARD_H__

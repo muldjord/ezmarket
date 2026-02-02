@@ -24,8 +24,7 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
 
-#ifndef __ITEMEDITOR_H__
-#define __ITEMEDITOR_H__
+#pragma once
 
 #include "datatypes.h"
 #include "data.h"
@@ -60,6 +59,3 @@ private:
   const QString &barcode;
   Data &data;
 };
-
-
-#endif // __ITEMEDITOR_H__

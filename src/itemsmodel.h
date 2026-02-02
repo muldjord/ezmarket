@@ -24,8 +24,7 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
 
-#ifndef __ITEMSMODEL_H__
-#define __ITEMSMODEL_H__
+#pragma once
 
 #include "datatypes.h"
 #include "data.h"
@@ -64,5 +63,3 @@ signals:
 private:
   Data &allData;
 };
-
-#endif // __ITEMSMODEL_H__

@@ -24,8 +24,7 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
 
-#ifndef __ACCOUNTSTAB_H__
-#define __ACCOUNTSTAB_H__
+#pragma once
 
 #include "datatypes.h"
 #include "data.h"
@@ -55,5 +54,3 @@ private:
   QTableView *accountsView = nullptr;
   Data &data;
 };
-
-#endif // __ACCOUNTSTAB_H__

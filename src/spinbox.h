@@ -24,8 +24,7 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
 
-#ifndef __SPINBOX_H__
-#define __SPINBOX_H__
+#pragma once
 
 #include <QSpinBox>
 
@@ -37,5 +36,3 @@ public:
   SpinBox(QWidget *parent);
   ~SpinBox();
 };
-
-#endif // __SPINBOX_H__

@@ -23,8 +23,7 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
 
-#ifndef __MAINWINDOW_H__
-#define __MAINWINDOW_H__
+#pragma once
 
 #include "data.h"
 #include "datatypes.h"
@@ -118,5 +117,3 @@ private:
 
   Data data;
 };
-
-#endif // __MAINWINDOW_H__
