@@ -137,6 +137,7 @@ void MainWindow::createToolBar()
   connect(barcodeLineEdit, &QLineEdit::returnPressed, this, &MainWindow::checkBarcode);
 
   openCloseButton = new QPushButton("", this);
+  openCloseButton->setCursor(Qt::PointingHandCursor);
   printf("locale: %s\n", qPrintable(data.locale));
   openCloseButton->setStyleSheet("QPushButton {border-image: url(" + (QFile::exists("graphics/store_closed-" + data.locale + ".png")?"graphics/store_closed-" + data.locale + ".png":"graphics/store_closed.png") + "); qproperty-iconSize: " + QString::number(data.iconSizeSmall) + "px; font-size: " + QString::number(data.fontSizeSmall) + "px;}"
                                  "QPushButton:checked {border-image: url(" + (QFile::exists("graphics/store_open-" + data.locale + ".png")?"graphics/store_open-" + data.locale + ".png":"graphics/store_open.png") + "); qproperty-iconSize: " + QString::number(data.iconSizeSmall) + "px; font-size: " + QString::number(data.fontSizeSmall) + "px;}");

@@ -47,6 +47,24 @@ int main(int argc, char *argv[])
   } else {
     locale = settings.value("main/locale", "en").toString();
   }
+  if(!settings.contains("ui/iconSize")) {
+    settings.setValue("ui/iconSize", 48);
+  }
+  if(!settings.contains("ui/iconSizeSmall")) {
+    settings.setValue("ui/iconSizeSmall", 35);
+  }
+  if(!settings.contains("ui/fontSize")) {
+    settings.setValue("ui/fontSize", 35);
+  }
+  if(!settings.contains("ui/fontSizeSmall")) {
+    settings.setValue("ui/fontSizeSmall", 30);
+  }
+  if(!settings.contains("ui/editorWidth")) {
+    settings.setValue("ui/editorWidth", 700);
+  }
+  if(!settings.contains("ui/editorHeight")) {
+    settings.setValue("ui/editorHeight", 450);
+  }
 
   QTranslator translator;
   if(translator.load("ezmarket_" + locale)) {
