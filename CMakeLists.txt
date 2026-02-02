@@ -82,7 +82,7 @@ set_target_properties(EZMarket PROPERTIES
 # Update translation from sources:
 # - Use 'make update_translations' to update ts file
 # - Use 'make release_translations' to update qm file
-qt_add_translations(EZMarket TS_FILES ezmarket_da_DK.ts
+qt_add_translations(EZMarket TS_FILES ezmarket_da.ts
   SOURCES ${SOURCES}
   # LUPDATE_OPTIONS -no-obsolete
 )
@@ -96,7 +96,7 @@ install(TARGETS EZMarket
 install(FILES
   ${CMAKE_SOURCE_DIR}/AUTHORS
   ${CMAKE_SOURCE_DIR}/LICENSE
-  ${CMAKE_CURRENT_BINARY_DIR}/ezmarket_da_DK.qm
+  ${CMAKE_CURRENT_BINARY_DIR}/ezmarket_da.qm
   ${CMAKE_SOURCE_DIR}/README.md
   DESTINATION .
 )
