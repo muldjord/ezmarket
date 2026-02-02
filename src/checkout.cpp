@@ -126,7 +126,7 @@ void Checkout::addItem(const QString &barcode)
     subTotal += item.price;
     discount -= item.discount;
     total += item.price - item.discount;
-    checkoutList->addItem(new QListWidgetItem(QIcon(data.icons[item.icon]), item.id + ": " + QLocale().toString(item.price, 'f', 2) + tr("$")));
+    checkoutList->addItem(new QListWidgetItem(QIcon(data.icons[item.icon].pixmap), item.id + ": " + QLocale().toString(item.price, 'f', 2) + tr("$")));
     if(item.discount > 0.0) {
       checkoutList->addItem(new QListWidgetItem("\t-" + QLocale().toString(item.discount, 'f', 2) + tr("$") + tr(" discount")));
     }

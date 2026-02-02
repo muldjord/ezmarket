@@ -27,6 +27,12 @@
 #pragma once
 
 #include <QString>
+#include <QPixmap>
+
+struct Icon {
+  QString tags = "";
+  QPixmap pixmap = QPixmap();
+};
 
 struct Account {
   QString barcode = "";

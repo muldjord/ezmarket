@@ -44,7 +44,7 @@ struct Data {
   QList<Account> accounts;
   QList<Item> items;
   QList<Category> categories;
-  QMap<QString, QPixmap> icons;
+  QMap<QString, Icon> icons;
   SoundMixer soundMixer;
   QPixmap iconBack = QPixmap();
 };

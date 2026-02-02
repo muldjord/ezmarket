@@ -65,6 +65,7 @@ private slots:
   void openCloseStore();
   
 private:
+  QString stringToUnicodeHexSequence(const QString &input);
   void loadIcons();
   void loadSounds();
   void loadDatabase();

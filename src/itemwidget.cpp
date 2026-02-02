@@ -43,7 +43,7 @@ ItemWidget::ItemWidget(Data &data,
   QLabel *categoryLabel = new QLabel(tr("Category:"));
   categoryComboBox = new QComboBox(this);
   for(const auto &category: data.categories) {
-    categoryComboBox->addItem(data.icons[category.icon], category.id, category.barcode);
+    categoryComboBox->addItem(data.icons[category.icon].pixmap, category.id, category.barcode);
   }
   
   QLabel *iconLabel = new QLabel(tr("Icon:"));
@@ -120,12 +120,9 @@ void ItemWidget::searchIcons()
   QList<QString> snippets = searchLineEdit->text().toLower().split(" ");
   iconComboBox->clear();
   for(const auto &key: data.icons.keys()) {
-    QString tmpKey = key;
-    tmpKey.replace("_", " ").replace("ae", "æ").replace("oe", "ø").replace("aa", "å");
-    tmpKey = tmpKey.left(1).toUpper() + tmpKey.mid(1);
     for(const auto &snippet: snippets) {
-      if(tmpKey.toLower().contains(snippet)) {
-        iconComboBox->addItem(data.icons[key], tmpKey, key);
+      if(data.icons[key].tags.contains(snippet)) {
+        iconComboBox->addItem(data.icons[key].pixmap, data.icons[key].tags, key);
         break;
       }
     }

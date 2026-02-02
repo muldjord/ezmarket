@@ -33,13 +33,13 @@
 
 CategoriesModel::CategoriesModel(Data &data,
                        QObject *parent)
-  : QAbstractTableModel(parent), allData(data)
+  : QAbstractTableModel(parent), _data(data)
 {
 }
 
 int CategoriesModel::rowCount(const QModelIndex &) const
 {
-  return allData.categories.size();
+  return _data.categories.size();
 }
 
 int CategoriesModel::columnCount(const QModelIndex &) const
@@ -56,23 +56,23 @@ QVariant CategoriesModel::data(const QModelIndex &index, int role) const
   if(role == Qt::DisplayRole) {
     switch(index.column()) {
     case 0:
-      return allData.categories.at(index.row()).id;
+      return _data.categories.at(index.row()).id;
       break;
     case 1:
-      return allData.categories.at(index.row()).lifespan;
+      return _data.categories.at(index.row()).lifespan;
       break;
       /*
     case 2:
-      return allData.categories.at(index.row()).barcode;
+      return _data.categories.at(index.row()).barcode;
       break;
       */
     };
   } else if(role == Qt::DecorationRole) {
     if(index.column() == 0) {
-      return ImgTools::getPreparedIcon(allData.icons[allData.categories.at(index.row()).icon], allData.iconSize, allData.iconBack);
+      return ImgTools::getPreparedIcon(_data.icons[_data.categories.at(index.row()).icon].pixmap, _data.iconSize, _data.iconBack);
     }
   } else if(role == Qt::ToolTipRole && index.column() == 0) {
-    return tr("Barcode: ") + allData.categories.at(index.row()).barcode;
+    return tr("Barcode: ") + _data.categories.at(index.row()).barcode;
   }
   return QVariant();
 }

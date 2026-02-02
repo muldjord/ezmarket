@@ -90,12 +90,9 @@ void CategoryWidget::searchIcons()
   QList<QString> snippets = searchLineEdit->text().toLower().split(" ");
   iconComboBox->clear();
   for(const auto &key: data.icons.keys()) {
-    QString tmpKey = key;
-    tmpKey.replace("_", " ").replace("ae", "æ").replace("oe", "ø").replace("aa", "å");
-    tmpKey = tmpKey.left(1).toUpper() + tmpKey.mid(1);
     for(const auto &snippet: snippets) {
-      if(tmpKey.toLower().contains(snippet)) {
-        iconComboBox->addItem(data.icons[key], tmpKey, key);
+      if(data.icons[key].tags.contains(snippet)) {
+        iconComboBox->addItem(data.icons[key].pixmap, data.icons[key].tags, key);
         break;
       }
     }

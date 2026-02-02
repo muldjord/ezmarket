@@ -26,6 +26,7 @@
 #include "mainwindow.h"
 #include "aboutbox.h"
 #include "entryeditor.h"
+#include "datatypes.h"
 
 #include <SFML/Audio/SoundBuffer.hpp>
 #include <QVBoxLayout>
@@ -37,6 +38,7 @@
 #include <QLocale>
 #include <QKeyEvent>
 #include <QDateTime>
+#include <QDomDocument>
 
 MainWindow::MainWindow()
 {
@@ -177,13 +179,55 @@ void MainWindow::createToolBar()
   addToolBar(Qt::TopToolBarArea, toolBar);
 }
 
+QString MainWindow::stringToUnicodeHexSequence(const QString &input)
+{
+  QStringList parts;
+  const QVector<uint> codePoints = input.toUcs4();
+  
+  for(uint cp : codePoints) {
+    parts.append(QString::number(cp, 16).toLower());
+  }
+  
+  return QStringLiteral("u") + parts.join('_');
+}
+
 void MainWindow::loadIcons()
 {
-  QDir iconsDir("graphics/icons", "*.png", QDir::Name, QDir::Files);
+  QDomDocument xmlDoc;
+  QString locale = QLocale::system().name().split("_").first();
+  QFile tFile("graphics/noto-emoji/translations/" + locale + ".xml");
+  //QFile tFile("graphics/noto-emoji/translations/da.xml");
+  if(tFile.open(QIODevice::ReadOnly)) {
+    xmlDoc.setContent(tFile.readAll());
+    tFile.close();
+  } else {
+    printf("Couldn't locate Emoji translation XML for locale '%s', can't load Emoji icons!\n", qPrintable(locale));
+    return;
+  }
+  QMap<QString, QString> emojiTags;
+  for(const auto &node: xmlDoc.elementsByTagName("annotation")) {
+    QDomElement elem = node.toElement();
+    if(elem.hasAttribute("tts")) {
+      continue;
+    }
+    emojiTags[stringToUnicodeHexSequence(elem.attribute("cp"))] += elem.text().replace(" | ", ", ").simplified() + ", ";
+  }
+  for(auto &key: emojiTags.keys()) {
+    emojiTags[key] = emojiTags[key].left(emojiTags[key].length() - 2); // Remove stray ", " at the end
+    printf("Key: '%s', Tags: '%s'\n", key.toStdString().c_str(), qPrintable(emojiTags[key]));
+  }
+  
+  QDir iconsDir("graphics/noto-emoji", "*.png", QDir::Name, QDir::Files);
   QList<QFileInfo> iconInfos = iconsDir.entryInfoList();
   for(const auto &iconInfo: iconInfos) {
-    data.icons[iconInfo.baseName()] = QPixmap(iconInfo.absoluteFilePath()).scaled(data.iconSize, data.iconSize, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+    if(emojiTags.find(iconInfo.baseName()) != emojiTags.end()) {
+      Icon newIcon;
+      newIcon.tags = emojiTags[iconInfo.baseName()];
+      newIcon.pixmap = QPixmap(iconInfo.absoluteFilePath()).scaled(data.iconSize, data.iconSize, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+      data.icons[iconInfo.baseName()] = newIcon;
+    }
   }
+
   data.iconBack = QPixmap("graphics/icon_background.png").scaled(data.iconSize + 2, data.iconSize + 2, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
 }
 

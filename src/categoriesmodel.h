@@ -24,8 +24,7 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
  */
 
-#ifndef __CATEGORIESMODEL_H__
-#define __CATEGORIESMODEL_H__
+#pragma once
 
 #include "datatypes.h"
 #include "data.h"
@@ -37,8 +36,7 @@ class CategoriesModel : public QAbstractTableModel
 Q_OBJECT
   
 public:
-  CategoriesModel(Data &data,
-             QObject *parent);
+  CategoriesModel(Data &data, QObject *parent);
   
   int rowCount(const QModelIndex &parent = QModelIndex()) const override;
   int columnCount(const QModelIndex &parent = QModelIndex()) const override;
@@ -62,7 +60,5 @@ signals:
   void editingDone();
 
 private:
-  Data &allData;
+  Data &_data;
 };
-
-#endif // __CATEGORIESMODEL_H__
