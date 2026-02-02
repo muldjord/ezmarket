@@ -30,9 +30,9 @@ if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
   endif()
 endif()
 
-find_package(SFML 3 REQUIRED COMPONENTS Audio)
+find_package(SFML 2 REQUIRED COMPONENTS audio)
 
-find_package(Qt6 REQUIRED COMPONENTS Widgets LinguistTools)
+find_package(Qt6 REQUIRED COMPONENTS Widgets Xml LinguistTools)
 
 qt_standard_project_setup()
 
@@ -72,7 +72,7 @@ qt_add_executable(EZMarket
   ${APP_ICON_RESOURCE}
 )
 
-target_link_libraries(EZMarket PRIVATE Qt6::Widgets sfml-audio)
+target_link_libraries(EZMarket PRIVATE Qt6::Widgets Qt6::Xml sfml-audio)
 
 set_target_properties(EZMarket PROPERTIES
   COMPILE_WARNING_AS_ERROR ON
