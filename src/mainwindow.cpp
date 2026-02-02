@@ -225,10 +225,6 @@ void MainWindow::loadIcons()
       newIcon.tags = emojiTags[iconInfo.baseName()];
       newIcon.pixmap = QPixmap(iconInfo.absoluteFilePath()).scaled(data.iconSize, data.iconSize, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
       data.icons[iconInfo.baseName()] = newIcon;
-    } else {
-      if(QFile::remove(iconInfo.absoluteFilePath())) {
-        printf("Removing: '%s'\n", qPrintable(iconInfo.absoluteFilePath()));
-      }
     }
   }
 
