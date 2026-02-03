@@ -40,12 +40,12 @@ int main(int argc, char *argv[])
 
   QDir::setCurrent(QApplication::applicationDirPath());
 
-  QString locale = "en";
+  QString locale = "en_US";
   QSettings settings("config.ini", QSettings::IniFormat);
   if(!settings.contains("main/locale")) {
-    settings.setValue("main/locale", QLocale::system().name().split("_").first());
+    settings.setValue("main/locale", QLocale::system().name());
   } else {
-    locale = settings.value("main/locale", "en").toString();
+    locale = settings.value("main/locale", "en_US").toString();
   }
   if(!settings.contains("ui/iconSize")) {
     settings.setValue("ui/iconSize", 48);
@@ -67,7 +67,7 @@ int main(int argc, char *argv[])
   }
 
   QTranslator translator;
-  if(translator.load("ezmarket_" + locale)) {
+  if(translator.load("translations/ezmarket-" + locale)) {
     app.installTranslator(&translator);
   }
 
