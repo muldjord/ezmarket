@@ -139,8 +139,8 @@ void MainWindow::createToolBar()
   openCloseButton = new QPushButton("", this);
   openCloseButton->setCursor(Qt::PointingHandCursor);
   printf("locale: %s\n", qPrintable(data.locale));
-  openCloseButton->setStyleSheet("QPushButton {border-image: url(" + (QFile::exists("graphics/store_closed-" + data.locale + ".png")?"graphics/store_closed-" + data.locale + ".png":"graphics/store_closed.png") + "); qproperty-iconSize: " + QString::number(data.iconSizeSmall) + "px; font-size: " + QString::number(data.fontSizeSmall) + "px;}"
-                                 "QPushButton:checked {border-image: url(" + (QFile::exists("graphics/store_open-" + data.locale + ".png")?"graphics/store_open-" + data.locale + ".png":"graphics/store_open.png") + "); qproperty-iconSize: " + QString::number(data.iconSizeSmall) + "px; font-size: " + QString::number(data.fontSizeSmall) + "px;}");
+  openCloseButton->setStyleSheet("QPushButton {border-image: url(" + (QFile::exists("graphics/store_closed-" + data.localeShort + ".png")?"graphics/store_closed-" + data.localeShort + ".png":"graphics/store_closed.png") + "); qproperty-iconSize: " + QString::number(data.iconSizeSmall) + "px; font-size: " + QString::number(data.fontSizeSmall) + "px;}"
+                                 "QPushButton:checked {border-image: url(" + (QFile::exists("graphics/store_open-" + data.localeShort + ".png")?"graphics/store_open-" + data.localeShort + ".png":"graphics/store_open.png") + "); qproperty-iconSize: " + QString::number(data.iconSizeSmall) + "px; font-size: " + QString::number(data.fontSizeSmall) + "px;}");
   //openCloseButton->setIcon(QIcon("graphics/quit.png"));
   openCloseButton->setFocusPolicy(Qt::NoFocus);
   openCloseButton->setFixedSize(200, data.iconSize);
@@ -199,19 +199,22 @@ QString MainWindow::stringToUnicodeHexSequence(const QString &input)
 
 void MainWindow::loadConfig(const QSettings &settings)
 {
-  data.locale = settings.value("main/locale", "en").toString();
+  data.locale = settings.value("main/locale", "en_US").toString();
+  if(data.locale.contains("_")) {
+    data.localeShort = data.locale.split("_").first();
+  }
 }
 
 void MainWindow::loadIcons()
 {
   QDomDocument xmlDoc;
-  QFile tFile("graphics/noto-emoji/translations/" + data.locale + ".xml");
+  QFile tFile("graphics/noto-emoji/translations/" + data.localeShort + ".xml");
   //QFile tFile("graphics/noto-emoji/translations/da.xml");
   if(tFile.open(QIODevice::ReadOnly)) {
     xmlDoc.setContent(tFile.readAll());
     tFile.close();
   } else {
-    printf("Couldn't locate Emoji translation XML for locale '%s', can't load Emoji icons!\n", qPrintable(data.locale));
+    printf("Couldn't locate Emoji translation XML for locale '%s', can't load Emoji icons!\n", qPrintable(data.localeShort));
     return;
   }
   QMap<QString, QString> emojiTags;
@@ -220,7 +223,7 @@ void MainWindow::loadIcons()
     if(elem.hasAttribute("tts")) {
       continue;
     }
-    emojiTags[stringToUnicodeHexSequence(elem.attribute("cp"))] += elem.text().replace(" | ", ", ").simplified() + ", ";
+    emojiTags[stringToUnicodeHexSequence(elem.attribute("cp"))] += elem.text().toLower().replace(" | ", ", ").simplified() + ", ";
   }
   for(auto &key: emojiTags.keys()) {
     emojiTags[key] = emojiTags[key].left(emojiTags[key].length() - 2); // Remove stray ", " at the end
